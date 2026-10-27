@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Training 2 · AI &amp; Your Data</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400;1,9..144,500&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23b31b1b'/%3E%3Ctext x='16' y='22' font-family='Arial' font-weight='800' font-style='italic' font-size='15' fill='white' text-anchor='middle'%3ERS%3C/text%3E%3C/svg%3E">
+</head>
+<body data-page="t2">
+<main>
+
+  <section class="section" style="padding-top:64px">
+    <p class="eyebrow"><span class="dot"></span>Training 2 · AI tool users · ~20 min</p>
+    <h1 style="font-size:clamp(44px,6vw,80px)">AI &amp; <em class="accent">your data.</em></h1>
+    <p class="lede">Before anything goes into an AI tool, sort it: <b style="color:var(--lvl-red)">Red</b>, <b style="color:var(--lvl-yellow)">Yellow</b>, or <b style="color:var(--lvl-green)">Green</b>. This training shows you how, using the systems you work in every day.</p>
+
+    <div class="primer" id="t2-primer" tabindex="0" aria-label="Training 2 slides">
+      <div class="primer-head"><span class="label">The training</span><span class="count">01 / 05</span></div>
+      <div class="progress"><i></i></div>
+      <div class="slides">
+
+        <!-- 1 -->
+        <article class="slide" data-title="Why data matters">
+          <div class="tag"><span class="dot"></span>Module 1 · Why data matters · 2 min</div>
+          <h3>What you paste <em class="accent">can leave the building.</em></h3>
+          <p>Anything you type, paste, upload, or record into an AI tool is data leaving your hands. Free and personal AI tools may use it to train their models. Enterprise tools have contracts that prevent this.</p>
+          <div class="callout"><b>A real example from our policy:</b> uploading a vendor contract with negotiated pricing into a public chatbot to summarize it. One paste, and our pricing terms are out of our control.</div>
+          <div class="grid grid-4">
+            <div class="card"><h4>Customer trust</h4><p>Their data, their pricing, their orders.</p></div>
+            <div class="card"><h4>Supplier agreements</h4><p>Terms we've agreed to keep confidential.</p></div>
+            <div class="card"><h4>Competitive edge</h4><p>Margins, costs, and strategy.</p></div>
+            <div class="card"><h4>Legal obligations</h4><p>NDAs, privacy laws, legal holds.</p></div>
+          </div>
+        </article>
+
+        <!-- 2 -->
+        <article class="slide" data-title="Data you touch">
+          <div class="tag"><span class="dot"></span>Module 2 · The data you touch every day · 4 min</div>
+          <h3>Know what's in the <em class="accent">systems you use.</em></h3>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Where you see it</th><th>Typical data</th><th>Level</th></tr></thead>
+              <tbody>
+                <tr><td><b>P21</b></td><td>Customers, orders, customer-specific pricing, vendor costs, margins</td><td><span class="pill warn">Yellow</span></td></tr>
+                <tr><td><b>Pronto (Proton.ai)</b></td><td>Customer lists, contacts, buying history</td><td><span class="pill warn">Yellow</span></td></tr>
+                <tr><td><b>Outlook / Teams</b></td><td>Internal messages, customer and vendor emails, attachments</td><td><span class="pill warn">Yellow</span></td></tr>
+                <tr><td><b>Retool apps</b></td><td>Operational and customer data from P21</td><td><span class="pill warn">Yellow</span></td></tr>
+                <tr><td><b>HR &amp; payroll records</b></td><td>Employee info · SSNs and bank details</td><td><span class="pill warn">Yellow</span> <span class="pill no">SSN / bank = Red</span></td></tr>
+                <tr><td><b>Finance reports</b></td><td>Statements, forecasts, margins</td><td><span class="pill warn">Yellow</span></td></tr>
+                <tr><td><b>Contracts, legal, board files</b></td><td>Customer/vendor terms · litigation, M&amp;A, board matters</td><td><span class="pill warn">Yellow</span> <span class="pill no">Legal / board = Red</span></td></tr>
+                <tr><td><b>Manufacturer sites, trade press</b></td><td>Public product info, industry trends</td><td><span class="pill ok">Green</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </article>
+
+        <!-- 3 -->
+        <article class="slide" data-title="Three levels">
+          <div class="tag"><span class="dot"></span>Module 3 · The three levels · 6 min</div>
+          <h3>Red. Yellow. <em class="accent">Green.</em></h3>
+          <div class="levels">
+            <div class="level red">
+              <h4>Red</h4>
+              <div class="rule">Never — in any AI tool, even enterprise ones</div>
+              <ul>
+                <li>SSNs and government IDs</li>
+                <li>Bank and payment card numbers</li>
+                <li>Passwords, credentials, API keys</li>
+                <li>Attorney-client communications</li>
+                <li>Trade secrets and formulas</li>
+                <li>Board confidential matters</li>
+                <li>Active litigation and legal holds</li>
+                <li>M&amp;A discussions</li>
+                <li>Investigations and whistleblower reports</li>
+              </ul>
+            </div>
+            <div class="level yellow">
+              <h4>Yellow</h4>
+              <div class="rule">Enterprise tools only, signed in with your work account</div>
+              <ul>
+                <li>Customer names, contacts, order history</li>
+                <li>Price lists and customer-specific pricing</li>
+                <li>Vendor contracts, costs, and terms</li>
+                <li>Sales, margin, and financial data</li>
+                <li>Employee info (no SSNs)</li>
+                <li>Internal communications</li>
+                <li>Strategic plans, unpublished product info</li>
+                <li>Internal processes</li>
+              </ul>
+            </div>
+            <div class="level green">
+              <h4>Green</h4>
+              <div class="rule">Fine in any approved tool</div>
+              <ul>
+                <li>Public information</li>
+                <li>General industry research</li>
+                <li>Generic drafts with no company specifics</li>
+                <li>Training content</li>
+                <li>Rewording your own writing</li>
+              </ul>
+            </div>
+          </div>
+          <div class="grid grid-3">
+            <div class="card"><h4>Health information</h4><p>Never enter it without explicit approval and a signed agreement (BAA) with the vendor.</p></div>
+            <div class="card"><h4>Third-party content</h4><p>Paid market reports, customer documents, NDA material, and copyrighted content need permission <em>and</em> an approved tool.</p></div>
+            <div class="card"><h4>Not sure?</h4><p>Treat it as one level higher, and ask.</p></div>
+          </div>
+          <div class="callout"><b>The 3-question check before you paste:</b> 1) Is any of it Red? Stop. 2) Is it about our customers, vendors, employees, money, or plans? Enterprise tool, work account. 3) Otherwise, any approved tool — then verify the output.</div>
+        </article>
+
+        <!-- 4 -->
+        <article class="slide" data-title="Good habits">
+          <div class="tag"><span class="dot"></span>Module 4 · Gray areas and good habits · 4 min</div>
+          <h3>Strip it down <em class="accent">before you paste.</em></h3>
+          <div class="grid grid-2">
+            <div class="card"><span class="num">01</span><h4>Share the minimum</h4><p>Paste the paragraph you need, not the whole contract or the full P21 export.</p></div>
+            <div class="card"><span class="num">02</span><h4>Anonymize people</h4><p>Swap names for "Customer A" or "Employee 1" unless the tool is approved for that data.</p></div>
+            <div class="card"><span class="num">03</span><h4>Screenshots count</h4><p>A screenshot of a P21 screen carries everything visible on it.</p></div>
+            <div class="card"><span class="num">04</span><h4>Notetakers hear everything</h4><p>Don't run Read.ai or Granola in meetings about legal, board, or HR investigation topics.</p></div>
+            <div class="card"><span class="num">05</span><h4>Mixed data takes the highest level</h4><p>One SSN in a spreadsheet makes the whole file Red.</p></div>
+            <div class="card"><span class="num">06</span><h4>Accidents happen</h4><p>If Red or Yellow data lands in the wrong tool, report it right away and note what was shared.</p></div>
+          </div>
+        </article>
+
+        <!-- 5 -->
+        <article class="slide" data-title="Practice">
+          <div class="tag"><span class="dot"></span>Module 5 · Practice · 4 min</div>
+          <h3>Sort it. <em class="accent">Red, Yellow, or Green?</em></h3>
+          <p>A quick warm-up before the quiz. Pick a level for each item — you'll see the answer right away. This doesn't count toward your score.</p>
+          <div class="sorter">
+            <div class="sort-item" data-answer="yellow">
+              <div>A customer's last six months of order history from P21</div>
+              <div class="choices"><button class="pick-red" data-level="red">Red</button><button class="pick-yellow" data-level="yellow">Yellow</button><button class="pick-green" data-level="green">Green</button></div>
+              <div class="fb" data-why="Customer order data is Yellow: fine in Copilot or another enterprise tool with your work account, never in a personal account."></div>
+            </div>
+            <div class="sort-item" data-answer="red">
+              <div>Your P21 login, so AI can "help you troubleshoot"</div>
+              <div class="choices"><button class="pick-red" data-level="red">Red</button><button class="pick-yellow" data-level="yellow">Yellow</button><button class="pick-green" data-level="green">Green</button></div>
+              <div class="fb" data-why="Passwords and credentials are Red. They never go into any AI tool."></div>
+            </div>
+            <div class="sort-item" data-answer="green">
+              <div>A public trade-press article on supply chain trends</div>
+              <div class="choices"><button class="pick-red" data-level="red">Red</button><button class="pick-yellow" data-level="yellow">Yellow</button><button class="pick-green" data-level="green">Green</button></div>
+              <div class="fb" data-why="Public information is Green. Any approved tool is fine (just mind copyright before republishing)."></div>
+            </div>
+            <div class="sort-item" data-answer="yellow">
+              <div>A vendor's price-increase letter with our negotiated cost</div>
+              <div class="choices"><button class="pick-red" data-level="red">Red</button><button class="pick-yellow" data-level="yellow">Yellow</button><button class="pick-green" data-level="green">Green</button></div>
+              <div class="fb" data-why="Vendor costs and terms are Yellow: enterprise tools only. Check whether an NDA limits how it can be used."></div>
+            </div>
+            <div class="sort-item" data-answer="red">
+              <div>Notes from a confidential board discussion</div>
+              <div class="choices"><button class="pick-red" data-level="red">Red</button><button class="pick-yellow" data-level="yellow">Yellow</button><button class="pick-green" data-level="green">Green</button></div>
+              <div class="fb" data-why="Board confidential matters are Red, even in enterprise tools."></div>
+            </div>
+            <div class="sort-item" data-answer="green">
+              <div>A generic "thanks for your order" email with no names or details</div>
+              <div class="choices"><button class="pick-red" data-level="red">Red</button><button class="pick-yellow" data-level="yellow">Yellow</button><button class="pick-green" data-level="green">Green</button></div>
+              <div class="fb" data-why="A generic draft with no company specifics is Green."></div>
+            </div>
+          </div>
+        </article>
+
+      </div>
+      <div class="primer-foot">
+        <button class="btn nav-btn" type="button" data-prev>← Back</button>
+        <div class="dots"></div>
+        <button class="btn btn-red nav-btn" type="button" data-next>Next →</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="quiz">
+    <div class="quiz">
+      <div>
+        <p class="eyebrow"><span class="dot"></span>Knowledge check · 6 scenarios · every Red item must be right</p>
+        <h3>Training 2 quiz</h3>
+        <p>Opens in Microsoft Forms. Sign in with your work account so your score is recorded. Pass with 5 of 6 correct, including every Red scenario.</p>
+      </div>
+      <a class="btn btn-red" data-quiz="training2" href="#">Take the quiz →</a>
+    </div>
+  </section>
+
+  <div class="nextup">
+    <div><div class="step">You're done</div><h3>Keep the quick reference handy</h3></div>
+    <a class="btn btn-dark" href="reference.html">Open quick reference →</a>
+  </div>
+
+</main>
+<script src="assets/config.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

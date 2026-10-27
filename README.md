@@ -1,0 +1,41 @@
+# Richards Supply — AI Training Site
+
+Static site (plain HTML/CSS/JS, no build step) for the two required AI trainings:
+
+| Page | What it is |
+| --- | --- |
+| `index.html` | Home: learning path, pre-flight checklist |
+| `training-1.html` | Training 1 · AI at Richards Supply (8 modules, ~20 min) |
+| `training-2.html` | Training 2 · AI & Your Data (5 modules, ~20 min, with a practice sorter) |
+| `reference.html` | One-page quick reference (prints cleanly) |
+| `assets/config.js` | **Quiz links and contacts — edit this file only** |
+
+## Add the quiz links
+
+1. Import the two quiz files into Microsoft Forms (Quick Import → Quiz) and set answers from the answer key.
+2. In each form, choose **Collect responses** and copy the link.
+3. Paste the links into `assets/config.js`:
+
+```js
+quizzes: {
+  training1: "https://forms.office.com/r/XXXXXXXX",
+  training2: "https://forms.office.com/r/YYYYYYYY"
+}
+```
+
+Until a link is set, the button shows "Quiz link coming soon".
+
+## Publish at ai.richardssupply.com (GitHub Pages)
+
+The `CNAME` file already points the site at `ai.richardssupply.com` — change it if you want a different subdomain.
+
+1. **DNS:** at your DNS host, add a `CNAME` record: `ai` → `mattkrichards.github.io`
+2. **GitHub:** repo **Settings → Pages** → Source: *Deploy from a branch* → `main` / `(root)`.
+3. Under **Custom domain**, confirm `ai.richardssupply.com`, wait for the DNS check, then tick **Enforce HTTPS**.
+4. Optional but recommended: verify `richardssupply.com` under your GitHub account's **Settings → Pages → Verified domains** so no one else can claim the subdomain.
+
+**Visibility note:** GitHub Pages sites are public on the internet, even when the repo is private (private-repo Pages needs a paid plan). The pages are tagged `noindex`, so search engines won't list them, but anyone with the link can read them. If the trainings should be employees-only, host the same files on Azure Static Web Apps with Microsoft Entra sign-in, or upload them to SharePoint.
+
+## Editing content
+
+Each training module is one `<article class="slide">` block in the page. Edit text in place; the slide count, dots, and progress bar update automatically. Link to a specific slide with `#slide-N`, e.g. `training-1.html#slide-5`.
