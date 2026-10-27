@@ -25,13 +25,15 @@ quizzes: {
 
 Until a link is set, the button shows "Quiz link coming soon".
 
-## Publish at ai.richardssupply.com (GitHub Pages)
+## Publishing
 
-The `CNAME` file already points the site at `ai.richardssupply.com` — change it if you want a different subdomain.
+Live at **https://mattkrichards.github.io/ai-training/** via GitHub Pages (Settings → Pages → `main` / root). Every push to `main` republishes it.
+
+### Optional: move to ai.richardssupply.com
 
 1. **DNS:** at your DNS host, add a `CNAME` record: `ai` → `mattkrichards.github.io`
-2. **GitHub:** repo **Settings → Pages** → Source: *Deploy from a branch* → `main` / `(root)`.
-3. Under **Custom domain**, confirm `ai.richardssupply.com`, wait for the DNS check, then tick **Enforce HTTPS**.
+2. Pages is already on; skip to the next step.
+3. Under **Custom domain**, enter `ai.richardssupply.com`, wait for the DNS check, then tick **Enforce HTTPS**.
 4. Optional but recommended: verify `richardssupply.com` under your GitHub account's **Settings → Pages → Verified domains** so no one else can claim the subdomain.
 
 **Visibility note:** GitHub Pages sites are public on the internet, even when the repo is private (private-repo Pages needs a paid plan). The pages are tagged `noindex`, so search engines won't list them, but anyone with the link can read them. If the trainings should be employees-only, host the same files on Azure Static Web Apps with Microsoft Entra sign-in, or upload them to SharePoint.
