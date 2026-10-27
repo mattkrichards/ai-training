@@ -18,8 +18,8 @@
   top.innerHTML =
     '<div class="topbar-inner">' +
       '<a class="brand" href="index.html" aria-label="Richards Supply AI Training home">' +
-        '<span class="brand-mark">RS</span>' +
-        '<span class="brand-name">Richards Supply<small>AI Training</small></span>' +
+        '<img class="brand-logo" src="' + (C.logoUrl || "https://www.richardssupply.com/images/Header/NewLogo.jpg") + '" alt="Richards Supply Company" width="423" height="94">' +
+        '<span class="brand-name">AI Training</span>' +
       '</a>' +
       '<span class="topbar-tag"><span class="dot"></span>Employee field guide · Responsible AI</span>' +
     '</div>';
