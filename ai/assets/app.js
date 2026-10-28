@@ -12,6 +12,18 @@
     spark: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.8 5.6L19.5 9l-5.7 1.6L12 16l-1.8-5.4L4.5 9l5.7-1.4z"/><circle cx="19" cy="18" r="2"/></svg>'
   };
 
+  icons.flag = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V4"/><path d="M5 4h11l-2 4 2 4H5"/></svg>';
+
+  var discloseMail = "mailto:" + C.contacts.email +
+    "?subject=" + encodeURIComponent("AI tool use disclosure") +
+    "&body=" + encodeURIComponent(
+      "Branch:\nDepartment:\nAI tool used:\nApprox. date first used:\nHow often (once / a few times / regularly / still using):\n" +
+      "What I used it for:\nHighest data level that went in (Red / Yellow / Green / not sure):\n" +
+      "Uploaded files or connected it to email, OneDrive, Teams, or P21? (yes / no / not sure):\n" +
+      "Signed up with my work email or phone? (yes / no / not sure):\n" +
+      "Stopped using it? (yes / no):\nWant IT to review it for approval? (yes / no):\nAnything else:\n");
+  var discloseHref = C.disclosureForm || discloseMail;
+
   // ---------- Chrome: top bar, rail, help, footer ----------
   var top = document.createElement("header");
   top.className = "topbar";
@@ -40,7 +52,8 @@
       '<span class="tip">' + l[2] + '</span></a>';
   }).join("") +
     '<span class="sep"></span>' +
-    '<a href="mailto:' + C.contacts.email + '?subject=AI%20question">' + icons.mail + '<span class="tip">Ask a question</span></a>';
+    '<a href="mailto:' + C.contacts.email + '?subject=AI%20question">' + icons.mail + '<span class="tip">Ask a question</span></a>' +
+    '<a href="' + discloseHref + '"' + (C.disclosureForm ? ' target="_blank" rel="noopener"' : "") + '>' + icons.flag + '<span class="tip">Disclose an unapproved tool</span></a>';
   document.body.insertBefore(rail, top.nextSibling);
 
   var fab = document.createElement("a");
@@ -64,6 +77,21 @@
     } else {
       el.setAttribute("aria-disabled", "true");
       el.textContent = "Quiz link coming soon";
+    }
+  });
+
+  // ---------- Unapproved-tool disclosure (form preferred, email accepted) ----------
+  document.querySelectorAll("[data-disclose]").forEach(function (el) {
+    var mode = el.getAttribute("data-disclose");
+    if (mode === "form" && C.disclosureForm) {
+      el.href = C.disclosureForm;
+      el.target = "_blank";
+      el.rel = "noopener";
+    } else if (mode === "form") {
+      el.href = discloseMail;
+    } else {
+      el.href = discloseMail;
+      if (!C.disclosureForm) el.style.display = "none"; // the main button already emails
     }
   });
 

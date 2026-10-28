@@ -8,7 +8,8 @@ Static site (plain HTML/CSS/JS, no build step) for the two required AI trainings
 | `ai/training-1.html` | Training 1 · AI at Richards Supply (8 modules, ~20 min) |
 | `ai/training-2.html` | Training 2 · AI & Your Data (5 modules, ~20 min, with a practice sorter) |
 | `ai/reference.html` | One-page quick reference (prints cleanly) |
-| `ai/assets/config.js` | **Quiz links and contacts — edit this file only** |
+| `ai/assets/config.js` | **Quiz links, disclosure form link, and contacts — edit this file only** |
+| `forms/` | Word file for Microsoft Forms Quick Import (disclosure form) |
 
 ## Add the quiz links
 
@@ -24,6 +25,21 @@ quizzes: {
 ```
 
 Until a link is set, the button shows "Quiz link coming soon".
+
+## Unapproved-tool disclosure form
+
+"Disclose an unapproved tool" buttons appear in Training 1 (Module 5 and Module 7), on the quick reference, and as a flag icon in the left rail on every page. The form is the preferred way to disclose; email is also accepted.
+
+1. Open `forms/AI Tool Use Disclosure - Forms import.docx`, then in Microsoft Forms choose **Quick Import** → upload it → **Form** (not Quiz).
+2. Check the imported questions. Set questions 1–4, 6, 8–12 to **Required**. On question 8 (data level), leave it single-choice.
+3. Settings: **Only people in my organization can respond** and **Record name** on (the form has no name question; it relies on this). Turn on email notification of new responses.
+4. Choose **Collect responses**, copy the link, and paste it into `ai/assets/config.js`:
+
+```js
+disclosureForm: "https://forms.office.com/r/ZZZZZZZZ",
+```
+
+Until it's set, the buttons open a pre-filled email to `contacts.email`. Once it's set, the main button opens the form and an "Email instead" button appears beside it.
 
 ## Publishing
 

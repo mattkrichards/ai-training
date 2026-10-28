@@ -6,6 +6,9 @@ window.RS_CONFIG = {
     training1: "https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=BEhP0OK6tk-F7kQstwCdxg2uTa57P49PjpVNhL0qmtdUNDFBTjkwODNXV1U2NlRCU1c3SElCSDRCSS4u",
     training2: "https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=BEhP0OK6tk-F7kQstwCdxg2uTa57P49PjpVNhL0qmtdUNUg5QjQ3UURTMDNWSk9RS1c4NU0zR1gxUS4u"
   },
+  // "Disclose an unapproved tool" buttons. Paste the Microsoft Forms link here.
+  // Until it's set, the buttons open a pre-filled email to contacts.email instead.
+  disclosureForm: "",
   contacts: {
     policyOwner: "Matt Kuehl, VP of Technology",
     email: "mattk@richardssupply.com",

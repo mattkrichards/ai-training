@@ -340,3 +340,8 @@ footer.site {
   .slide { display: block !important; page-break-inside: avoid; }
   main { padding: 0 20px; }
 }
+
+/* Unapproved-tool disclosure */
+.disclose .btn-row { gap: 10px; }
+.disclose-note { font-size: 14px; color: #4a4642; margin: 10px 0 0; }
+@media print { .disclose .btn-row { display: none; } }
