@@ -14,5 +14,5 @@ window.RS_CONFIG = {
     email: "mattk@richardssupply.com",
     helpDesk: "IT Help Desk"
   },
-  policyVersion: "AI Usage Policy v2 (draft, Oct 2026)"
+  policyVersion: "AI Usage Policy v3 (draft, Nov 2026)"
 };
