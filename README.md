@@ -8,6 +8,7 @@ Static site (plain HTML/CSS/JS, no build step) for the two required AI trainings
 | `ai/training-1.html` | Training 1 · AI at Richards Supply (8 modules, ~20 min) |
 | `ai/training-2.html` | Training 2 · AI & Your Data (5 modules, ~20 min, with a practice sorter) |
 | `ai/reference.html` | One-page quick reference (prints cleanly) |
+| `ai/migration.html` | Migration plan: moving personal AI accounts (Claude, ChatGPT, Base44, others) into company accounts |
 | `ai/assets/config.js` | **Quiz links, disclosure form link, and contacts — edit this file only** |
 | `forms/` | Word file for Microsoft Forms Quick Import (disclosure form) |
 

@@ -12,6 +12,8 @@
     spark: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.8 5.6L19.5 9l-5.7 1.6L12 16l-1.8-5.4L4.5 9l5.7-1.4z"/><circle cx="19" cy="18" r="2"/></svg>'
   };
 
+  icons.mig = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h12"/><path d="m13 4 3 3-3 3"/><path d="M20 17H8"/><path d="m11 14-3 3 3 3"/></svg>';
+
   icons.flag = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V4"/><path d="M5 4h11l-2 4 2 4H5"/></svg>';
 
   var discloseMail = "mailto:" + C.contacts.email +
@@ -41,7 +43,8 @@
     ["home", "index.html", "Home"],
     ["t1", "training-1.html", "Training 1 · AI at Richards"],
     ["t2", "training-2.html", "Training 2 · AI & Your Data"],
-    ["ref", "reference.html", "Quick reference"]
+    ["ref", "reference.html", "Quick reference"],
+    ["mig", "migration.html", "Move to a company account"]
   ];
   var rail = document.createElement("nav");
   rail.className = "rail";
