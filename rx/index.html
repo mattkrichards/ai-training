@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RX Training Library · Richards Supply</title>
+<meta name="description" content="Video training for the RX Scan and RX Builder inventory agreement tools.">
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="../ai/assets/style.css?v=10">
+<link rel="stylesheet" href="rx.css?v=1">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23b31b1b'/%3E%3Ctext x='16' y='22' font-family='Arial' font-weight='800' font-style='italic' font-size='15' fill='white' text-anchor='middle'%3ERS%3C/text%3E%3C/svg%3E">
+</head>
+<body data-page="rx">
+<header class="site-header">
+  <div class="header-inner">
+    <a class="brand" href="./" aria-label="RX Training Library home">
+      <img class="brand-logo" src="https://www.richardssupply.com/images/Header/NewLogo.jpg" alt="Richards Supply Company" width="162" height="36">
+      <span class="brand-name">RX Training Library</span>
+    </a>
+    <div class="search" role="search">
+      <label class="search-box">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
+        <input type="search" id="rx-search" placeholder="Search training videos" autocomplete="off" aria-label="Search training videos">
+      </label>
+    </div>
+    <div class="header-actions">
+      <a class="hdr-link" href="../ai/">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c0 1.7 2.7 3 6 3s6-1.3 6-3v-5"/></svg>
+        <span>AI Training</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<main id="rx-main">
+  <section class="rx-hero">
+    <p class="eyebrow">Inventory Agreements</p>
+    <h1 id="rx-title">RX Training Library</h1>
+    <p class="lede" id="rx-subtitle"></p>
+    <p class="rx-tip muted">Tip: search for a task, like “min max”, “barcode labels”, or “impersonate”.</p>
+    <div class="rx-steps">
+      <div><b>1</b><span>Search or browse the videos below</span></div>
+      <div><b>2</b><span>Watch each module in order</span></div>
+      <div><b>3</b><span>Take the quiz for that course</span></div>
+    </div>
+  </section>
+
+  <div class="rx-toolbar">
+    <div class="rx-chips" id="rx-chips" role="group" aria-label="Filter by course"></div>
+    <p class="rx-count" id="rx-count" aria-live="polite"></p>
+  </div>
+
+  <div id="rx-library"><p class="muted">Loading videos…</p></div>
+</main>
+
+<footer class="site">
+  <span>Richards Supply · RX Training Library</span>
+  <span>Questions about the RX tools: <a href="mailto:mattk@richardssupply.com">Matt Kuehl</a> · <a href="../ai/">AI Training</a></span>
+</footer>
+
+<div class="rx-modal" id="rx-modal" hidden>
+  <div class="rx-modal-backdrop" data-close></div>
+  <div class="rx-modal-box" role="dialog" aria-modal="true" aria-labelledby="rx-modal-title">
+    <div class="rx-modal-head">
+      <div>
+        <p class="eyebrow" id="rx-modal-course"></p>
+        <h3 id="rx-modal-title"></h3>
+      </div>
+      <button class="rx-close" type="button" data-close aria-label="Close video">×</button>
+    </div>
+    <div class="rx-player" id="rx-player"></div>
+    <div class="rx-modal-foot">
+      <p id="rx-modal-desc"></p>
+      <div class="btn-row" id="rx-modal-actions"></div>
+    </div>
+  </div>
+</div>
+
+<script src="rx.js?v=1"></script>
+</body>
+</html>

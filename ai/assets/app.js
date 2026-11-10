@@ -30,7 +30,8 @@
     ask: '<path d="M4 5h16v11H9l-5 4z"/>',
     flag: '<path d="M5 21V4"/><path d="M5 4h12l-2.5 4.5L17 13H5"/>',
     search: '<circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>',
-    menu: '<path d="M4 6h16M4 12h16M4 18h16"/>'
+    menu: '<path d="M4 6h16M4 12h16M4 18h16"/>',
+    play: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M10 9.5v5l4.5-2.5z"/>'
   };
   function icon(n) { return '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + I[n] + "</svg>"; }
 
@@ -73,6 +74,7 @@
       '<div class="side-label">Resources</div>' +
       link("ref", "reference.html", "Quick reference", "ref") +
       link("mig", "migration.html", "Move to a company account", "mig") +
+      link("rx", "../rx/", "RX Training Library", "play") +
       '<div class="side-label">Help</div>' +
       link("ask", askHref, "Ask a question", "ask") +
       link("disclose", discloseHref, "Report an AI tool", "flag", discloseAttrs) +
