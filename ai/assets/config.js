@@ -14,5 +14,13 @@ window.RS_CONFIG = {
     email: "mattk@richardssupply.com",
     helpDesk: "IT Help Desk"
   },
+  // Training creator (admin.html): where course content is saved.
+  admin: {
+    owner: "mattkrichards",
+    repo: "ai-training",
+    branch: "main",
+    contentPath: "ai/content/trainings.json",
+    imageDir: "ai/content/images"
+  },
   policyVersion: "AI Usage Policy v3 (draft, Nov 2026)"
 };

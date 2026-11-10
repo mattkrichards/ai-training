@@ -6,7 +6,7 @@
 <title>AI Training · Richards Supply</title>
 <meta name="description" content="Required AI training for Richards Supply employees: how to use AI well, safely, and with the right data.">
 <meta name="robots" content="noindex">
-<link rel="stylesheet" href="assets/style.css?v=8">
+<link rel="stylesheet" href="assets/style.css?v=9">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23b31b1b'/%3E%3Ctext x='16' y='22' font-family='Arial' font-weight='800' font-style='italic' font-size='15' fill='white' text-anchor='middle'%3ERS%3C/text%3E%3C/svg%3E">
 </head>
 <body data-page="home">
@@ -14,47 +14,12 @@
 
   <div class="page-head">
     <p class="eyebrow">Richards Supply · AI Training</p>
-    <h1>Your required AI training</h1>
-    <p class="lede">Two short courses on using AI well and safely at Richards Supply. Take them in order. Each one ends with a short quiz in Microsoft Forms.</p>
-    <div class="meta-row"><span><b>2 courses</b></span><span><b>About 40 minutes total</b></span><span>Your progress is saved on this device</span></div>
+    <h1>My courses</h1>
+    <p class="lede">Short courses on using AI well and safely at Richards Supply. Start with the core training, in order. Each course ends with a short quiz in Microsoft Forms.</p>
+    <div class="meta-row" id="home-meta"></div>
   </div>
 
-  <section class="section">
-    <h2>My courses</h2>
-    <div class="course-list">
-
-      <div class="course" data-deck="t1-primer" data-lessons="8" data-quiz-key="training1">
-        <div class="step-no">1</div>
-        <div>
-          <h3><a href="training-1.html" style="color:inherit;text-decoration:none">AI at Richards Supply</a></h3>
-          <p>What AI is and isn't, why we want you using it, the five ground rules, the approved tools, and what to do when something goes wrong.</p>
-          <div class="meta-row"><span>All employees</span><span>About 20 min</span><span>8 lessons + quiz</span></div>
-        </div>
-        <div class="cta">
-          <span class="status">Not started</span>
-          <div class="bar"><i></i></div>
-          <span class="count muted" style="font-size:13px">0 of 8 lessons</span>
-          <a class="btn btn-red" href="training-1.html">Start</a>
-        </div>
-      </div>
-
-      <div class="course" data-deck="t2-primer" data-lessons="5" data-quiz-key="training2">
-        <div class="step-no">2</div>
-        <div>
-          <h3><a href="training-2.html" style="color:inherit;text-decoration:none">AI &amp; Your Data</a></h3>
-          <p>The data you work with in P21, Pronto, Outlook, and Retool, and how to sort it into Red, Yellow, and Green before it goes anywhere near AI.</p>
-          <div class="meta-row"><span>AI tool users</span><span>About 20 min</span><span>5 lessons + quiz</span></div>
-        </div>
-        <div class="cta">
-          <span class="status">Not started</span>
-          <div class="bar"><i></i></div>
-          <span class="count muted" style="font-size:13px">0 of 5 lessons</span>
-          <a class="btn btn-red" href="training-2.html">Start</a>
-        </div>
-      </div>
-
-    </div>
-  </section>
+  <div id="course-sections"></div>
 
   <section class="section">
     <h2>Resources</h2>
@@ -75,7 +40,8 @@
   </section>
 
 </main>
-<script src="assets/config.js?v=8"></script>
-<script src="assets/app.js?v=8"></script>
+<script src="assets/config.js?v=9"></script>
+<script src="assets/render.js?v=9"></script>
+<script src="assets/app.js?v=9"></script>
 </body>
 </html>
