@@ -50,4 +50,6 @@ Live at **https://hub.richardssupply.com/ai/** via GitHub Pages (Settings → Pa
 
 ## Editing content
 
-Each training module is one `<article class="slide">` block in the page. Edit text in place; the slide count, dots, and progress bar update automatically. Link to a specific slide with `#slide-N`, e.g. `training-1.html#slide-5`.
+Each lesson is one `<article class="slide" data-title="...">` block in the training page. The course outline, "Lesson X of Y" label, durations (read from the hidden `.tag` line, e.g. "· 4 min"), progress bar, and Previous/Next buttons are built automatically. The last article (`data-kind="quiz"`) is the quiz step. Link to a specific lesson with `#slide-N`, e.g. `training-1.html#slide-5`.
+
+Progress (lessons viewed, quiz opened) is saved in the browser on that device and shows on the home page. The official completion record is the Microsoft Forms quiz.

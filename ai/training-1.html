@@ -5,23 +5,23 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Training 1 · AI at Richards Supply</title>
 <meta name="robots" content="noindex">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600;700;800&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css?v=7">
+<link rel="stylesheet" href="assets/style.css?v=8">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23b31b1b'/%3E%3Ctext x='16' y='22' font-family='Arial' font-weight='800' font-style='italic' font-size='15' fill='white' text-anchor='middle'%3ERS%3C/text%3E%3C/svg%3E">
 </head>
 <body data-page="t1">
 <main>
 
-  <section class="section" style="padding-top:64px">
-    <p class="eyebrow"><span class="dot"></span>Training 1 · All employees · ~20 min</p>
-    <h1 style="font-size:clamp(44px,6vw,80px)">AI at <em class="accent">Richards Supply.</em></h1>
-    <p class="lede">What AI is, why we want you using it, the ground rules that keep it safe, and the tools you're cleared to use. Click through like slides — use the arrows, the dots, or your keyboard's <span class="kbd">←</span> <span class="kbd">→</span> keys.</p>
+  <div class="page-head">
+    <p class="eyebrow">Required training · Course 1 of 2 · All employees</p>
+    <h1>Training 1: AI at Richards Supply</h1>
+    <p class="lede">What AI is, why we want you using it, the ground rules that keep it safe, and the tools you're cleared to use.</p>
+    <div class="meta-row"><span><b>About 20 minutes</b></span><span><b>8 lessons</b></span><span><b>Quiz:</b> 6 questions, pass with 5</span></div>
+  </div>
 
-    <div class="primer" id="t1-primer" tabindex="0" aria-label="Training 1 slides">
-      <div class="primer-head"><span class="label">The training</span><span class="count">01 / 08</span></div>
-      <div class="progress"><i></i></div>
+  <div class="course-layout">
+    <aside class="outline" id="outline" aria-label="Course outline"></aside>
+    <section class="lesson-panel primer" id="t1-primer" data-outline="outline" data-after="training-2.html" data-after-label="Next course: Training 2" aria-label="Lesson">
+      <div class="lesson-top"><span class="where"></span><span class="dur"></span></div>
       <div class="slides">
 
         <!-- 1 -->
@@ -146,7 +146,7 @@
               <ol>
                 <li>Stop.</li>
                 <li>Take a screenshot of what happened.</li>
-                <li>Report it right away with the disclosure form below (preferred), or email <a href="mailto:mattk@richardssupply.com">mattk@richardssupply.com</a>.</li>
+                <li>Report it right away with the disclosure form (preferred), or email <a href="mailto:mattk@richardssupply.com">mattk@richardssupply.com</a>.</li>
                 <li>Don't try to fix or delete it yourself.</li>
               </ol>
               <div class="callout"><b>Self-reporting works.</b> Report an accident promptly, with no data breach, and there's no discipline. Good-faith reporters are protected from retaliation.</div>
@@ -171,37 +171,37 @@
           <div class="mantra" style="margin:8px 0 22px">Use AI. Use <span>approved</span> tools. Check the data. Check the output. <span>You own the result.</span></div>
           <div class="grid grid-2">
             <div class="card"><h4>Questions, new tool requests, incidents</h4><p>Matt Kuehl, VP of Technology — <a href="mailto:mattk@richardssupply.com">mattk@richardssupply.com</a>, or the IT Help Desk.</p></div>
-            <div class="card"><h4>Last step</h4><p>Take the 6-question quiz below (pass with 5 correct) and acknowledge the AI Usage Policy. Then move on to Training 2.</p></div>
+            <div class="card"><h4>Last step</h4><p>Take the 6-question quiz in the next step (pass with 5 correct) and acknowledge the AI Usage Policy. Then move on to Training 2.</p></div>
           </div>
         </article>
 
-      </div>
-      <div class="primer-foot">
-        <button class="btn nav-btn" type="button" data-prev>← Back</button>
-        <div class="dots"></div>
-        <button class="btn btn-red nav-btn" type="button" data-next>Next →</button>
-      </div>
-    </div>
-  </section>
 
-  <section class="section" id="quiz">
-    <div class="quiz">
-      <div>
-        <p class="eyebrow"><span class="dot"></span>Knowledge check · 6 questions · pass with 5</p>
-        <h3>Training 1 quiz</h3>
-        <p>Opens in Microsoft Forms. Sign in with your work account so your score is recorded. The quiz includes your policy acknowledgment.</p>
-      </div>
-      <a class="btn btn-red" data-quiz="training1" href="#">Take the quiz →</a>
-    </div>
-  </section>
+        <!-- Quiz -->
+        <article class="slide" data-title="Quiz" data-kind="quiz">
+          <h3>Training 1 quiz</h3>
+          <p>6 questions. Pass with 5 correct. The quiz includes your acknowledgment of the AI Usage Policy.</p>
+          <div class="quiz-box">
+            <b>Before you start</b>
+            <ul>
+              <li>The quiz opens in Microsoft Forms in a new tab.</li>
+              <li>Sign in with your @richardssupply.com account so your score is recorded.</li>
+              <li>You can come back to any lesson using the outline.</li>
+            </ul>
+            <div class="btn-row"><a class="btn btn-red" data-quiz="training1" href="#">Start the quiz</a></div>
+          </div>
+          <p style="margin-top:20px">When you're done, continue to <a href="training-2.html">Training 2: AI &amp; Your Data</a>.</p>
+        </article>
 
-  <div class="nextup">
-    <div><div class="step">Step 2 of 2</div><h3>Next up: AI &amp; Your Data</h3></div>
-    <a class="btn btn-dark" href="training-2.html">Go to Training 2 →</a>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn" type="button" data-prev>← Previous</button>
+        <button class="btn btn-red" type="button" data-next>Next lesson →</button>
+      </div>
+    </section>
   </div>
 
 </main>
-<script src="assets/config.js?v=7"></script>
-<script src="assets/app.js?v=7"></script>
+<script src="assets/config.js?v=8"></script>
+<script src="assets/app.js?v=8"></script>
 </body>
 </html>
