@@ -1,4 +1,4 @@
-/* RX Training Library — builds on ../ai/assets/style.css (colors, header, buttons, footer). */
+/* RX Training Library — builds on base.css (colors, header, buttons, footer). */
 
 .rx-hero { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 28px 32px; box-shadow: var(--shadow); border-top: 4px solid var(--red); }
 .rx-steps { display: flex; flex-wrap: wrap; gap: 10px 28px; margin-top: 18px; }

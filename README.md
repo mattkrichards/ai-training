@@ -17,13 +17,13 @@ Static site (plain HTML/CSS/JS, no build step) for the two required AI trainings
 
 ## RX Training Library (`/rx/`)
 
-Live at **https://hub.richardssupply.com/rx/** (also linked as "RX Training Library" in the AI site's left menu). Video library for the Inventory Agreements RX Scan and RX Builder trainings.
+Live at **https://hub.richardssupply.com/rx/**. Video library for the Inventory Agreements RX Scan and RX Builder trainings.
 
 | File | What it is |
 | --- | --- |
 | `rx/index.html` | The page: search, course filter, video cards, player |
 | `rx/videos.json` | **All content**: courses, quiz links, and videos |
-| `rx/rx.js`, `rx/rx.css` | Behavior and styling (uses `ai/assets/style.css` for the shared look) |
+| `rx/rx.js`, `rx/rx.css` | Behavior and styling ; `rx/base.css` is its own copy of the site styles, so changes to the AI site don't affect it |
 
 **What it does**
 - Live search across title, description, keywords, and course; matching words are highlighted. Press `/` to jump to the search box.
