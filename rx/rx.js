@@ -62,12 +62,6 @@
     "</article>";
   }
 
-  function quizButton(c) {
-    return c.quizUrl
-      ? '<a class="btn btn-sm btn-dark" href="' + esc(c.quizUrl) + '" target="_blank" rel="noopener">Take the quiz ↗</a>'
-      : '<span class="btn btn-sm" aria-disabled="true">Quiz link coming soon</span>';
-  }
-
   function render() {
     var ws = words(), watched = load(), shown = 0, html = "";
     DATA.courses.forEach(function (c) {
@@ -82,7 +76,7 @@
       var done = all.filter(function (v) { return watched[v.id]; }).length;
       html += '<section class="rx-course" id="' + esc(c.id) + '">' +
         '<div class="rx-course-head"><div><h2>' + esc(c.name) + "</h2><p>" + esc(c.summary || "") + "</p></div>" +
-        '<div class="rx-course-meta"><span class="rx-progress">' + done + " of " + all.length + " watched</span>" + quizButton(c) + "</div></div>" +
+        '<div class="rx-course-meta"><span class="rx-progress">' + done + " of " + all.length + " watched</span></div></div>" +
         '<div class="rx-grid">' + list.map(function (v) { return card(v, ws, watched); }).join("") + "</div></section>";
     });
     if (!shown) {
@@ -130,7 +124,7 @@
     var siblings = DATA.videos.filter(function (x) { return x.course === v.course; }).sort(function (a, b) { return a.order - b.order; });
     var idx = siblings.indexOf(v), next = siblings[idx + 1];
     $("rx-modal-actions").innerHTML =
-      (next ? '<button class="btn btn-red" type="button" data-play="' + esc(next.id) + '">Next: ' + esc(next.title) + " →</button>" : quizButton(c)) +
+      (next ? '<button class="btn btn-red" type="button" data-play="' + esc(next.id) + '">Next: ' + esc(next.title) + " →</button>" : "") +
       '<a class="btn" href="' + watchUrl(v) + '" target="_blank" rel="noopener">Open on YouTube ↗</a>';
     $("rx-modal").hidden = false;
     document.body.classList.add("rx-lock");

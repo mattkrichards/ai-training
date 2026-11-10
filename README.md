@@ -22,19 +22,18 @@ Live at **https://hub.richardssupply.com/rx/**. Video library for the Inventory 
 | File | What it is |
 | --- | --- |
 | `rx/index.html` | The page: search, course filter, video cards, player |
-| `rx/videos.json` | **All content**: courses, quiz links, and videos |
+| `rx/videos.json` | **All content**: courses and videos |
 | `rx/rx.js`, `rx/rx.css` | Behavior and styling ; `rx/base.css` is its own copy of the site styles, so changes to the AI site don't affect it |
 
 **What it does**
 - Live search across title, description, keywords, and course; matching words are highlighted. Press `/` to jump to the search box.
 - Course filter chips, videos grouped by course in module order, and a match count.
-- Cards show the YouTube thumbnail (red artwork if it can't load). Clicking a card plays the video in a popup with a "Next" button to the following module, and "Take the quiz" after the last one.
+- Cards show the YouTube thumbnail (red artwork if it can't load). Clicking a card plays the video in a popup with a "Next" button to the following module.
 - "Watched" checkmarks and "X of Y watched" per course, saved in that browser.
 - Shareable links: `?q=min%20max`, `?course=rx-builder`, or `#v=VIDEOID` to open a specific video.
 
 **Editing**: edit `rx/videos.json` on GitHub.
 - Add a video: copy a block in `videos`, set `id` (the part after `watch?v=` in the YouTube link), `course`, `order`, `title`, `description`, and `keywords` (extra search words).
-- Quiz links: paste each Microsoft Forms "Collect responses" link into the course's `quizUrl`. Until then the button shows "Quiz link coming soon".
 - Add a course: add a block to `courses` with a new `id`, then use that `id` on its videos.
 
 ## Training Creator (admin)
