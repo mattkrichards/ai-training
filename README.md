@@ -4,26 +4,54 @@ Static site (plain HTML/CSS/JS, no build step) for the two required AI trainings
 
 | Page | What it is |
 | --- | --- |
-| `ai/index.html` | Home: learning path, pre-flight checklist |
-| `ai/training-1.html` | Training 1 · AI at Richards Supply (8 modules, ~20 min) |
-| `ai/training-2.html` | Training 2 · AI & Your Data (5 modules, ~20 min, with a practice sorter) |
+| `ai/index.html` | My courses: core and tool courses with each employee's progress |
+| `ai/course.html?id=…` | Course player: outline, lessons, quiz step (built from the content file) |
+| `ai/admin.html` | **Training Creator**: create and edit courses, lessons, content blocks, and images |
+| `ai/content/trainings.json` | All course content (edited through the Training Creator) |
+| `ai/content/images/` | Images uploaded in the Training Creator |
 | `ai/reference.html` | One-page quick reference (prints cleanly) |
-| `ai/migration.html` | Migration plan: moving personal AI accounts (Claude, ChatGPT, Base44, others) into company accounts |
-| `ai/assets/config.js` | **Quiz links, disclosure form link, and contacts — edit this file only** |
+| `ai/migration.html` | Migration plan: moving personal AI accounts into company accounts |
+| `ai/training-1.html`, `training-2.html` | Old links; they forward to the course player |
+| `ai/assets/config.js` | Disclosure form link, contacts, and Training Creator repo settings |
 | `forms/` | Word file for Microsoft Forms Quick Import (disclosure form) |
 
-## Add the quiz links
+## Training Creator (admin)
+
+Open **https://hub.richardssupply.com/ai/admin.html** (also linked as "Admin" in the site footer).
+
+**Sign in once per computer** with a GitHub fine-grained token:
+1. GitHub → Settings → Developer settings → Fine-grained tokens → Generate new token.
+2. Repository access: only `ai-training`. Permissions: **Contents: Read and write**. Nothing else.
+3. Paste it into the sign-in screen. It's stored only in that browser. Revoke it on GitHub any time.
+
+**What you can do**
+- Courses: create (blank or copied from another), duplicate, delete, reorder; set **Core** or **Tool** type, **Draft** or **Published**, required, audience, summary, intro, and the Microsoft Forms quiz link.
+- Lessons: add, rename, set minutes and page heading, reorder, duplicate, delete.
+- Content blocks: paragraph, subheading, bullet/numbered list, card grid (2–4 columns, optional images), callout (red/blue/green), key message banner, table (with colored status labels), image upload, video (Loom, YouTube, Vimeo, Stream, MP4), Red/Yellow/Green data levels, practice check, button link, report buttons, divider, two/three columns, and custom HTML.
+- Formatting in text fields: `**bold**`, `*italic*`, `[link text](https://…)`, `==highlight==`. Table labels: `{ok}Approved`, `{warn}Yellow`, `{no}Not approved`, `{dark}Prohibited`.
+- Look: each course has a cover photo (pick from the free-photo gallery, upload your own, or paste an Unsplash link), an artwork icon, and a color. Each lesson has a banner with an icon and color (Auto picks one). If a photo can't load, the colored artwork shows instead.
+- Live preview (desktop and phone) beside the editor.
+- **Publish changes** commits the content file; the site updates in about a minute. Unpublished edits are kept in the browser if you close the tab.
+- More menu: download or import the content file as a backup, discard unpublished changes.
+- "Practice without signing in" lets anyone try the editor without publishing.
+
+Images upload to `ai/content/images/` when added; large photos are resized to 1600px wide.
+
+**Note:** the content file (including draft courses) is public, like the rest of the site. Don't put anything in a course you wouldn't post on the training site.
+
+## Home page settings
+
+In `ai/assets/config.js`:
+- `heroImage`: the photo in the home page banner.
+- `skills`: the numbered "Skills you'll build" links on the home page (and "Popular topics" in the left menu). Each one points at a course ID and lesson number.
+
+Photos come from Unsplash and are free to use under the [Unsplash License](https://unsplash.com/license). They load from Unsplash's servers, so they need internet access, like the rest of the site.
+
+## Quiz links
 
 1. Import the two quiz files into Microsoft Forms (Quick Import → Quiz) and set answers from the answer key.
 2. In each form, choose **Collect responses** and copy the link.
-3. Paste the links into `ai/assets/config.js`:
-
-```js
-quizzes: {
-  training1: "https://forms.office.com/r/XXXXXXXX",
-  training2: "https://forms.office.com/r/YYYYYYYY"
-}
-```
+3. Paste the link into the course's **Quiz** section in the Training Creator.
 
 Until a link is set, the button shows "Quiz link coming soon".
 
@@ -50,6 +78,6 @@ Live at **https://hub.richardssupply.com/ai/** via GitHub Pages (Settings → Pa
 
 ## Editing content
 
-Each lesson is one `<article class="slide" data-title="...">` block in the training page. The course outline, "Lesson X of Y" label, durations (read from the hidden `.tag` line, e.g. "· 4 min"), progress bar, and Previous/Next buttons are built automatically. The last article (`data-kind="quiz"`) is the quiz step. Link to a specific lesson with `#slide-N`, e.g. `training-1.html#slide-5`.
+Use the Training Creator. Link to a specific lesson with `#slide-N`, e.g. `course.html?id=training-1#slide-5`.
 
 Progress (lessons viewed, quiz opened) is saved in the browser on that device and shows on the home page. The official completion record is the Microsoft Forms quiz.

@@ -1,0 +1,763 @@
+{
+  "version": 1,
+  "courses": [
+    {
+      "id": "training-1",
+      "title": "AI at Richards Supply",
+      "type": "core",
+      "status": "published",
+      "required": true,
+      "audience": "All employees",
+      "summary": "What AI is and isn't, why we want you using it, the five ground rules, the approved tools, and what to do when something goes wrong.",
+      "image": "https://images.unsplash.com/photo-1758873268745-dd2cf0d677b5",
+      "icon": "sparkles",
+      "color": "red",
+      "quiz": {
+        "title": "Training 1 quiz",
+        "url": "https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=BEhP0OK6tk-F7kQstwCdxg2uTa57P49PjpVNhL0qmtdUNDFBTjkwODNXV1U2NlRCU1c3SElCSDRCSS4u",
+        "description": "6 questions. Pass with 5 correct. The quiz includes your acknowledgment of the AI Usage Policy.",
+        "after": "When you're done, continue to [AI &amp; Your Data](course.html?id=training-2)."
+      },
+      "intro": "What AI is, why we want you using it, the ground rules that keep it safe, and the tools you're cleared to use.",
+      "lessons": [
+        {
+          "id": "l1",
+          "title": "Why we're here",
+          "minutes": 2,
+          "heading": "AI helps you. It doesn't replace you.",
+          "blocks": [
+            {
+              "type": "text",
+              "html": "Richards Supply takes a balanced approach: we want AI used, and used well. AI is here to augment your judgment, not stand in for it. Whatever AI helps you make, **you stay accountable for the work.**",
+              "muted": false
+            },
+            {
+              "type": "text",
+              "html": "How AI fits our Core Values:",
+              "muted": true
+            },
+            {
+              "type": "cards",
+              "columns": 3,
+              "cards": [
+                {
+                  "label": "Here to Help",
+                  "title": "",
+                  "text": "Use AI to serve customers and teammates better — never as a shortcut that shortchanges them.",
+                  "boxed": true
+                },
+                {
+                  "label": "Humble Excellence",
+                  "title": "",
+                  "text": "AI speeds us up. It doesn't make us experts in things we aren't.",
+                  "boxed": true
+                },
+                {
+                  "label": "Details Matter",
+                  "title": "",
+                  "text": "Check every detail before AI-assisted work goes out.",
+                  "boxed": true
+                },
+                {
+                  "label": "Always Learning",
+                  "title": "",
+                  "text": "Learn the tools and their limits. Share what works.",
+                  "boxed": true
+                },
+                {
+                  "label": "Motivated Action",
+                  "title": "",
+                  "text": "Use AI to catch problems early and cut busywork.",
+                  "boxed": true
+                },
+                {
+                  "label": "Trusted Delivery",
+                  "title": "",
+                  "text": "Own your output. Protect customer data and ours.",
+                  "boxed": true
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "l2",
+          "title": "What AI is",
+          "minutes": 2,
+          "heading": "It predicts. It doesn't know.",
+          "blocks": [
+            {
+              "type": "text",
+              "html": "Generative AI — Copilot, ChatGPT and others — predicts the most likely words, images, or code based on patterns in huge amounts of data. That makes it fast and fluent. It does not make it right.",
+              "muted": false
+            },
+            {
+              "type": "cards",
+              "columns": 2,
+              "cards": [
+                {
+                  "label": "",
+                  "title": "Good at",
+                  "text": "Drafting, summarizing, rewording, brainstorming, explaining, and a first pass at analysis.",
+                  "boxed": true
+                },
+                {
+                  "label": "",
+                  "title": "Bad at",
+                  "text": "Being right every time. It can invent part numbers, prices, dates, or facts — and sound completely sure. These are called **hallucinations**.",
+                  "boxed": true
+                }
+              ]
+            },
+            {
+              "type": "callout",
+              "html": "**AI is already inside software you use.** Outlook, Teams, the CRM, even browsers are adding AI features. Those count as AI tools too, and follow the same rules."
+            }
+          ]
+        },
+        {
+          "id": "l3",
+          "title": "Why use it",
+          "minutes": 2,
+          "heading": "Less busywork. More time for customers.",
+          "blocks": [
+            {
+              "type": "text",
+              "html": "The goal is simple: spend less time on repetitive work and more time helping customers and teammates. A few ways people here use it:",
+              "muted": false
+            },
+            {
+              "type": "cards",
+              "columns": 2,
+              "cards": [
+                {
+                  "label": "Inside sales",
+                  "title": "Faster follow-ups",
+                  "text": "Draft a follow-up email in Outlook with Copilot, then edit it in your own voice.",
+                  "boxed": true
+                },
+                {
+                  "label": "Outside sales",
+                  "title": "Know the account",
+                  "text": "Use Pronto to see what a customer usually buys and what they've stopped buying.",
+                  "boxed": true
+                },
+                {
+                  "label": "Branch & warehouse",
+                  "title": "Clean procedures",
+                  "text": "Turn a messy procedure into a clear checklist anyone can follow.",
+                  "boxed": true
+                },
+                {
+                  "label": "Everyone",
+                  "title": "Catch up quickly",
+                  "text": "Summarize a long email thread or meeting before you respond.",
+                  "boxed": true
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "html": "Found a prompt that works? Share it — good prompts go into the company prompt library.",
+              "muted": false
+            }
+          ]
+        },
+        {
+          "id": "l4",
+          "title": "Ground rules",
+          "minutes": 4,
+          "heading": "Five rules. One gut check.",
+          "blocks": [
+            {
+              "type": "columns",
+              "columns": [
+                {
+                  "blocks": [
+                    {
+                      "type": "list",
+                      "style": "number",
+                      "items": [
+                        "**Accountability stays human.** AI-assisted work is your work.",
+                        "**Protect confidential information.** Data rules are covered in Training 2.",
+                        "**Verify before you use.** Check numbers, names, prices, and claims.",
+                        "**Approved tools only.** Covered next.",
+                        "**Ask when unsure.** Asking is always the right move."
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "blocks": [
+                    {
+                      "type": "callout",
+                      "tone": "",
+                      "html": "**The gut check:** Would I put my name on this if I'd done it by hand?"
+                    },
+                    {
+                      "type": "text",
+                      "html": "**Ask first** — get approval before you:"
+                    },
+                    {
+                      "type": "list",
+                      "style": "bullet",
+                      "items": [
+                        "Connect AI to company systems, email, files, or P21",
+                        "Let AI take actions or make decisions on its own",
+                        "Use AI for anything that talks directly to customers",
+                        "Generate legal or financial documents",
+                        "Build, train, or fine-tune AI, or build apps with AI (Retool is the only approved tool for this)",
+                        "Create synthetic voice, images, or video of a real person — consent and disclosure required; impersonation is never allowed"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "l5",
+          "title": "Approved tools",
+          "minutes": 4,
+          "heading": "Is it approved — and am I signed in with my work account?",
+          "blocks": [
+            {
+              "type": "table",
+              "headers": [
+                "Tool",
+                "Status",
+                "Use it for"
+              ],
+              "rows": [
+                [
+                  "**Microsoft Copilot (M365)**",
+                  "{ok}Approved · enterprise",
+                  "Email, documents, Teams, everyday writing and summarizing"
+                ],
+                [
+                  "**Pronto (Proton.ai)**",
+                  "{ok}Approved · enterprise",
+                  "Customer insights, CRM, sales recommendations"
+                ],
+                [
+                  "**Claude Enterprise**",
+                  "{ok}Approved · enterprise",
+                  "Drafting, analysis, and projects with company data; seats assigned by role"
+                ],
+                [
+                  "**ChatGPT Enterprise / Team**",
+                  "{ok}Approved · enterprise",
+                  "General drafting and analysis with company data"
+                ],
+                [
+                  "**Retool**",
+                  "{ok}Approved · enterprise",
+                  "Internal apps; the only approved tool for building with AI"
+                ],
+                [
+                  "**Read.ai / Granola**",
+                  "{ok}Approved · notetakers",
+                  "Meeting notes, with data improvement turned off"
+                ],
+                [
+                  "ChatGPT Free/Plus, Claude Free/Pro/Max (personal accounts)",
+                  "{no}Not approved",
+                  "Not for company work. [Move to your company account](migration.html)"
+                ],
+                [
+                  "Base44",
+                  "{no}Not approved",
+                  "Not for company work"
+                ],
+                [
+                  "DeepSeek",
+                  "{dark}Prohibited",
+                  "Never"
+                ],
+                [
+                  "Browser extensions, plug-ins, agents, AI add-ons",
+                  "{warn}Needs review",
+                  "Request approval first"
+                ]
+              ]
+            },
+            {
+              "type": "cards",
+              "columns": 3,
+              "cards": [
+                {
+                  "label": "",
+                  "title": "Why enterprise matters",
+                  "text": "Enterprise tools have contracts that keep our data from training public models. Free tools often don't.",
+                  "boxed": true
+                },
+                {
+                  "label": "",
+                  "title": "Company accounts only",
+                  "text": "No personal AI accounts for Richards work. Never sign up for an AI service with your work email or phone.",
+                  "boxed": true
+                },
+                {
+                  "label": "",
+                  "title": "Need a new tool?",
+                  "text": "Ask your manager → IT review (5–10 business days) → training → access. Anything not on the list is restricted.",
+                  "boxed": true
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "html": "**Already doing company work in a personal AI account?** Follow the [migration plan](migration.html) to move it into your company account. **Using a tool that isn't on this list?** Tell us. Disclosing it is how it gets reviewed, and good-faith disclosure carries no discipline.",
+              "muted": false
+            },
+            {
+              "type": "disclose"
+            }
+          ]
+        },
+        {
+          "id": "l6",
+          "title": "Model-training settings",
+          "minutes": 2,
+          "heading": "Our data never trains their AI.",
+          "blocks": [
+            {
+              "type": "text",
+              "html": "Many AI tools have a setting that lets the vendor use your conversations, files, or recordings to train or \"improve\" their models. At Richards Supply, that setting must always be **off**.",
+              "muted": false
+            },
+            {
+              "type": "cards",
+              "columns": 2,
+              "cards": [
+                {
+                  "label": "",
+                  "title": "Why it matters",
+                  "text": "With it on, customer pricing, vendor terms, or internal conversations could end up in a vendor's training data. That can't be undone.",
+                  "boxed": true
+                },
+                {
+                  "label": "",
+                  "title": "What it's called",
+                  "text": "Names vary: \"Improve the model for everyone,\" \"Help improve,\" \"Data improvement,\" \"Use my data for training.\" Learn the idea, not one label.",
+                  "boxed": true
+                },
+                {
+                  "label": "",
+                  "title": "Who handles it",
+                  "text": "IT turns it off company-wide before a tool is approved. Copilot, Claude Enterprise, and ChatGPT Enterprise/Team don't train on our data under our agreements. Read.ai and Granola are approved only with data improvement off.",
+                  "boxed": true
+                },
+                {
+                  "label": "",
+                  "title": "Your job",
+                  "text": "Don't change data-sharing or privacy settings. See an \"improve the model\" option turned on? Stop using it for company data and tell IT. If a tool won't let you turn it off, it isn't approved.",
+                  "boxed": true
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "l7",
+          "title": "When something goes wrong",
+          "minutes": 2,
+          "heading": "Report it fast. Honesty is protected.",
+          "blocks": [
+            {
+              "type": "columns",
+              "columns": [
+                {
+                  "blocks": [
+                    {
+                      "type": "text",
+                      "html": "**Pasted something you shouldn't have, or used an unapproved tool?**"
+                    },
+                    {
+                      "type": "list",
+                      "style": "number",
+                      "items": [
+                        "Stop.",
+                        "Take a screenshot of what happened.",
+                        "Report it right away with the disclosure form (preferred), or email [mattk@richardssupply.com](mailto:mattk@richardssupply.com).",
+                        "Don't try to fix or delete it yourself."
+                      ]
+                    },
+                    {
+                      "type": "callout",
+                      "tone": "",
+                      "html": "**Self-reporting works.** Report an accident promptly, with no data breach, and there's no discipline. Good-faith reporters are protected from retaliation."
+                    },
+                    {
+                      "type": "disclose"
+                    }
+                  ]
+                },
+                {
+                  "blocks": [
+                    {
+                      "type": "text",
+                      "html": "**What happens with repeated or serious violations**"
+                    },
+                    {
+                      "type": "list",
+                      "style": "bullet",
+                      "items": [
+                        "1st: verbal warning and retraining",
+                        "2nd: written warning and loss of AI access",
+                        "Repeated or serious: discipline up to termination"
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "html": "**Privacy in company tools**<br/>AI use in company tools is monitored, and conversation history is kept. Don't expect privacy there, and don't delete your history."
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "l8",
+          "title": "Wrap-up",
+          "minutes": 2,
+          "heading": "Use AI. Use it right.",
+          "blocks": [
+            {
+              "type": "quote",
+              "html": "Use AI. Use ==approved== tools. Check the data. Check the output. ==You own the result.=="
+            },
+            {
+              "type": "cards",
+              "columns": 2,
+              "cards": [
+                {
+                  "label": "",
+                  "title": "Questions, new tool requests, incidents",
+                  "text": "Matt Kuehl, VP of Technology — [mattk@richardssupply.com](mailto:mattk@richardssupply.com), or the IT Help Desk.",
+                  "boxed": true
+                },
+                {
+                  "label": "",
+                  "title": "Last step",
+                  "text": "Take the 6-question quiz in the next step (pass with 5 correct) and acknowledge the AI Usage Policy. Then move on to Training 2.",
+                  "boxed": true
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "training-2",
+      "title": "AI & Your Data",
+      "type": "core",
+      "status": "published",
+      "required": true,
+      "audience": "AI tool users",
+      "summary": "The data you work with in P21, Pronto, Outlook, and Retool, and how to sort it into Red, Yellow, and Green before it goes anywhere near AI.",
+      "image": "https://images.unsplash.com/photo-1764795850513-fa8a469a4600",
+      "icon": "database",
+      "color": "teal",
+      "quiz": {
+        "title": "Training 2 quiz",
+        "url": "https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=BEhP0OK6tk-F7kQstwCdxg2uTa57P49PjpVNhL0qmtdUNUg5QjQ3UURTMDNWSk9RS1c4NU0zR1gxUS4u",
+        "description": "6 scenarios. Pass with 5 correct, and every Red scenario must be right.",
+        "after": "That's both required courses. Keep the [quick reference](reference.html) handy."
+      },
+      "intro": "Before anything goes into an AI tool, sort it: <b style=\"color:var(--lvl-red)\">Red</b>, <b style=\"color:var(--lvl-yellow)\">Yellow</b>, or <b style=\"color:var(--lvl-green)\">Green</b>. This course shows you how, using the systems you work in every day.",
+      "lessons": [
+        {
+          "id": "l1",
+          "title": "Why data matters",
+          "minutes": 2,
+          "heading": "What you paste can leave the building.",
+          "blocks": [
+            {
+              "type": "text",
+              "html": "Anything you type, paste, upload, or record into an AI tool is data leaving your hands. Free and personal AI tools may use it to train their models. Enterprise tools have contracts that prevent this.",
+              "muted": false
+            },
+            {
+              "type": "callout",
+              "html": "**A real example from our policy:** uploading a vendor contract with negotiated pricing into a public chatbot to summarize it. One paste, and our pricing terms are out of our control."
+            },
+            {
+              "type": "cards",
+              "columns": 4,
+              "cards": [
+                {
+                  "label": "",
+                  "title": "Customer trust",
+                  "text": "Their data, their pricing, their orders.",
+                  "boxed": true
+                },
+                {
+                  "label": "",
+                  "title": "Supplier agreements",
+                  "text": "Terms we've agreed to keep confidential.",
+                  "boxed": true
+                },
+                {
+                  "label": "",
+                  "title": "Competitive edge",
+                  "text": "Margins, costs, and strategy.",
+                  "boxed": true
+                },
+                {
+                  "label": "",
+                  "title": "Legal obligations",
+                  "text": "NDAs, privacy laws, legal holds.",
+                  "boxed": true
+                }
+              ]
+            }
+          ],
+          "icon": "lock"
+        },
+        {
+          "id": "l2",
+          "title": "Data you touch",
+          "minutes": 4,
+          "heading": "Know what's in the systems you use.",
+          "blocks": [
+            {
+              "type": "table",
+              "headers": [
+                "Where you see it",
+                "Typical data",
+                "Level"
+              ],
+              "rows": [
+                [
+                  "**P21**",
+                  "Customers, orders, customer-specific pricing, vendor costs, margins",
+                  "{warn}Yellow"
+                ],
+                [
+                  "**Pronto (Proton.ai)**",
+                  "Customer lists, contacts, buying history",
+                  "{warn}Yellow"
+                ],
+                [
+                  "**Outlook / Teams**",
+                  "Internal messages, customer and vendor emails, attachments",
+                  "{warn}Yellow"
+                ],
+                [
+                  "**Retool apps**",
+                  "Operational and customer data from P21",
+                  "{warn}Yellow"
+                ],
+                [
+                  "**HR &amp; payroll records**",
+                  "Employee info · SSNs and bank details",
+                  "{warn}Yellow {no}SSN / bank = Red"
+                ],
+                [
+                  "**Finance reports**",
+                  "Statements, forecasts, margins",
+                  "{warn}Yellow"
+                ],
+                [
+                  "**Contracts, legal, board files**",
+                  "Customer/vendor terms · litigation, M&A, board matters",
+                  "{warn}Yellow {no}Legal / board = Red"
+                ],
+                [
+                  "**Manufacturer sites, trade press**",
+                  "Public product info, industry trends",
+                  "{ok}Green"
+                ]
+              ]
+            }
+          ],
+          "icon": "database"
+        },
+        {
+          "id": "l3",
+          "title": "Three levels",
+          "minutes": 6,
+          "heading": "Red. Yellow. Green.",
+          "blocks": [
+            {
+              "type": "levels",
+              "red": {
+                "title": "Red",
+                "rule": "Never — in any AI tool, even enterprise ones",
+                "items": [
+                  "SSNs and government IDs",
+                  "Bank and payment card numbers",
+                  "Passwords, credentials, API keys",
+                  "Attorney-client communications",
+                  "Trade secrets and formulas",
+                  "Board confidential matters",
+                  "Active litigation and legal holds",
+                  "M&A discussions",
+                  "Investigations and whistleblower reports"
+                ]
+              },
+              "yellow": {
+                "title": "Yellow",
+                "rule": "Enterprise tools only, signed in with your work account",
+                "items": [
+                  "Customer names, contacts, order history",
+                  "Price lists and customer-specific pricing",
+                  "Vendor contracts, costs, and terms",
+                  "Sales, margin, and financial data",
+                  "Employee info (no SSNs)",
+                  "Internal communications",
+                  "Strategic plans, unpublished product info",
+                  "Internal processes"
+                ]
+              },
+              "green": {
+                "title": "Green",
+                "rule": "Fine in any approved tool",
+                "items": [
+                  "Public information",
+                  "General industry research",
+                  "Generic drafts with no company specifics",
+                  "Training content",
+                  "Rewording your own writing"
+                ]
+              }
+            },
+            {
+              "type": "cards",
+              "columns": 3,
+              "cards": [
+                {
+                  "label": "",
+                  "title": "Health information",
+                  "text": "Never enter it without explicit approval and a signed agreement (BAA) with the vendor.",
+                  "boxed": true
+                },
+                {
+                  "label": "",
+                  "title": "Third-party content",
+                  "text": "Paid market reports, customer documents, NDA material, and copyrighted content need permission *and* an approved tool.",
+                  "boxed": true
+                },
+                {
+                  "label": "",
+                  "title": "Not sure?",
+                  "text": "Treat it as one level higher, and ask.",
+                  "boxed": true
+                }
+              ]
+            },
+            {
+              "type": "callout",
+              "html": "**The 3-question check before you paste:** 1) Is any of it Red? Stop. 2) Is it about our customers, vendors, employees, money, or plans? Enterprise tool, work account. 3) Otherwise, any approved tool — then verify the output."
+            }
+          ],
+          "icon": "shield"
+        },
+        {
+          "id": "l4",
+          "title": "Good habits",
+          "minutes": 4,
+          "heading": "Strip it down before you paste.",
+          "blocks": [
+            {
+              "type": "cards",
+              "columns": 2,
+              "cards": [
+                {
+                  "label": "01",
+                  "title": "Share the minimum",
+                  "text": "Paste the paragraph you need, not the whole contract or the full P21 export.",
+                  "boxed": true
+                },
+                {
+                  "label": "02",
+                  "title": "Anonymize people",
+                  "text": "Swap names for \"Customer A\" or \"Employee 1\" unless the tool is approved for that data.",
+                  "boxed": true
+                },
+                {
+                  "label": "03",
+                  "title": "Screenshots count",
+                  "text": "A screenshot of a P21 screen carries everything visible on it.",
+                  "boxed": true
+                },
+                {
+                  "label": "04",
+                  "title": "Notetakers hear everything",
+                  "text": "Don't run Read.ai or Granola in meetings about legal, board, or HR investigation topics.",
+                  "boxed": true
+                },
+                {
+                  "label": "05",
+                  "title": "Mixed data takes the highest level",
+                  "text": "One SSN in a spreadsheet makes the whole file Red.",
+                  "boxed": true
+                },
+                {
+                  "label": "06",
+                  "title": "Accidents happen",
+                  "text": "If Red or Yellow data lands in the wrong tool, report it right away and note what was shared.",
+                  "boxed": true
+                }
+              ]
+            }
+          ],
+          "icon": "checklist"
+        },
+        {
+          "id": "l5",
+          "title": "Practice",
+          "minutes": 4,
+          "heading": "Sort it. Red, Yellow, or Green?",
+          "blocks": [
+            {
+              "type": "text",
+              "html": "A quick warm-up before the quiz. Pick a level for each item — you'll see the answer right away. This doesn't count toward your score.",
+              "muted": false
+            },
+            {
+              "type": "practice",
+              "items": [
+                {
+                  "text": "A customer's last six months of order history from P21",
+                  "answer": "yellow",
+                  "why": "Customer order data is Yellow: fine in Copilot or another enterprise tool with your work account, never in a personal account."
+                },
+                {
+                  "text": "Your P21 login, so AI can \"help you troubleshoot\"",
+                  "answer": "red",
+                  "why": "Passwords and credentials are Red. They never go into any AI tool."
+                },
+                {
+                  "text": "A public trade-press article on supply chain trends",
+                  "answer": "green",
+                  "why": "Public information is Green. Any approved tool is fine (just mind copyright before republishing)."
+                },
+                {
+                  "text": "A vendor's price-increase letter with our negotiated cost",
+                  "answer": "yellow",
+                  "why": "Vendor costs and terms are Yellow: enterprise tools only. Check whether an NDA limits how it can be used."
+                },
+                {
+                  "text": "Notes from a confidential board discussion",
+                  "answer": "red",
+                  "why": "Board confidential matters are Red, even in enterprise tools."
+                },
+                {
+                  "text": "A generic \"thanks for your order\" email with no names or details",
+                  "answer": "green",
+                  "why": "A generic draft with no company specifics is Green."
+                }
+              ]
+            }
+          ],
+          "icon": "target"
+        }
+      ]
+    }
+  ]
+}
