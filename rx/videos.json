@@ -1,0 +1,86 @@
+{
+  "title": "Inventory Agreements: RX Training Library",
+  "subtitle": "Video training for the RX Scan and RX Builder inventory agreement tools. Watch each course in order, then take its quiz.",
+  "courses": [
+    {
+      "id": "rx-scan",
+      "name": "RX Scan Training",
+      "tool": "RX Scan",
+      "summary": "Impersonate a customer, view their contracts, and scan to order from an RX VMI contract.",
+      "quizUrl": ""
+    },
+    {
+      "id": "rx-builder",
+      "name": "RX Builder Training",
+      "tool": "RX Builder",
+      "summary": "Build an inventory agreement from start to customer signature, then manage it in Modify Existing.",
+      "quizUrl": ""
+    }
+  ],
+  "videos": [
+    {
+      "id": "Qur0ThfWIWQ",
+      "course": "rx-scan",
+      "order": 1,
+      "title": "Impersonating Customers",
+      "description": "How to select a customer and ship-to and impersonate a shopper on the site, and why to turn impersonation off when finished.",
+      "keywords": ["impersonate", "impersonation", "impersonate shopper", "ship to", "customer selection", "log in"]
+    },
+    {
+      "id": "Id8uN9wvjw0",
+      "course": "rx-scan",
+      "order": 2,
+      "title": "Contracts & Scanning",
+      "description": "Viewing a customer's contracts (RX VMI and standard), using SCAN to order from an RX VMI contract, entering and adjusting quantities, and checking out to import a quote or order into P21.",
+      "keywords": ["contracts", "RX VMI", "standard contract", "scan", "scanning", "quantity", "checkout", "quote", "order", "P21 import"]
+    },
+    {
+      "id": "V5iiWnCpaUQ",
+      "course": "rx-builder",
+      "order": 1,
+      "title": "Entering Basic Information for a New Inventory Agreement",
+      "description": "Starting a new inventory agreement in RX Builder: customer and ship-to level assignment, house accounts, customer contacts, and pulling items in from a source quote.",
+      "keywords": ["new agreement", "basic information", "house account", "source quote", "customer contacts", "ship to level"]
+    },
+    {
+      "id": "y39V7SgTrbE",
+      "course": "rx-builder",
+      "order": 2,
+      "title": "Entering Process, Service Schedule Information and VMI Locations",
+      "description": "Setting the replenishment method (Fill to Max vs Min/Max), count and delivery days, and creating named VMI locations at the ship-to.",
+      "keywords": ["replenishment method", "fill to max", "min/max", "service schedule", "count day", "delivery day", "VMI locations"]
+    },
+    {
+      "id": "iiJiBz1p-Z4",
+      "course": "rx-builder",
+      "order": 3,
+      "title": "Placing Items in Locations and Entering Min Maxes",
+      "description": "Assigning items to one or more locations, setting min/max per location, and fixing max quantities flagged red for being below box, pack, or case quantity.",
+      "keywords": ["items", "locations", "min max", "min/max", "max quantity", "red highlight", "box pack case quantity", "unit of measure"]
+    },
+    {
+      "id": "jmV5m8pWA-Y",
+      "course": "rx-builder",
+      "order": 4,
+      "title": "Confirming Agreement & Starting PDF Signature Workflow",
+      "description": "Reviewing the agreement, clicking Create Contract & PDF (contract, VMI locations, pricing, and min/maxes in P21), and the customer e-signature email workflow.",
+      "keywords": ["confirm agreement", "review screen", "create contract & PDF", "PDF agreement", "signature workflow", "e-signature", "signed copy", "P21 contract"]
+    },
+    {
+      "id": "IiCIdbn1oBw",
+      "course": "rx-builder",
+      "order": 5,
+      "title": "Pending Requests and Resuming from Saved Agreement",
+      "description": "What a pending agreement is, where saved agreements live in the Pending Requests tab, and how to resume work on one.",
+      "keywords": ["pending requests", "pending agreement", "saved agreement", "resume", "draft"]
+    },
+    {
+      "id": "f0kf3f2q-yU",
+      "course": "rx-builder",
+      "order": 6,
+      "title": "Modify Existing - Alerts, Binder Contents & Labels",
+      "description": "Using the Modify Existing tab: approved and unapproved contracts, editing min/maxes, branch replenishment alerts, barcode label requests, signature workflow, and On-site Binder Contents PDF.",
+      "keywords": ["modify existing", "approved", "unapproved", "edit min max", "replenishment alerts", "barcode labels", "binder contents", "on-site binder"]
+    }
+  ]
+}
