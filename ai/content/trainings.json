@@ -9,6 +9,9 @@
       "required": true,
       "audience": "All employees",
       "summary": "What AI is and isn't, why we want you using it, the five ground rules, the approved tools, and what to do when something goes wrong.",
+      "image": "https://images.unsplash.com/photo-1758873268745-dd2cf0d677b5",
+      "icon": "sparkles",
+      "color": "red",
       "quiz": {
         "title": "Training 1 quiz",
         "url": "https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=BEhP0OK6tk-F7kQstwCdxg2uTa57P49PjpVNhL0qmtdUNDFBTjkwODNXV1U2NlRCU1c3SElCSDRCSS4u",
@@ -456,6 +459,9 @@
       "required": true,
       "audience": "AI tool users",
       "summary": "The data you work with in P21, Pronto, Outlook, and Retool, and how to sort it into Red, Yellow, and Green before it goes anywhere near AI.",
+      "image": "https://images.unsplash.com/photo-1764795850513-fa8a469a4600",
+      "icon": "database",
+      "color": "teal",
       "quiz": {
         "title": "Training 2 quiz",
         "url": "https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=BEhP0OK6tk-F7kQstwCdxg2uTa57P49PjpVNhL0qmtdUNUg5QjQ3UURTMDNWSk9RS1c4NU0zR1gxUS4u",
@@ -509,7 +515,8 @@
                 }
               ]
             }
-          ]
+          ],
+          "icon": "lock"
         },
         {
           "id": "l2",
@@ -567,7 +574,8 @@
                 ]
               ]
             }
-          ]
+          ],
+          "icon": "database"
         },
         {
           "id": "l3",
@@ -646,7 +654,8 @@
               "type": "callout",
               "html": "**The 3-question check before you paste:** 1) Is any of it Red? Stop. 2) Is it about our customers, vendors, employees, money, or plans? Enterprise tool, work account. 3) Otherwise, any approved tool — then verify the output."
             }
-          ]
+          ],
+          "icon": "shield"
         },
         {
           "id": "l4",
@@ -696,7 +705,8 @@
                 }
               ]
             }
-          ]
+          ],
+          "icon": "checklist"
         },
         {
           "id": "l5",
@@ -744,7 +754,8 @@
                 }
               ]
             }
-          ]
+          ],
+          "icon": "target"
         }
       ]
     }

@@ -196,6 +196,47 @@
       '<div class="hint">PNG, JPG, GIF, or SVG. Large photos are resized automatically.</div></div></div></div>' +
       (altPath ? fText("Alt text (describe the image for screen readers)", altPath, { ph: "e.g. Copilot button in the Outlook ribbon" }) : "");
   }
+  var ICON_SVG = function (name) {
+    var m = R.art({ icon: name, color: "slate", seed: name }).match(/<g transform[^>]*>([\s\S]*)<\/g>/);
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">' + (m ? m[1] : "") + "</svg>";
+  };
+  function fIcon(label, path, auto) {
+    var cv = v(path) || "";
+    return '<div class="field"><span class="flabel">' + label + '</span><div class="icon-pick">' +
+      (auto ? '<button type="button" class="' + (cv ? "" : "on") + '" data-act="set" data-b="' + path + '" data-v="" title="Pick automatically">Auto</button>' : "") +
+      R.ICON_NAMES.map(function (n) { return '<button type="button" class="' + (cv === n ? "on" : "") + '" data-act="set" data-b="' + path + '" data-v="' + n + '" title="' + n + '">' + ICON_SVG(n) + "</button>"; }).join("") +
+      "</div></div>";
+  }
+  function fColor(label, path, auto) {
+    var cv = v(path) || "";
+    return '<div class="field"><span class="flabel">' + label + '</span><div class="swatches">' +
+      (auto ? '<button type="button" class="auto' + (cv ? "" : " on") + '" data-act="set" data-b="' + path + '" data-v="" title="Pick automatically">Auto</button>' : "") +
+      R.PALETTE_NAMES.map(function (n) { var p = R.PALETTES[n]; return '<button type="button" class="' + (cv === n ? "on" : "") + '" data-act="set" data-b="' + path + '" data-v="' + n + '" title="' + n + '" style="background:linear-gradient(135deg,' + p[0] + "," + p[1] + ')"></button>'; }).join("") +
+      "</div></div>";
+  }
+  function coverField(c) {
+    return '<div class="field"><span class="flabel">Cover photo</span><div class="cover-field"><div class="cover-prev">' +
+      R.thumb(resolveSrc(R.photoUrl(c.image, 640, 360)), { icon: c.icon, color: c.color, seed: c.id }) + "</div><div>" +
+      '<div class="btn-row" style="margin:0 0 8px"><button type="button" class="btn btn-sm" data-act="gallery">Choose a free photo</button>' +
+      '<button type="button" class="btn btn-sm" data-act="img-pick" data-b="image">Upload</button>' +
+      (c.image ? '<button type="button" class="btn btn-sm" data-act="set" data-b="image" data-v="">Use artwork only</button>' : "") + "</div>" +
+      '<input type="url" data-b="image" value="' + esc(c.image || "") + '" placeholder="…or paste an image link (https://)">' +
+      '<div class="hint">With no photo, or if a photo can\'t load, the course shows its colored artwork instead.</div></div></div></div>';
+  }
+  function galleryDialog() {
+    var c = cur();
+    modal('<h2>Choose a free photo</h2><p class="muted" style="margin-top:-6px">Free to use under the <a href="https://unsplash.com/license" target="_blank" rel="noopener">Unsplash License</a>. You can also upload your own, or paste a link to any Unsplash photo.</p><div class="gallery">' +
+      R.GALLERY.map(function (g, k) {
+        return '<button type="button" data-g="' + k + '"' + (c.image === g.url ? ' class="on"' : "") + ">" + R.thumb(R.photoUrl(g.url, 480, 270), { icon: c.icon, color: c.color, seed: g.label }) +
+          "<b>" + esc(g.label) + "</b><small>" + esc(g.credit) + "</small></button>";
+      }).join("") + '</div><div class="btn-row"><a class="btn" href="https://unsplash.com/s/photos/office-team" target="_blank" rel="noopener">Find more on Unsplash ↗</a><button class="btn" data-close>Cancel</button></div>', function (b) {
+        b.querySelectorAll("[data-g]").forEach(function (btn) {
+          btn.addEventListener("click", function () {
+            cur().image = R.GALLERY[+btn.getAttribute("data-g")].url; closeModal(); markDirty(); renderEditorKeepScroll();
+          });
+        });
+      });
+  }
   function subHead(title, listPath, k, n) {
     return '<div class="sub-head"><span>' + title + '</span><span class="tools">' +
       '<button type="button" class="icon-btn" title="Move up" data-act="sub-move" data-b="' + listPath + '" data-i="' + k + '" data-d="-1"' + (k === 0 ? " disabled" : "") + ">↑</button>" +
@@ -367,6 +408,7 @@
         '<div class="row c2">' + fText("Who it's for", "audience", { ph: "e.g. All employees, Inside sales" }) + fCheck("Required training", "required") + "</div>" +
         fText("Course ID (used in the web address)", "id", { ro: c.status !== "draft", hint: c.status !== "draft" ? "Locked because the course is published; changing it would break links and saved progress." : "Lowercase letters, numbers, and dashes. Set it before you publish." }) +
         "</div>" +
+        '<div class="panel"><h3>Look</h3>' + coverField(c) + fIcon("Artwork icon", "icon") + fColor("Artwork color", "color") + "</div>" +
         '<div class="panel"><h3>Descriptions</h3>' + fArea("Summary on the My courses page", "summary", { rich: true }) + fArea("Introduction at the top of the course", "intro", { rich: true }) + "</div>" +
         '<div class="panel" id="quiz-panel"><h3>Quiz (final step)</h3>' + fText("Quiz title", "quiz.title", { ph: c.title + " quiz" }) +
         fText("Microsoft Forms link", "quiz.url", { type: "url", ph: "https://forms.office.com/r/…", hint: "In Forms: Collect responses → copy link. Leave it empty to show “Quiz link coming soon”." }) +
@@ -389,7 +431,8 @@
         '<button class="btn btn-sm" data-act="move-lesson" data-d="1"' + (j === c.lessons.length - 1 ? " disabled" : "") + ">↓</button>" +
         '<button class="btn btn-sm" data-act="dup-lesson">Duplicate</button><button class="btn btn-sm" data-act="del-lesson">Delete</button></div></div>' +
         '<div class="panel"><div class="row" style="grid-template-columns:1fr 130px">' + fText("Lesson name (shown in the outline)", base + ".title") + fText("Minutes", base + ".minutes", { type: "number", kind: "int" }) + "</div>" +
-        fText("Page heading", base + ".heading", { ph: "e.g. Less busywork. More time for customers.", hint: "The big headline at the top of the lesson. Leave empty to use the lesson name." }) + "</div>" +
+        fText("Page heading", base + ".heading", { ph: "e.g. Less busywork. More time for customers.", hint: "The big headline at the top of the lesson. Leave empty to use the lesson name." }) +
+        '<details class="look"><summary>Banner artwork</summary>' + fIcon("Icon", base + ".icon", true) + fColor("Color", base + ".color", true) + "</details></div>" +
         '<div class="flabel" style="margin:6px 0 8px">Content blocks</div>' +
         (blocks.length ? '<div class="insert-here" style="opacity:.6"><button type="button" data-act="add-block" data-list="' + base + '.blocks" data-at="0">+ Insert block at top</button></div>' : "") +
         blocks.map(function (b, k) { return blockEditor(b, base + ".blocks", k, blocks.length); }).join("") +
@@ -407,14 +450,16 @@
     if (S.sel.view === "lesson" && curLesson()) {
       var l = curLesson();
       html = '<div class="lesson-panel"><div class="lesson-top"><span><b>Lesson ' + (S.sel.l + 1) + " of " + c.lessons.length + "</b></span><span>" + (l.minutes || "") + ' min</span></div><div class="slides">' +
-        R.lesson(l, opt) + '</div><div class="lesson-nav"><span class="btn" aria-disabled="true">← Previous</span><span class="btn btn-red" aria-disabled="true">Next lesson →</span></div></div>';
+        R.lesson(l, opt, S.sel.l + 1, c) + '</div><div class="lesson-nav"><span class="btn" aria-disabled="true">← Previous</span><span class="btn btn-red" aria-disabled="true">Next lesson →</span></div></div>';
     } else {
       var mins = R.totalMinutes(c);
-      html = '<div class="page-head"><p class="eyebrow">' + (c.type === "tool" ? "Tool training" : "Core training") + (c.required ? " · Required" : "") + (c.audience ? " · " + esc(c.audience) : "") +
+      html = '<section class="course-hero">' + R.thumb(resolveSrc(R.photoUrl(c.image, 1600, 500)), { icon: c.icon, color: c.color, seed: c.id, wide: true }) +
+        '<div class="course-hero-in"><p class="eyebrow">' + (c.type === "tool" ? "Tool training" : "Core training") + (c.required ? " · Required" : "") + (c.audience ? " · " + esc(c.audience) : "") +
         "</p><h1>" + esc(c.title) + "</h1>" + (c.intro ? '<p class="lede">' + R.rich(c.intro) + "</p>" : "") +
-        '<div class="meta-row"><span><b>About ' + mins + " minutes</b></span><span><b>" + c.lessons.length + " lessons</b></span></div></div>" +
-        '<p class="pv-label">On the My courses page:</p><div class="course"><div class="step-no">' + (c.type === "tool" ? '<span class="tool-badge">Tool</span>' : "#") + "</div><div><h3>" + esc(c.title) + "</h3>" +
-        (c.summary ? "<p>" + R.rich(c.summary) + "</p>" : "") + '</div><div class="cta"><span class="status">Not started</span><span class="btn btn-red">Start</span></div></div>' +
+        '<div class="meta-row"><span>' + mins + "m</span><span>" + c.lessons.length + " lesson" + (c.lessons.length === 1 ? "" : "s") + "</span></div></div></section>" +
+        '<p class="pv-label">On the Home page:</p><div class="pv-card"><div class="ccard">' +
+        R.thumb(resolveSrc(R.photoUrl(c.image, 640, 360)), { icon: c.icon, color: c.color, seed: c.id }, (c.required ? '<span class="badge-on">Required</span>' : c.type === "tool" ? '<span class="badge-on">Tool</span>' : "") + '<span class="dur-badge">' + mins + "m</span>") +
+        '<div class="ccard-body"><span class="kind">Course · ' + c.lessons.length + " lessons</span><h3>" + esc(c.title) + "</h3>" + (c.audience ? '<span class="by">For: ' + esc(c.audience) + "</span>" : "") + "</div></div></div>" +
         '<p class="pv-label">Quiz step:</p><div class="lesson-panel"><div class="slides">' + R.quiz(c) + "</div></div>";
     }
     pv.innerHTML = '<div class="pv-bar"><span>Preview — what employees will see</span><span class="seg"><button type="button" data-act="pv-size" data-v="0"' + (S.phone ? "" : ' class="on"') + '>Desktop</button><button type="button" data-act="pv-size" data-v="1"' + (S.phone ? ' class="on"' : "") + ">Phone</button></span></div>" +
@@ -756,7 +801,7 @@
   });
   document.addEventListener("change", function (e) {
     var el = e.target; if (!S.data || !el.matches("[data-b]") || el.closest("#modal")) return;
-    if (el.tagName === "SELECT" || el.type === "checkbox") { renderEditorKeepScroll(); }
+    if (el.tagName === "SELECT" || el.type === "checkbox" || el.getAttribute("data-b") === "image") { renderEditorKeepScroll(); }
   });
   function renderEditorKeepScroll() { var ed = $(".adm-editor"), y = ed.scrollTop; renderEditor(); ed.scrollTop = y; renderPreview(); }
 
@@ -847,6 +892,7 @@
         if (tb.headers.length <= 1) return toast("A table needs at least one column.", true);
         tb.headers.splice(i, 1); tb.rows.forEach(function (r) { r.splice(i, 1); }); markDirty(); renderEditorKeepScroll(); break;
       case "img-pick": pickImage(a.getAttribute("data-b")); break;
+      case "gallery": galleryDialog(); break;
       case "set":
         path = a.getAttribute("data-b");
         if (path === "status" && a.getAttribute("data-v") === "published" && !/^[a-z0-9]+(-[a-z0-9]+)*$/.test(c.id || "")) return toast("Fix the course ID before publishing this course.", true);

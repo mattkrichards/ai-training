@@ -145,3 +145,25 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--r
 .blk.nested .blk-head { background: #fff; }
 .sub > .blk { margin-bottom: 8px; }
 .blk-head .nm { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.icon-pick { display: flex; flex-wrap: wrap; gap: 6px; }
+.icon-pick button { width: 40px; height: 40px; border: 1px solid #cfd4da; background: #fff; border-radius: 8px; cursor: pointer; display: grid; place-items: center; color: var(--ink); font: 600 12px var(--font); padding: 0; }
+.icon-pick button svg { width: 22px; height: 22px; }
+.icon-pick button.on { border-color: var(--red); background: var(--red-tint); color: var(--red); box-shadow: 0 0 0 2px rgba(179,27,27,.2); }
+.swatches { display: flex; flex-wrap: wrap; gap: 8px; }
+.swatches button { width: 34px; height: 34px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 0 1px #cfd4da; cursor: pointer; padding: 0; }
+.swatches button.on { box-shadow: 0 0 0 3px var(--ink); }
+.swatches button.auto { width: auto; border-radius: 99px; padding: 0 12px; background: #fff; font: 600 12.5px var(--font); }
+.cover-field { display: grid; grid-template-columns: 220px 1fr; gap: 14px; align-items: start; }
+.cover-prev .thumb { border-radius: 8px; }
+details.look { border-top: 1px solid var(--line); padding-top: 10px; }
+details.look summary { cursor: pointer; font-weight: 600; font-size: 14px; color: var(--ink); margin-bottom: 10px; }
+.gallery { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 12px 0; }
+.gallery button { border: 2px solid transparent; background: #fff; border-radius: 10px; padding: 0 0 8px; cursor: pointer; text-align: left; overflow: hidden; font: 400 13px var(--font); }
+.gallery button .thumb { border-radius: 8px 8px 0 0; }
+.gallery button b { display: block; padding: 6px 8px 0; color: var(--ink); }
+.gallery button small { display: block; padding: 0 8px; color: var(--muted); }
+.gallery button:hover, .gallery button.on { border-color: var(--red); }
+.pv-card { max-width: 300px; }
+.pv-frame .course-hero { min-height: 220px; }
+.pv-frame .course-hero h1 { font-size: 26px; }
+@media (max-width: 760px) { .cover-field, .gallery { grid-template-columns: 1fr; } }

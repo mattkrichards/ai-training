@@ -29,6 +29,7 @@ Open **https://hub.richardssupply.com/ai/admin.html** (also linked as "Admin" in
 - Lessons: add, rename, set minutes and page heading, reorder, duplicate, delete.
 - Content blocks: paragraph, subheading, bullet/numbered list, card grid (2–4 columns, optional images), callout (red/blue/green), key message banner, table (with colored status labels), image upload, video (Loom, YouTube, Vimeo, Stream, MP4), Red/Yellow/Green data levels, practice check, button link, report buttons, divider, two/three columns, and custom HTML.
 - Formatting in text fields: `**bold**`, `*italic*`, `[link text](https://…)`, `==highlight==`. Table labels: `{ok}Approved`, `{warn}Yellow`, `{no}Not approved`, `{dark}Prohibited`.
+- Look: each course has a cover photo (pick from the free-photo gallery, upload your own, or paste an Unsplash link), an artwork icon, and a color. Each lesson has a banner with an icon and color (Auto picks one). If a photo can't load, the colored artwork shows instead.
 - Live preview (desktop and phone) beside the editor.
 - **Publish changes** commits the content file; the site updates in about a minute. Unpublished edits are kept in the browser if you close the tab.
 - More menu: download or import the content file as a backup, discard unpublished changes.
@@ -37,6 +38,14 @@ Open **https://hub.richardssupply.com/ai/admin.html** (also linked as "Admin" in
 Images upload to `ai/content/images/` when added; large photos are resized to 1600px wide.
 
 **Note:** the content file (including draft courses) is public, like the rest of the site. Don't put anything in a course you wouldn't post on the training site.
+
+## Home page settings
+
+In `ai/assets/config.js`:
+- `heroImage`: the photo in the home page banner.
+- `skills`: the numbered "Skills you'll build" links on the home page (and "Popular topics" in the left menu). Each one points at a course ID and lesson number.
+
+Photos come from Unsplash and are free to use under the [Unsplash License](https://unsplash.com/license). They load from Unsplash's servers, so they need internet access, like the rest of the site.
 
 ## Quiz links
 
