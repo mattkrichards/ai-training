@@ -36,15 +36,15 @@ Live at **https://hub.richardssupply.com/rx/**. Video library for the Inventory 
 - Add a video: copy a block in `videos`, set `id` (the part after `watch?v=` in the YouTube link), `course`, `order`, `title`, `description`, and `keywords` (extra search words).
 - Add a course: add a block to `courses` with a new `id`, then use that `id` on its videos.
 
-## RX Fit Check (`/rx-fit/`)
+## RX Performance Diagnostic (`/rx-fit/`)
 
-Live at **https://hub.richardssupply.com/rx-fit/**. A five-minute self-guided assessment that reps or customers can use: company, how inventory is managed today, pain points, categories, brands and monthly spend. Results show an RX fit score (tachometer gauge), the recommended service tier (Tier 1 Core RX Support, Tier 2 Managed Replenishment, Tier 3 Automated Vending) with the tier comparison, a starting scope and next steps.
+Live at **https://hub.richardssupply.com/rx-fit/**. A five-minute self-guided performance diagnostic that reps or customers can use: company, how inventory is managed today, pain points, categories, brands and monthly spend. Results show a performance score (tachometer gauge), the recommended service tier (Tier 1 Core RX Support, Tier 2 Managed Replenishment, Tier 3 Automated Vending) with the tier comparison, a starting scope and next steps.
 
 | File | What it is |
 | --- | --- |
 | `rx-fit/index.html` | The page shell: utility bar, RX header navigation, action bar |
 | `rx-fit/fit.js` | Questions, scoring, tier logic and results. **`CONFIG` at the top** holds the results email, branches, tier names/minimums, tier comparison rows and the "Richards Xpress difference" copy |
-| `rx-fit/fit.css` | Styling (standalone; hub red/charcoal with the RX black/red livery) |
+| `rx-fit/fit.css` | Styling (standalone; RX black/red livery, Montserrat headings, bright blue accent for labels on dark) |
 | `rx-fit/img/` | Photos used on the start screen and results |
 | `rx-fit/brand/` | Web-sized RX logo and icon used by the page |
 

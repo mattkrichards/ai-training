@@ -1,4 +1,4 @@
-/* RX Fit Check — quick self-guided assessment for a Richards Xpress (RX) program.
+/* RX Performance Diagnostic — quick self-guided assessment for a Richards Xpress (RX) program.
    Static: answers stay in the visitor's browser (localStorage) until they copy, print or email them.
    Edit CONFIG for contacts and program language. Tier data comes from the RX Sales Rollout (Sept 2026). */
 
@@ -100,10 +100,10 @@ const STEPS = [
     <section class="hero">
       <img src="img/hero.jpg" alt="RX Specialist restocking a Richards Xpress cabinet on a machining floor" loading="eager">
       <div class="hero-in">
-        <p class="eyebrow">RX Fit Check · Richards Xpress</p>
+        <p class="eyebrow">Performance Diagnostic · Richards Xpress</p>
         <h1>Your operation can't afford to <em>slow down.</em></h1>
         <p class="lede">Answer a few questions about how you stock supplies today. You'll see how a Richards Xpress program would keep your site fueled, tuned and running at full speed.</p>
-        <div class="cta"><button class="btn btn-hot" type="button" data-go="1">Start the fit check</button><span class="time">About 5 minutes · 4 short steps</span></div>
+        <div class="cta"><button class="btn btn-hot" type="button" data-go="1">Start the diagnostic</button><span class="time">About 5 minutes · 4 short steps</span></div>
       </div>
     </section>
     <h2 class="eyebrow" style="margin:6px 0 10px">The Richards Xpress difference</h2>
@@ -170,7 +170,7 @@ function score() {
   const relPts = Math.min(10, (d.existing === "Yes" ? 5 : 0) + (d.contact && (d.email || d.phone) ? 3 : 0) + (d.decision ? 2 : 0));
   const ready = Math.min(40, spacePts + catPts + tPts + relPts);
   const total = opp + ready;
-  const band = total >= 75 ? ["Strong RX fit", "#1f7a46"] : total >= 55 ? ["Good RX fit", "#d3271d"] : total >= 35 ? ["Worth exploring", "#946200"] : ["Early stage", "#687078"];
+  const band = total >= 75 ? ["Strong RX fit", "#1f7a46"] : total >= 55 ? ["Good RX fit", "#1f5fd6"] : total >= 35 ? ["Worth exploring", "#946200"] : ["Early stage", "#687078"];
   return { total, opp, ready, band };
 }
 function vendingSignal() { return S.d.mgmt === MGMT[2][0] || arr("space").includes("Vending machines"); }
@@ -205,7 +205,7 @@ function gaugeSVG() {
     ticks += `<line x1="${x0.toFixed(1)}" y1="${y0.toFixed(1)}" x2="${x1.toFixed(1)}" y2="${y1.toFixed(1)}" stroke="${v >= 75 ? "#d3271d" : "#fff"}" stroke-width="${major ? 3 : 1.5}" opacity="${major ? 1 : .6}"/>`;
     if (major && v % 20 === 0) { const [tx, ty] = pt(v, R - 32); ticks += `<text x="${tx.toFixed(1)}" y="${(ty + 5).toFixed(1)}" fill="#bbb" font-family="Barlow Condensed, Arial Narrow, sans-serif" font-weight="700" font-size="15" text-anchor="middle">${v}</text>`; }
   }
-  return `<svg class="gauge" viewBox="0 0 300 230" role="img" aria-label="RX fit score gauge">
+  return `<svg class="gauge" viewBox="0 0 300 230" role="img" aria-label="Performance score gauge">
     <path d="${arc(0, 100, R + 8)}" stroke="rgba(255,255,255,.12)" stroke-width="5" fill="none" stroke-linecap="round"/>
     <path d="${arc(75, 100, R + 8)}" stroke="#d3271d" stroke-width="5" fill="none" stroke-linecap="round"/>
     ${ticks}
@@ -219,7 +219,7 @@ function renderResults() {
   const cell = v => v === true ? '<td class="c yes">✓</td>' : v === "opt" ? '<td class="c">Optional</td>' : '<td class="c no">—</td>';
   const on = id => (id === t.id ? "col-on" : "");
   let h = `<section class="panel res-top">
-    <div class="gauge-wrap">${gaugeSVG()}<div class="gauge-val"><b id="gaugeNum">0</b><span>RX FIT SCORE</span></div></div>
+    <div class="gauge-wrap">${gaugeSVG()}<div class="gauge-val"><b id="gaugeNum">0</b><span>PERFORMANCE SCORE</span></div></div>
     <div class="res-sum">
       <span class="band" style="background:${sc.band[1]};color:#fff">${sc.band[0]}</span>
       <h2>${esc(d.company || "Your operation")}${d.city ? " · " + esc(d.city) : ""}</h2>
@@ -254,7 +254,7 @@ function renderResults() {
 
   h += `<div class="photo-band" style="margin-top:18px"><img src="img/line.jpg" alt="Production line with an RX Specialist servicing a Richards Xpress cabinet" loading="lazy"><div><b>Stay fueled, tuned and <em>in the race.</em></b><p>We track fill rate, stockouts and on-time service, and adjust as your operation changes.</p></div></div>`;
 
-  h += `<section class="panel"><p class="eyebrow">What happens next</p><h2 style="font:700 26px var(--cond);margin-bottom:14px">From fit check to go-live</h2>
+  h += `<section class="panel"><p class="eyebrow">What happens next</p><h2 style="font:700 26px var(--cond);margin-bottom:14px">From diagnostic to go-live</h2>
     <ol class="road">
       <li><b>Site walkthrough</b><span>An RX team member reviews your space, points of use and access.</span></li>
       <li><b>Usage review</b><span>${d.existing === "Yes" ? "We pull your Richards history and add" : "We review"} what you buy from other suppliers to size the program.</span></li>
@@ -292,13 +292,13 @@ function animateResults() {
 function summary() {
   const d = S.d, sc = score(), t = tier();
   const L = [
-    "RX FIT CHECK · Richards Xpress",
+    "RX PERFORMANCE DIAGNOSTIC · Richards Xpress",
     `${d.company || "—"}${d.city ? " · " + d.city : ""}`,
     `Contact: ${[d.contact, d.title, d.email, d.phone].filter(Boolean).join(" · ") || "—"}`,
     `Industry: ${d.industry || "—"} · Employees: ${d.employees || "—"} · ${d.shifts || ""}`,
     `Richards customer: ${d.existing || "—"}${d.custId ? " (#" + d.custId + ")" : ""} · Nearest branch: ${d.branch || "—"}`,
     "",
-    `RX FIT SCORE: ${sc.total}/100 · ${sc.band[0]} (Opportunity ${sc.opp}/60, Readiness ${sc.ready}/40)`,
+    `PERFORMANCE SCORE: ${sc.total}/100 · ${sc.band[0]} (Opportunity ${sc.opp}/60, Readiness ${sc.ready}/40)`,
     `Recommended: ${t.id ? "Tier " + t.id + " – " + t.title : t.title}${t.also ? " (also consider Tier " + t.also + ")" : ""}`,
     `Monthly spend in scope: ${d.spend || "—"} · Items: ${d.skus || "—"} · Service rhythm: ${cadence()}`,
     `Start with: ${starterCats().slice(0, 3).join(", ") || "—"}`,
@@ -356,7 +356,7 @@ function render() {
   $("#back").disabled = i === 0;
   $("#next").textContent = i === 0 ? "Start" : i === STEPS.length - 2 ? "See my results" : "Next";
   $("#actionbar").classList.toggle("hide", i === STEPS.length - 1);
-  $("#abStep").textContent = i === 0 ? "RX Fit Check" : i < STEPS.length - 1 ? `Step ${i} of ${STEPS.length - 2}` : "Results";
+  $("#abStep").textContent = i === 0 ? "Performance Diagnostic" : i < STEPS.length - 1 ? `Step ${i} of ${STEPS.length - 2}` : "Results";
   updateGauge();
   if (i === STEPS.length - 1) animateResults();
 }
@@ -379,7 +379,7 @@ document.addEventListener("click", e => {
   if (act === "copy") copy(summary());
   if (act === "print") window.print();
   if (act === "email") {
-    const subj = `RX Fit Check: ${S.d.company || "results"}`;
+    const subj = `RX Performance Diagnostic: ${S.d.company || "results"}`;
     location.href = `mailto:${CONFIG.contactEmail}?subject=${encodeURIComponent(subj)}&body=${encodeURIComponent(summary())}`;
   }
   if (act === "submit" && CONFIG.submitEndpoint) {
