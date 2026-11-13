@@ -6,6 +6,19 @@ const CONFIG = {
   contactEmail: "mattk@richardssupply.com",   // where "Email my results" goes (swap for an RX inbox)
   branches: ["Waco", "Temple", "Fort Worth"],
   submitEndpoint: "",                          // optional: Retool Workflow webhook to log submissions
+  // optional: Retool Workflow that looks up a work email's domain (P21 customer match, ZoomInfo, etc.)
+  // POST {email, domain} -> {company, city, industry, employees, existing:"Yes"|"No", custId, branch}
+  // Anything it returns is public to whoever types that email, so return only what you'd show a stranger.
+  enrichEndpoint: "",
+  // Answers pre-selected for a new visitor so they mostly click Next. Visitors can change any of them.
+  defaults: {
+    existing: "Not sure", branch: "Not sure", industry: "Manufacturing – other", employees: "50–99", shifts: "1 shift",
+    mgmt: "Our own team manages it", phil: ["Reorder when empty"], space: ["Open shelving", "Bins on racks"],
+    skus: "50 – 150", timeline: "Within 90 days",
+    pains: ["Stockouts of everyday items", "Time spent counting & ordering"], topPain: "Stockouts of everyday items",
+    cats: ["Safety & PPE", "Abrasives", "Fasteners & Hardware", "Janitorial & Facility"], brandPref: ["Open to equivalents"],
+    spend: "$1,250 – $3,000"
+  },
   tiers: [
     { id: 1, name: "Core RX Support", min: 15000, minLabel: "$15,000 / yr" },
     { id: 2, name: "Managed Replenishment", min: 36000, minLabel: "$36,000 / yr" },
@@ -66,8 +79,9 @@ const TIMELINE = [["ASAP",10],["Within 90 days",8],["This year",5],["Just explor
 
 /* ---------------- State ---------------- */
 const KEY = "rxFit.v1";
-const fresh = () => ({ step: 0, d: {} });
-let S = (() => { try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && s.d) return Object.assign(fresh(), s); } catch (e) {} return fresh(); })();
+const withDefaults = d => { const out = JSON.parse(JSON.stringify(CONFIG.defaults)); Object.keys(d || {}).forEach(k => out[k] = d[k]); return out; };
+const fresh = () => ({ step: 0, d: withDefaults({}), auto: {} });
+let S = (() => { try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && s.d) { const o = Object.assign(fresh(), s); o.d = withDefaults(s.d); o.auto = s.auto || {}; return o; } } catch (e) {} return fresh(); })();
 const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
 const D = () => S.d;
 const arr = k => Array.isArray(S.d[k]) ? S.d[k] : [];
@@ -80,7 +94,7 @@ function toast(m) { const t = $("#toast"); t.textContent = m; t.classList.add("o
 function field(f) {
   if (f.show && !f.show()) return "";
   const v = S.d[f.k];
-  const lab = `<label class="lbl"${f.t === "text" || f.t === "email" || f.t === "tel" || f.t === "select" || f.t === "area" ? ` for="f-${f.k}"` : ""}>${esc(f.label)}</label>`;
+  const lab = `<label class="lbl"${f.t === "text" || f.t === "email" || f.t === "tel" || f.t === "select" || f.t === "area" ? ` for="f-${f.k}"` : ""}>${esc(f.label)}${f.opt ? '<span class="optional">optional</span>' : ""}<span class="autofill" id="af-${f.k}"${S.auto && S.auto[f.k] ? "" : " hidden"}>filled from your email</span></label>`;
   const help = f.help ? `<div class="help">${esc(f.help)}</div>` : "";
   let c = "";
   if (["text", "email", "tel"].includes(f.t)) c = `<input id="f-${f.k}" type="${f.t}" data-k="${f.k}" value="${esc(v)}" placeholder="${esc(f.ph || "")}" autocomplete="${f.ac || "off"}">`;
@@ -91,7 +105,8 @@ function field(f) {
   else if (f.t === "tiles") c = `<div class="tiles" role="group">${f.o.map(o => `<button type="button" class="tile" data-k="${f.k}" data-v="${esc(o[0])}" data-one="1" aria-pressed="${v === o[0]}">${esc(o[0])}${o[1] ? `<small>${esc(o[1])}</small>` : ""}</button>`).join("")}</div>`;
   return `<div class="${f.full ? "full" : ""}">${lab}${c}${help}</div>`;
 }
-const panel = (n, eyebrow, title, sub, body) => `<section class="panel redtop"><div class="panel-head"><div class="panel-num">${n}</div><div><p class="eyebrow">${eyebrow}</p><h2>${title}</h2>${sub ? `<p class="sub">${sub}</p>` : ""}</div></div>${body}</section>`;
+const PREFILL = `<div class="prefill-note"><span>We've <b>pre-selected common answers</b>. Change anything that doesn't fit, or just hit Next.</span></div>`;
+const panel = (n, eyebrow, title, sub, body, note = true) => `<section class="panel redtop"><div class="panel-head"><div class="panel-num">${n}</div><div><p class="eyebrow">${eyebrow}</p><h2>${title}</h2>${sub ? `<p class="sub">${sub}</p>` : ""}</div></div>${note ? PREFILL : ""}${body}</section>`;
 const grid = fs => `<div class="grid">${fs.map(field).join("")}</div>`;
 
 /* ---------------- Steps ---------------- */
@@ -110,20 +125,20 @@ const STEPS = [
     <div class="diff">${CONFIG.difference.map(d => `<div><b>${esc(d[0])}</b><span>${esc(d[1])}</span></div>`).join("")}</div>
     <div class="victory"><b>Built for Victory Lane</b><span>MORE UPTIME · MORE THROUGHPUT · MORE PROFITABILITY</span></div>` },
 
-  { t: "Company", r: () => panel(1, "Step 1 of 4", "Your company", "Tell us about this location.", grid([
+  { t: "Company", r: () => panel(1, "Step 1 of 4", "Your company", "Start with your work email. We'll fill in what we can.", grid([
+    { k: "email", label: "Work email", t: "email", ac: "email", full: true, ph: "you@yourcompany.com" },
     { k: "company", label: "Company name", t: "text", ac: "organization" },
     { k: "contact", label: "Your name", t: "text", ac: "name" },
-    { k: "title", label: "Title / role", t: "text", ph: "e.g. Maintenance Manager" },
-    { k: "email", label: "Email", t: "email", ac: "email" },
-    { k: "phone", label: "Phone", t: "tel", ac: "tel" },
-    { k: "city", label: "Location (city)", t: "text" },
+    { k: "title", label: "Title / role", t: "text", ph: "e.g. Maintenance Manager", opt: true },
+    { k: "phone", label: "Phone", t: "tel", ac: "tel", opt: true },
+    { k: "city", label: "Location (city)", t: "text", opt: true },
     { k: "existing", label: "Do you buy from Richards Supply today?", t: "one", o: ["Yes", "No", "Not sure"] },
     { k: "custId", label: "Richards customer # (if you know it)", t: "text", show: () => S.d.existing === "Yes" },
     { k: "industry", label: "Industry", t: "select", o: INDUSTRIES },
     { k: "branch", label: "Nearest Richards branch", t: "one", o: [...CONFIG.branches, "Not sure"] },
     { k: "employees", label: "Employees at this location", t: "one", o: EMP },
     { k: "shifts", label: "Operating schedule", t: "one", o: SHIFTS },
-    { k: "repName", label: "Richards rep you work with (if any)", t: "text", full: true }
+    { k: "repName", label: "Richards rep you work with", t: "text", full: true, opt: true }
   ])) },
 
   { t: "Today", r: () => panel(2, "Step 2 of 4", "How it works today", "Who manages inventory, how it gets reordered, and what the space looks like.", grid([
@@ -134,20 +149,20 @@ const STEPS = [
     { k: "skus", label: "About how many different items do you keep on hand?", t: "one", o: SKUS.map(s => s[0]) },
     { k: "timeline", label: "Timing for a change", t: "one", o: TIMELINE.map(t => t[0]) },
     { k: "uniq", label: "Anything unique about the site?", t: "many", o: UNIQ, full: true },
-    { k: "uniqNotes", label: "Other key details", t: "area", full: true, ph: "Layout quirks, access rules, how receiving works…" }
+    { k: "uniqNotes", label: "Other key details", t: "area", full: true, opt: true, ph: "Layout quirks, access rules, how receiving works…" }
   ])) },
 
   { t: "Needs", r: () => panel(3, "Step 3 of 4", "What's slowing you down", "Pick everything that applies, then the one that matters most.", grid([
     { k: "pains", label: "Pain points", t: "many", o: PAINS.map(p => p[0]), full: true },
     { k: "topPain", label: "Biggest priority", t: "select", o: arr("pains").length ? arr("pains") : PAINS.map(p => p[0]) },
-    { k: "decision", label: "Who else weighs in on this decision?", t: "text", ph: "e.g. Plant manager, purchasing, safety" },
-    { k: "goals", label: "What would a win look like six months from now?", t: "area", full: true, ph: "e.g. No more weekend runs for gloves, one invoice a month, usage by department" }
+    { k: "decision", label: "Who else weighs in on this decision?", t: "text", opt: true, ph: "e.g. Plant manager, purchasing, safety" },
+    { k: "goals", label: "What would a win look like six months from now?", t: "area", full: true, opt: true, ph: "e.g. No more weekend runs for gloves, one invoice a month, usage by department" }
   ])) },
 
   { t: "Categories", r: () => panel(4, "Step 4 of 4", "Categories, brands & spend", "What you'd want covered, and roughly what you spend on it each month across all suppliers.", grid([
     { k: "cats", label: "Categories to include", t: "many", o: CATS, full: true },
     { k: "brandPref", label: "Brand approach", t: "many", o: BRANDS, full: true },
-    { k: "brands", label: "Must-have brands or specs", t: "area", full: true, ph: "e.g. a specific glove, an approved abrasive brand, a lubricant your engineers specify" },
+    { k: "brands", label: "Must-have brands or specs", t: "area", full: true, opt: true, ph: "e.g. a specific glove, an approved abrasive brand, a lubricant your engineers specify" },
     { k: "spend", label: "Estimated monthly spend on these categories", t: "one", o: SPEND.map(s => s[0]), full: true, help: "A best guess is fine. Include what you buy from every supplier, not just Richards." }
   ])) },
 
@@ -202,14 +217,14 @@ function gaugeSVG() {
   let ticks = "";
   for (let v = 0; v <= 100; v += 5) {
     const major = v % 10 === 0, [x0, y0] = pt(v, R - (major ? 16 : 9)), [x1, y1] = pt(v, R - 2);
-    ticks += `<line x1="${x0.toFixed(1)}" y1="${y0.toFixed(1)}" x2="${x1.toFixed(1)}" y2="${y1.toFixed(1)}" stroke="${v >= 75 ? "#d3271d" : "#fff"}" stroke-width="${major ? 3 : 1.5}" opacity="${major ? 1 : .6}"/>`;
+    ticks += `<line x1="${x0.toFixed(1)}" y1="${y0.toFixed(1)}" x2="${x1.toFixed(1)}" y2="${y1.toFixed(1)}" stroke="${v >= 75 ? "#ab2c24" : "#fff"}" stroke-width="${major ? 3 : 1.5}" opacity="${major ? 1 : .6}"/>`;
     if (major && v % 20 === 0) { const [tx, ty] = pt(v, R - 32); ticks += `<text x="${tx.toFixed(1)}" y="${(ty + 5).toFixed(1)}" fill="#bbb" font-family="Barlow Condensed, Arial Narrow, sans-serif" font-weight="700" font-size="15" text-anchor="middle">${v}</text>`; }
   }
   return `<svg class="gauge" viewBox="0 0 300 230" role="img" aria-label="Performance score gauge">
     <path d="${arc(0, 100, R + 8)}" stroke="rgba(255,255,255,.12)" stroke-width="5" fill="none" stroke-linecap="round"/>
-    <path d="${arc(75, 100, R + 8)}" stroke="#d3271d" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <path d="${arc(75, 100, R + 8)}" stroke="#ab2c24" stroke-width="5" fill="none" stroke-linecap="round"/>
     ${ticks}
-    <g class="needle" id="needle" style="transform:rotate(-120deg)"><path d="M147 160 L150 58 L153 160 Z" fill="#d3271d"/><circle cx="150" cy="160" r="11" fill="#1b1d20" stroke="#fff" stroke-width="2.5"/></g>
+    <g class="needle" id="needle" style="transform:rotate(-120deg)"><path d="M147 160 L150 58 L153 160 Z" fill="#ab2c24"/><circle cx="150" cy="160" r="11" fill="#1b1d20" stroke="#fff" stroke-width="2.5"/></g>
   </svg>`;
 }
 function renderResults() {
@@ -345,10 +360,12 @@ function moveIndicator() {
   ind.style.transform = `translateX(${on.offsetLeft}px)`;
   if (on.scrollIntoView && nav.scrollWidth > nav.clientWidth) on.scrollIntoView({ block: "nearest", inline: "center", behavior: "smooth" });
 }
-function updateGauge() { $("#rpmVal").textContent = score().total; }
+function updateGauge() { $("#rpmVal").textContent = score().total; $("#rpm").classList.toggle("off", S.step === 0); }
 function render() {
   const v = $("#view"), i = S.step;
   v.innerHTML = STEPS[i].r();
+  v.classList.toggle("narrow", i > 0 && i < STEPS.length - 1);
+  v.classList.toggle("results", i === STEPS.length - 1);
   v.classList.remove("enter", "enter-back"); void v.offsetWidth;
   v.classList.add(i >= lastStep ? "enter" : "enter-back"); lastStep = i;
   renderNav();
@@ -366,6 +383,7 @@ document.addEventListener("click", e => {
   if (b.dataset.go !== undefined) return go(+b.dataset.go);
   if (b.dataset.k) {
     const k = b.dataset.k, v = b.dataset.v;
+    delete S.auto[k];
     if (b.dataset.one) S.d[k] = S.d[k] === v ? "" : v;
     else { const a = arr(k); S.d[k] = a.includes(v) ? a.filter(x => x !== v) : [...a, v]; }
     save();
@@ -391,7 +409,63 @@ document.addEventListener("click", e => {
     else { b.dataset.armed = "1"; b.textContent = "Click again to clear answers"; b.classList.add("btn-red"); }
   }
 });
-document.addEventListener("input", e => { const k = e.target.dataset.k; if (!k) return; S.d[k] = e.target.value; save(); updateGauge(); });
+document.addEventListener("input", e => {
+  const k = e.target.dataset.k; if (!k) return;
+  S.d[k] = e.target.value;
+  if (S.auto[k]) { delete S.auto[k]; const b = document.getElementById("af-" + k); if (b) b.hidden = true; }  // they edited it: stop overwriting
+  save(); updateGauge();
+  if (k === "email") { clearTimeout(emailTimer); emailTimer = setTimeout(fromEmail, 350); }
+});
+document.addEventListener("focusout", e => { if (e.target.dataset && e.target.dataset.k === "email") fromEmail(); });
+
+/* ---------------- Email → company autofill ---------------- */
+const FREE_MAIL = ["gmail","yahoo","outlook","hotmail","live","msn","icloud","me","aol","comcast","att","sbcglobal","verizon","proton","protonmail","gmx","mail","ymail","windstream","suddenlink","charter","spectrum"];
+const TAIL_WORDS = ["manufacturing","industries","industrial","fabrication","fabricators","fab","steel","metals","metal","machine","machining","precision","services","service","systems","group","energy","foods","food","farms","construction","contractors","electric","plastics","products","solutions","technologies","tech","company","corp","inc","llc","usa","texas","tx","mfg","supply","logistics","works","tools","tool","equipment","engineering","partners"];
+let emailTimer = null;
+function companyFromDomain(domain) {
+  const parts = domain.toLowerCase().split(".").filter(Boolean);
+  if (parts.length < 2) return "";
+  let label = parts.length >= 3 && ["co","com","org","net"].includes(parts[parts.length - 2]) ? parts[parts.length - 3] : parts[parts.length - 2];
+  if (FREE_MAIL.includes(label)) return "";
+  const words = [];
+  label.split(/[-_]/).forEach(chunk => {
+    const tail = []; let rest = chunk, hit = true;
+    while (hit && rest.length > 3) { hit = false; for (const w of TAIL_WORDS) { if (rest.length > w.length + 2 && rest.endsWith(w)) { tail.unshift(w); rest = rest.slice(0, -w.length); hit = true; break; } } }
+    words.push(rest, ...tail);
+  });
+  return words.filter(Boolean).map(w => ["llc","usa","tx","mfg","inc"].includes(w) ? w.toUpperCase() : w[0].toUpperCase() + w.slice(1)).join(" ").replace(/ (Inc|LLC|Corp)$/i, m => m);
+}
+function nameFromLocal(local) {
+  const bits = local.split(/[._-]+/).filter(b => /^[a-z]{2,}$/i.test(b));
+  return bits.length >= 2 ? bits.slice(0, 2).map(b => b[0].toUpperCase() + b.slice(1).toLowerCase()).join(" ") : "";
+}
+function setAuto(k, val) {
+  if (!val) return false;
+  if (S.d[k] && !S.auto[k]) return false;          // never overwrite something they typed or picked
+  S.d[k] = val; S.auto[k] = true;
+  const el = document.getElementById("f-" + k); if (el) el.value = val;
+  const b = document.getElementById("af-" + k); if (b) b.hidden = false;
+  return true;
+}
+async function fromEmail() {
+  const em = (S.d.email || "").trim();
+  const m = em.match(/^([^@\s]+)@([^@\s]+\.[a-z]{2,})$/i); if (!m) return;
+  let changed = setAuto("company", companyFromDomain(m[2]));
+  changed = setAuto("contact", nameFromLocal(m[1])) || changed;
+  if (CONFIG.enrichEndpoint) {
+    try {
+      const r = await fetch(CONFIG.enrichEndpoint, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: em, domain: m[2] }) });
+      const j = await r.json();
+      ["company", "city", "custId"].forEach(k => { changed = setAuto(k, j[k]) || changed; });
+      // choice fields: only replace the pre-selected default, never a choice they made
+      ["industry", "employees", "existing", "branch"].forEach(k => { if (j[k] && (S.d[k] === CONFIG.defaults[k] || S.auto[k])) { S.d[k] = j[k]; S.auto[k] = true; changed = true; } });
+    } catch (e) { /* lookup is optional */ }
+  }
+  if (changed) {
+    save(); updateGauge();
+    if (S.step === 1 && (S.auto.industry || S.auto.employees || S.auto.existing || S.auto.branch)) { const y = window.scrollY, a = document.activeElement && document.activeElement.id; $("#view").innerHTML = STEPS[1].r(); if (a) { const el = document.getElementById(a); el && el.focus(); } window.scrollTo(0, y); }
+  }
+}
 $("#back").onclick = () => go(S.step - 1);
 $("#next").onclick = () => go(S.step + 1);
 window.addEventListener("resize", moveIndicator);

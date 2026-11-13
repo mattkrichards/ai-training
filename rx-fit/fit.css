@@ -3,9 +3,9 @@
    black / red / white livery for the navigation, hero and results. */
 
 :root {
-  --red: #b31b1b;          /* hub primary */
-  --red-deep: #8c1414;
-  --red-hot: #d3271d;      /* RX livery red, used on black */
+  --red: #ab2c24;          /* RX brand Deep Red (guideline) */
+  --red-deep: #8a231d;     /* hover / pressed */
+  --red-hot: #ab2c24;      /* same brand red on black */
   --slate: #65737e;         /* brand Cool Slate (Pantone 431C): accents on light backgrounds, focus */
   --slate-light: #a3aeb7;   /* lighter Cool Slate tint: small labels on dark backgrounds */
   --tint: #f2f4f7;          /* neutral highlight background */
@@ -53,7 +53,7 @@ h1, h2, h3, h4 { color: var(--ink); margin: 0; line-height: 1.15; }
 
 .steps { position: relative; display: flex; gap: 2px; background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.1); border-radius: 999px; padding: 4px; margin: 0 auto; overflow-x: auto; scrollbar-width: none; max-width: 100%; }
 .steps::-webkit-scrollbar { display: none; }
-.steps-ind { position: absolute; top: 4px; bottom: 4px; left: 0; width: 0; border-radius: 999px; background: var(--red-hot); box-shadow: 0 2px 10px rgba(211,39,29,.45); transition: transform .34s var(--ease-mech), width .34s var(--ease-mech); z-index: 0; }
+.steps-ind { position: absolute; top: 4px; bottom: 4px; left: 0; width: 0; border-radius: 999px; background: var(--red-hot); box-shadow: 0 2px 10px rgba(171,44,36,.5); transition: transform .34s var(--ease-mech), width .34s var(--ease-mech); z-index: 0; }
 .steps button { position: relative; z-index: 1; border: 0; background: none; color: rgba(255,255,255,.62); font: 600 14px var(--font); padding: 7px 14px; border-radius: 999px; cursor: pointer; white-space: nowrap; display: flex; align-items: center; gap: 7px; transition: color .2s var(--ease); }
 .steps button:hover { color: #fff; }
 .steps button .n { font: 700 10.5px/1 var(--cond); width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid currentColor; display: grid; place-items: center; }
@@ -62,13 +62,14 @@ h1, h2, h3, h4 { color: var(--ink); margin: 0; line-height: 1.15; }
 .steps button.on { color: #fff; }
 .steps button.on .n { background: #fff; color: var(--red-hot); border-color: #fff; }
 
-.rpm { flex-shrink: 0; display: flex; align-items: baseline; gap: 6px; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.14); border-radius: 8px; padding: 5px 10px; margin-right: 150px; }
+.rpm { flex-shrink: 0; display: flex; align-items: baseline; gap: 6px; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.14); border-radius: 8px; padding: 5px 10px; }
+.rpm.off { visibility: hidden; }
 .rpm span { font: 700 10.5px var(--cond); letter-spacing: 1.2px; color: rgba(255,255,255,.6); }
 .rpm b { font: 700 19px/1 var(--cond); color: #fff; min-width: 26px; text-align: right; font-variant-numeric: tabular-nums; }
 .revline { position: relative; z-index: 1; height: 3px; background: rgba(255,255,255,.08); }
 .revline i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, #fff 0%, var(--red-hot) 70%); transition: width .5s var(--ease-mech); }
 
-@media (max-width: 980px) { .rpm { margin-right: 60px; } .rxbar::after { width: 140px; right: -50px; } }
+@media (max-width: 1500px) { .rxbar::after { width: 150px; right: -70px; opacity: .55; } }
 @media (max-width: 760px) {
   .rxbar-in { height: auto; padding: 10px 14px; flex-wrap: wrap; gap: 10px; }
   .steps { order: 3; width: 100%; margin: 0; }
@@ -153,7 +154,7 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--s
 .btn-red { background: var(--red); border-color: var(--red); color: #fff; }
 .btn-red:hover { background: var(--red-deep); border-color: var(--red-deep); color: #fff; }
 .btn-hot { background: var(--red-hot); border-color: var(--red-hot); color: #fff; font: italic 800 16px var(--cond); letter-spacing: .4px; text-transform: uppercase; padding: 13px 28px; clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%); border-radius: 0; }
-.btn-hot:hover { background: #b81f16; color: #fff; }
+.btn-hot:hover { background: var(--red-deep); color: #fff; }
 .btn-dark { background: var(--charcoal); border-color: var(--charcoal); color: #fff; }
 .btn-dark:hover { background: #000; color: #fff; }
 .btn-ghost { background: #fff; }
@@ -277,3 +278,31 @@ footer.site { color: rgba(255,255,255,.62); border-top-color: rgba(255,255,255,.
 .ab-step { color: rgba(255,255,255,.6); }
 .actionbar .btn-ghost { background: transparent; color: #fff; border-color: rgba(255,255,255,.28); }
 .actionbar .btn-ghost:hover { background: rgba(255,255,255,.08); }
+
+/* ---------- Richards Supply logo in the RX bar ---------- */
+.rs-mark { display: flex; align-items: center; padding-left: 18px; border-left: 1px solid rgba(255,255,255,.18); flex-shrink: 0; position: relative; z-index: 1; }
+.rs-mark img { height: 20px; width: auto; display: block; opacity: .92; }
+@media (max-width: 1240px) { .rs-mark img { height: 16px; } .steps button { padding: 7px 10px; } }
+@media (max-width: 1060px) { .steps button .t { display: none; } .steps button.on .t { display: inline; } }
+@media (max-width: 760px) { .rs-mark { display: none; } }
+
+/* ---------- Narrower, see-through panels so the background shows ---------- */
+.view.narrow { max-width: 880px; }
+.view.results { max-width: 1000px; }
+.panel { background: rgba(255,255,255,.86); -webkit-backdrop-filter: blur(10px) saturate(1.1); backdrop-filter: blur(10px) saturate(1.1); border-color: rgba(255,255,255,.5); }
+.panel.res-top { background: rgba(17,18,20,.82); }
+.view .diff div { background: rgba(255,255,255,.88); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+.kpi, .road li, .tbl-wrap, .tier-rec { background: rgba(255,255,255,.7); }
+
+/* ---------- Footer with the Richards Supply logo ---------- */
+footer.site { align-items: center; }
+.foot-brand { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.foot-brand img { height: 22px; width: auto; display: block; }
+
+/* ---------- Autofill + defaults hints ---------- */
+.autofill[hidden] { display: none !important; }
+.autofill { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 600; color: var(--slate); margin-left: 8px; }
+.autofill::before { content: ""; width: 6px; height: 6px; background: var(--red); transform: rotate(45deg); }
+.prefill-note { display: flex; gap: 10px; align-items: center; background: rgba(101,115,126,.1); border: 1px solid rgba(101,115,126,.25); border-radius: 8px; padding: 9px 12px; font-size: 13.5px; color: var(--text); margin: -6px 0 18px; }
+.prefill-note b { color: var(--ink); }
+.optional { font-weight: 500; color: var(--muted); font-size: 12.5px; margin-left: 6px; }

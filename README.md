@@ -51,6 +51,12 @@ Live at **https://hub.richardssupply.com/rx-fit/**. A five-minute self-guided pe
 
 **Branding**: the RX bar uses `rx-fit/brand/rx-horizontal-dark.png` (red/white horizontal logo) and `rx-fit/brand/rx-icon.png` as the favicon. These are web-sized copies of the official files in `brand/rx-logos/`.
 
+**Less typing**: step 1 starts with the work email. The company name is guessed from the email domain (e.g. `acmesteel.com` → "Acme Steel") and the person's name from `first.last@`; free-mail addresses (Gmail, Outlook…) are skipped. Anything filled this way is tagged "filled from your email" and is never overwritten once the visitor edits it. Common answers are pre-selected from `CONFIG.defaults` in `fit.js`, and optional fields are marked.
+
+**Optional lookup** (`CONFIG.enrichEndpoint`): point it at a Retool Workflow that takes `{email, domain}` and returns `{company, city, industry, employees, existing, custId, branch}` (e.g. a P21 customer match by email domain, or ZoomInfo). The page is public, so return only what you'd show anyone who types that email.
+
+**Brand**: colors follow the Richards Xpress brand guideline (Deep Red #AB2C24, Cool Slate #65737E). Headings use Montserrat as a stand-in for Gotham; the guideline's Gotham needs a web-font license before it can be served here.
+
 **Tier logic** (from the Sept 2026 sales rollout): $36K+/yr → Tier 2 (Tier 3 if they already use or want vending); $15K–$36K → Tier 1; below $15K → "find the right starting point". The spend ranges on step 4 break at $1,250 and $3,000 a month to line up with those minimums.
 
 **Results** stay in the visitor's browser. They can email them (opens their mail app addressed to `CONFIG.contactEmail`), copy a summary, or print / save a PDF. Set `CONFIG.submitEndpoint` to a Retool Workflow webhook to log submissions instead.
@@ -58,6 +64,8 @@ Live at **https://hub.richardssupply.com/rx-fit/**. A five-minute self-guided pe
 ## RX brand files (`/brand/rx-logos/`)
 
 Official Richards Xpress logo PNGs from the Managers SharePoint (RX / Richards Xpress Artwork / Logo Files): `horizontal/`, `horizontal-no-spacing/` (tightly cropped), `vertical/`, `icon/` and `monochrome/`. In each set, odd numbers include the "Inventory Solutions" tagline and even numbers don't for horizontal/vertical; variants with white lettering are for dark backgrounds. Source files (AI, EPS, PSD, SVG) stay on SharePoint.
+
+`/brand/richards-supply/`: Richards Supply Company horizontal logo, white lettering (`rs-logo-horizontal-white.png`, for dark backgrounds) and dark lettering (`rs-logo-horizontal-dark.png`, for light backgrounds).
 
 ## Training Creator (admin)
 
