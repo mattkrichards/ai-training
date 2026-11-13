@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RX Fit Check · Richards Xpress · Richards Supply</title>
+<meta name="description" content="A five-minute check of how a Richards Xpress (RX) managed-inventory program fits your operation.">
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,600;0,700;1,700;1,800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="fit.css?v=1">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23111214'/%3E%3Ctext x='16' y='22' font-family='Arial' font-weight='800' font-style='italic' font-size='15' fill='%23d3271d' text-anchor='middle'%3ERX%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+
+<!-- Utility bar: matches the hub's white header -->
+<div class="util">
+  <a class="util-brand" href="./" aria-label="RX Fit Check home">
+    <img src="https://www.richardssupply.com/images/Header/NewLogo.jpg" alt="Richards Supply Company" width="162" height="36">
+    <span>RX Fit Check</span>
+  </a>
+  <div class="util-right">
+    <label class="switch" title="Rep mode shows internal fields, tier minimums and watchouts">
+      <input type="checkbox" id="repMode"><span class="track"><i></i></span><span class="lbl">Rep mode</span>
+    </label>
+  </div>
+</div>
+
+<!-- RX header navigation -->
+<header class="rxbar" id="rxbar">
+  <div class="rxbar-in">
+    <div class="rx-mark" aria-hidden="true">
+      <svg viewBox="0 0 48 48" class="gauge-ic"><path d="M8 34a17 17 0 1 1 32 0" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" opacity=".9"/><path d="M29 10.5a17 17 0 0 1 11 13" fill="none" stroke="#d3271d" stroke-width="3.2" stroke-linecap="round" stroke-dasharray="2.2 2.4"/><path d="M24 30 35 17" stroke="#d3271d" stroke-width="3.2" stroke-linecap="round"/><circle cx="24" cy="30" r="3" fill="#fff"/></svg>
+      <span class="wm">RICHARDS <em>XPRESS</em></span>
+    </div>
+    <nav class="steps" id="steps" aria-label="Fit check steps">
+      <span class="steps-ind" id="stepsInd" aria-hidden="true"></span>
+    </nav>
+    <div class="rpm" id="rpm" title="RX fit score so far"><span>FIT</span><b id="rpmVal">0</b></div>
+  </div>
+  <div class="revline"><i id="revline"></i></div>
+</header>
+
+<main id="view" class="view" tabindex="-1"></main>
+
+<div class="actionbar" id="actionbar">
+  <div class="ab-in">
+    <button class="btn btn-ghost" id="back" type="button">Back</button>
+    <span class="ab-step" id="abStep"></span>
+    <button class="btn btn-red" id="next" type="button">Next</button>
+  </div>
+</div>
+
+<footer class="site">
+  <span>Richards Supply · Richards Xpress (RX) · Precision service. Maximum performance.</span>
+  <span>Waco · Temple · Fort Worth</span>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script src="fit.js?v=1"></script>
+</body>
+</html>
