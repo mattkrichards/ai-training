@@ -46,12 +46,17 @@ Live at **https://hub.richardssupply.com/rx-fit/**. A five-minute self-guided as
 | `rx-fit/fit.js` | Questions, scoring, tier logic and results. **`CONFIG` at the top** holds the results email, branches, tier names/minimums, tier comparison rows and the "Richards Xpress difference" copy |
 | `rx-fit/fit.css` | Styling (standalone; hub red/charcoal with the RX black/red livery) |
 | `rx-fit/img/` | Photos used on the start screen and results |
+| `rx-fit/brand/` | Web-sized RX logo and icon used by the page |
 
-**Rep mode** (toggle top right) adds rep name and notes, tier minimum spend, internal watchouts and scorecard targets. Anyone can flip the toggle, so keep it free of anything you wouldn't show a customer.
+**Branding**: the RX bar uses `rx-fit/brand/rx-horizontal-dark.png` (red/white horizontal logo) and `rx-fit/brand/rx-icon.png` as the favicon. These are web-sized copies of the official files in `brand/rx-logos/`.
 
 **Tier logic** (from the Sept 2026 sales rollout): $36K+/yr → Tier 2 (Tier 3 if they already use or want vending); $15K–$36K → Tier 1; below $15K → "find the right starting point". The spend ranges on step 4 break at $1,250 and $3,000 a month to line up with those minimums.
 
 **Results** stay in the visitor's browser. They can email them (opens their mail app addressed to `CONFIG.contactEmail`), copy a summary, or print / save a PDF. Set `CONFIG.submitEndpoint` to a Retool Workflow webhook to log submissions instead.
+
+## RX brand files (`/brand/rx-logos/`)
+
+Official Richards Xpress logo PNGs from the Managers SharePoint (RX / Richards Xpress Artwork / Logo Files): `horizontal/`, `horizontal-no-spacing/` (tightly cropped), `vertical/`, `icon/` and `monochrome/`. In each set, odd numbers include the "Inventory Solutions" tagline and even numbers don't for horizontal/vertical; variants with white lettering are for dark backgrounds. Source files (AI, EPS, PSD, SVG) stay on SharePoint.
 
 ## Training Creator (admin)
 

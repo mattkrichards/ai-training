@@ -271,3 +271,8 @@ footer.site { max-width: 1180px; margin: 0 auto; padding: 18px 20px 30px; font-s
   .panel, .kpi { box-shadow: none; break-inside: avoid; }
   .res-top, .gauge-wrap, .tier-badge, .road li::before, thead .col-on { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 }
+
+/* Brand logo in the RX bar */
+.rx-mark { display: flex; align-items: center; flex-shrink: 0; text-decoration: none; }
+.rx-mark img { height: 40px; width: auto; display: block; }
+@media (max-width: 760px) { .rx-mark img { height: 32px; } }

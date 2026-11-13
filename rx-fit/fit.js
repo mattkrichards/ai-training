@@ -66,7 +66,7 @@ const TIMELINE = [["ASAP",10],["Within 90 days",8],["This year",5],["Just explor
 
 /* ---------------- State ---------------- */
 const KEY = "rxFit.v1";
-const fresh = () => ({ step: 0, rep: false, d: {} });
+const fresh = () => ({ step: 0, d: {} });
 let S = (() => { try { const s = JSON.parse(localStorage.getItem(KEY)); if (s && s.d) return Object.assign(fresh(), s); } catch (e) {} return fresh(); })();
 const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
 const D = () => S.d;
@@ -78,10 +78,9 @@ function toast(m) { const t = $("#toast"); t.textContent = m; t.classList.add("o
 
 /* ---------------- Field helpers ---------------- */
 function field(f) {
-  if (f.rep && !S.rep) return "";
   if (f.show && !f.show()) return "";
   const v = S.d[f.k];
-  const lab = `<label class="lbl"${f.t === "text" || f.t === "email" || f.t === "tel" || f.t === "select" || f.t === "area" ? ` for="f-${f.k}"` : ""}>${esc(f.label)}${f.rep ? '<span class="repflag">REP</span>' : ""}</label>`;
+  const lab = `<label class="lbl"${f.t === "text" || f.t === "email" || f.t === "tel" || f.t === "select" || f.t === "area" ? ` for="f-${f.k}"` : ""}>${esc(f.label)}</label>`;
   const help = f.help ? `<div class="help">${esc(f.help)}</div>` : "";
   let c = "";
   if (["text", "email", "tel"].includes(f.t)) c = `<input id="f-${f.k}" type="${f.t}" data-k="${f.k}" value="${esc(v)}" placeholder="${esc(f.ph || "")}" autocomplete="${f.ac || "off"}">`;
@@ -103,7 +102,7 @@ const STEPS = [
       <div class="hero-in">
         <p class="eyebrow">RX Fit Check · Richards Xpress</p>
         <h1>Your operation can't afford to <em>slow down.</em></h1>
-        <p class="lede">${S.rep ? "Walk through this with the customer. In about five minutes you'll have an RX fit score, a recommended service tier and a starting scope to bring into the walkthrough." : "Answer a few questions about how you stock supplies today. You'll see how a Richards Xpress program would keep your site fueled, tuned and running at full speed."}</p>
+        <p class="lede">Answer a few questions about how you stock supplies today. You'll see how a Richards Xpress program would keep your site fueled, tuned and running at full speed.</p>
         <div class="cta"><button class="btn btn-hot" type="button" data-go="1">Start the fit check</button><span class="time">About 5 minutes · 4 short steps</span></div>
       </div>
     </section>
@@ -111,7 +110,7 @@ const STEPS = [
     <div class="diff">${CONFIG.difference.map(d => `<div><b>${esc(d[0])}</b><span>${esc(d[1])}</span></div>`).join("")}</div>
     <div class="victory"><b>Built for Victory Lane</b><span>MORE UPTIME · MORE THROUGHPUT · MORE PROFITABILITY</span></div>` },
 
-  { t: "Company", r: () => panel(1, "Step 1 of 4", "Your company", S.rep ? "Who we're talking to and where they run." : "Tell us about this location.", grid([
+  { t: "Company", r: () => panel(1, "Step 1 of 4", "Your company", "Tell us about this location.", grid([
     { k: "company", label: "Company name", t: "text", ac: "organization" },
     { k: "contact", label: "Your name", t: "text", ac: "name" },
     { k: "title", label: "Title / role", t: "text", ph: "e.g. Maintenance Manager" },
@@ -124,8 +123,7 @@ const STEPS = [
     { k: "branch", label: "Nearest Richards branch", t: "one", o: [...CONFIG.branches, "Not sure"] },
     { k: "employees", label: "Employees at this location", t: "one", o: EMP },
     { k: "shifts", label: "Operating schedule", t: "one", o: SHIFTS },
-    { k: "repName", label: "Richards rep", t: "text", rep: true },
-    { k: "repNotes", label: "Rep notes", t: "area", rep: true, full: true, ph: "Relationship context, competitor on site, who else is involved…" }
+    { k: "repName", label: "Richards rep you work with (if any)", t: "text", full: true }
   ])) },
 
   { t: "Today", r: () => panel(2, "Step 2 of 4", "How it works today", "Who manages inventory, how it gets reordered, and what the space looks like.", grid([
@@ -180,10 +178,10 @@ function tier() {
   const m = monthly(), yr = m * 12, d = S.d;
   const countPain = arr("pains").includes("Time spent counting & ordering") || d.topPain === "Time spent counting & ordering";
   if (!m) return { id: 0, title: "Tier set after a usage review", why: "Add an estimate of monthly spend and we'll point to a tier. Your rep confirms it with a usage review either way." };
-  if (yr >= 36000 && vendingSignal()) return { id: 3, title: "Automated Vending", also: 2, why: "Your spend supports full managed replenishment, and you already use or want vending. Tier 3 adds the vending machine program on top of Tier 2 service." + (S.rep ? " Requires the vending justification form." : "") };
+  if (yr >= 36000 && vendingSignal()) return { id: 3, title: "Automated Vending", also: 2, why: "Your spend supports full managed replenishment, and you already use or want vending. Tier 3 adds the vending machine program on top of Tier 2 service." };
   if (yr >= 36000) return { id: 2, title: "Managed Replenishment", also: vendingSignal() || arr("pains").includes("Shrink / walk-off") ? 3 : 0, why: "Your spend supports a full pit-crew program: an RX Specialist counts, restocks and keeps your Richards cabinets and shelving tuned to actual usage." };
   if (yr >= 15000) return { id: 1, title: "Core RX Support", also: countPain ? 2 : 0, why: "Dedicated inventory, barcoded bins, scheduled deliveries and reporting at special pricing." + (countPain ? " Counting time is a top pain point, so Tier 2 (RX Specialist counts and restocks) is worth a look as spend grows." : "") };
-  return { id: 0, below: true, title: "Let's find the right starting point", why: S.rep ? `Stated spend (~${fmt$(yr)}/yr) is below the Tier 1 minimum of $15,000/yr. Look for categories to consolidate with Richards to reach it.` : "Programs are sized to spend. Your rep can look at which categories to bring together so RX makes sense for your site." };
+  return { id: 0, below: true, title: "Let's find the right starting point", why: "Programs are sized to spend. Your rep can look at which categories to bring together so RX makes sense for your site." };
 }
 function cadence() {
   const m = monthly(), sk = (SKUS.find(x => x[0] === S.d.skus) || [0, 0])[1];
@@ -194,18 +192,6 @@ function cadence() {
 function starterCats() {
   const pri = ["Safety & PPE", "Abrasives", "Cutting Tools & Drills", "Fasteners & Hardware", "Lubricants, Adhesives & Chemicals", "Janitorial & Facility", "Welding Supplies"];
   return arr("cats").slice().sort((a, b) => (pri.indexOf(a) < 0 ? 99 : pri.indexOf(a)) - (pri.indexOf(b) < 0 ? 99 : pri.indexOf(b)));
-}
-function watchouts() {
-  const w = [], d = S.d;
-  if (d.mgmt === MGMT[1][0]) w.push(`Another distributor manages inventory today${d.competitor ? " (" + d.competitor + ")" : ""}. Learn the terms, renewal date and what isn't working before proposing a switch.`);
-  if (vendingSignal()) w.push("Vending is in play. Decide which items stay in vending (high-value, controlled) and which move to RX bins (high-volume consumables). Tier 3 needs the vending justification form.");
-  if (arr("brandPref").some(b => /locked|approved/i.test(b))) w.push("Brand or spec restrictions: capture the approved list before building the agreement.");
-  if (arr("uniq").some(u => /badging|orientation/i.test(u))) w.push("Site access: plan badging, orientation and service windows for the RX Specialist before go-live.");
-  if (arr("uniq").includes("Multiple buildings")) w.push("Multiple buildings: map bin locations per area in the agreement so counts and usage reporting line up.");
-  if (arr("uniq").includes("Hazmat / flammables storage")) w.push("Hazmat / flammables: confirm storage rules before stocking chemicals and aerosols.");
-  const t = tier(); if (t.below) w.push("Below Tier 1 minimum on stated spend. Validate spend across all suppliers; it's often understated.");
-  if (d.timeline === "Just exploring") w.push("No firm timeline. Offer the site walkthrough as a low-commitment next step.");
-  return w;
 }
 
 /* ---------------- Results ---------------- */
@@ -249,11 +235,10 @@ function renderResults() {
     <div class="tier-rec">${t.id ? `<div class="tier-badge"><small>TIER</small><b>${t.id}</b></div>` : `<div class="tier-badge"><small>TIER</small><b>?</b></div>`}
       <div><h3>${esc(t.title)}</h3><p>${esc(t.why)}</p>${t.also ? `<p class="muted" style="font-size:14px">Also worth discussing: Tier ${t.also}, ${esc(CONFIG.tiers[t.also - 1].name)}.</p>` : ""}</div></div>
     <div class="tbl-wrap"><table><thead><tr><th>Program component</th>${CONFIG.tiers.map(x => `<th class="c ${on(x.id)}">Tier ${x.id}<small>${esc(x.name)}</small></th>`).join("")}</tr></thead><tbody>
-      ${S.rep ? `<tr><td><b>Minimum annual spend</b> <span class="repflag">REP</span></td>${CONFIG.tiers.map(x => `<td class="c ${on(x.id)}">${esc(x.minLabel)}</td>`).join("")}</tr>` : ""}
       ${CONFIG.tierRows.map(r => `<tr><td>${esc(r[0])}</td>${[1, 2, 3].map(i => cell(r[i]).replace('class="c', `class="c ${on(i)}`)).join("")}</tr>`).join("")}
     </tbody></table></div></section>`;
 
-  h += `<section class="panel"><p class="eyebrow">Starting scope</p><h2 style="font:700 26px var(--cond);margin-bottom:14px">${S.rep ? "Confirm on the site walkthrough" : "Your rep confirms this with you on a site walkthrough"}</h2>
+  h += `<section class="panel"><p class="eyebrow">Starting scope</p><h2 style="font:700 26px var(--cond);margin-bottom:14px">Your rep confirms this with you on a site walkthrough</h2>
     <div class="kpis">
       <div class="kpi"><div class="l">Monthly spend in scope</div><div class="v">${esc(d.spend && d.spend !== "Not sure yet" ? d.spend : "TBD")}</div><div class="s">${m ? "≈ " + fmt$(m * 12) + " a year" : "estimate"}</div></div>
       <div class="kpi"><div class="l">Est. items / bins</div><div class="v">${sk ? "~" + sk : "TBD"}</div><div class="s">barcoded RX bins</div></div>
@@ -266,11 +251,6 @@ function renderResults() {
     <section class="panel"><p class="eyebrow">What you told us matters most</p>${pains.length ? `<ul class="list">${top ? `<li class="top">${esc(top)} · top priority</li>` : ""}${pains.filter(p => p !== top).slice(0, 5).map(p => `<li>${esc(p)}</li>`).join("")}</ul>` : '<p class="muted">No pain points selected.</p>'}</section>
   </div>`;
 
-  if (S.rep) {
-    const W = watchouts();
-    h += `<section class="panel" style="margin-top:18px"><p class="eyebrow">Watchouts <span class="repflag">REP</span></p>${W.length ? `<ul class="list">${W.map(w => `<li>${esc(w)}</li>`).join("")}</ul>` : '<p class="muted">Nothing flagged.</p>'}
-      <p class="note" style="margin-top:12px"><b>Scorecard targets once live:</b> fill rate 98%+, zero stockouts, service completion 98%+, sales at or above the tier minimum.</p></section>`;
-  }
 
   h += `<div class="photo-band" style="margin-top:18px"><img src="img/line.jpg" alt="Production line with an RX Specialist servicing a Richards Xpress cabinet" loading="lazy"><div><b>Stay fueled, tuned and <em>in the race.</em></b><p>We track fill rate, stockouts and on-time service, and adjust as your operation changes.</p></div></div>`;
 
@@ -334,7 +314,7 @@ function summary() {
     `Timeline: ${d.timeline || "—"} · Decision makers: ${d.decision || "—"}`,
     d.goals ? `Success in 6 months: ${d.goals}` : ""
   ];
-  if (S.rep) { const W = watchouts(); if (W.length) L.push("", "WATCHOUTS:", ...W.map(w => "  - " + w)); if (d.repName) L.push("", "Rep: " + d.repName); if (d.repNotes) L.push("Rep notes: " + d.repNotes); }
+  if (d.repName) L.push("", "Richards rep: " + d.repName);
   return L.filter((x, i) => x !== "" || L[i - 1] !== "").join("\n");
 }
 async function copy(text) {
@@ -377,7 +357,6 @@ function render() {
   $("#next").textContent = i === 0 ? "Start" : i === STEPS.length - 2 ? "See my results" : "Next";
   $("#actionbar").classList.toggle("hide", i === STEPS.length - 1);
   $("#abStep").textContent = i === 0 ? "RX Fit Check" : i < STEPS.length - 1 ? `Step ${i} of ${STEPS.length - 2}` : "Results";
-  $("#repMode").checked = S.rep;
   updateGauge();
   if (i === STEPS.length - 1) animateResults();
 }
@@ -408,12 +387,11 @@ document.addEventListener("click", e => {
       .then(r => toast(r.ok ? "Submitted. Thank you!" : "Submit failed")).catch(() => toast("Submit failed"));
   }
   if (act === "reset") {
-    if (b.dataset.armed) { const rep = S.rep; S = fresh(); S.rep = rep; save(); lastStep = 0; render(); toast("Cleared"); }
+    if (b.dataset.armed) { S = fresh(); save(); lastStep = 0; render(); toast("Cleared"); }
     else { b.dataset.armed = "1"; b.textContent = "Click again to clear answers"; b.classList.add("btn-red"); }
   }
 });
 document.addEventListener("input", e => { const k = e.target.dataset.k; if (!k) return; S.d[k] = e.target.value; save(); updateGauge(); });
-$("#repMode").addEventListener("change", e => { S.rep = e.target.checked; save(); const y = window.scrollY; $("#view").innerHTML = STEPS[S.step].r(); if (S.step === STEPS.length - 1) animateResults(); window.scrollTo(0, y); toast(S.rep ? "Rep mode on" : "Customer view"); });
 $("#back").onclick = () => go(S.step - 1);
 $("#next").onclick = () => go(S.step + 1);
 window.addEventListener("resize", moveIndicator);
