@@ -44,7 +44,7 @@ Live at **https://hub.richardssupply.com/rx-fit/**. A five-minute self-guided pe
 | --- | --- |
 | `rx-fit/index.html` | The page shell: utility bar, RX header navigation, action bar |
 | `rx-fit/fit.js` | Questions, scoring, tier logic and results. **`CONFIG` at the top** holds the results email, branches, tier names/minimums, tier comparison rows and the "Richards Xpress difference" copy |
-| `rx-fit/fit.css` | Styling (standalone; RX black/red livery, Montserrat headings, bright blue accent for labels on dark) |
+| `rx-fit/fit.css` | Styling (standalone; RX black/red livery, Montserrat headings, Cool Slate (#65737E) accent from the RX brand guideline) |
 | `rx-fit/img/` | Photos used on the start screen and results |
 | `rx-fit/brand/` | Web-sized RX logo and icon used by the page |
 | `rx-fit/media/` | Background loop (`bg-track.mp4`, 13s, 720p, silent, ~1.7 MB) and its still frame. Made from the original `rx_video_background.mp4` (slowed 25%). Paused when the tab is hidden; reduced-motion users get the still. |

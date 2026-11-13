@@ -170,7 +170,7 @@ function score() {
   const relPts = Math.min(10, (d.existing === "Yes" ? 5 : 0) + (d.contact && (d.email || d.phone) ? 3 : 0) + (d.decision ? 2 : 0));
   const ready = Math.min(40, spacePts + catPts + tPts + relPts);
   const total = opp + ready;
-  const band = total >= 75 ? ["Strong RX fit", "#1f7a46"] : total >= 55 ? ["Good RX fit", "#1f5fd6"] : total >= 35 ? ["Worth exploring", "#946200"] : ["Early stage", "#687078"];
+  const band = total >= 75 ? ["Strong RX fit", "#1f7a46"] : total >= 55 ? ["Good RX fit", "#65737e"] : total >= 35 ? ["Worth exploring", "#946200"] : ["Early stage", "#687078"];
   return { total, opp, ready, band };
 }
 function vendingSignal() { return S.d.mgmt === MGMT[2][0] || arr("space").includes("Vending machines"); }
