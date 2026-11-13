@@ -397,3 +397,13 @@ $("#next").onclick = () => go(S.step + 1);
 window.addEventListener("resize", moveIndicator);
 document.fonts && document.fonts.ready.then(moveIndicator);
 render();
+
+// Pause the background loop when the tab is hidden; respect reduced motion.
+(() => {
+  const v = document.getElementById("bgVideo"); if (!v) return;
+  const rm = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)");
+  const sync = () => { if ((rm && rm.matches) || document.hidden) v.pause(); else v.play().catch(() => {}); };
+  document.addEventListener("visibilitychange", sync);
+  rm && rm.addEventListener && rm.addEventListener("change", sync);
+  sync();
+})();
