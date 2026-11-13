@@ -47,6 +47,7 @@ Live at **https://hub.richardssupply.com/rx-fit/**. A five-minute self-guided pe
 | `rx-fit/fit.css` | Styling (standalone; RX black/red livery, Montserrat headings, bright blue accent for labels on dark) |
 | `rx-fit/img/` | Photos used on the start screen and results |
 | `rx-fit/brand/` | Web-sized RX logo and icon used by the page |
+| `rx-fit/media/` | Background loop (`bg-track.mp4`, 13s, 720p, silent, ~1.7 MB) and its still frame. Made from the original `rx_video_background.mp4` (slowed 25%). Paused when the tab is hidden; reduced-motion users get the still. |
 
 **Branding**: the RX bar uses `rx-fit/brand/rx-horizontal-dark.png` (red/white horizontal logo) and `rx-fit/brand/rx-icon.png` as the favicon. These are web-sized copies of the official files in `brand/rx-logos/`.
 
