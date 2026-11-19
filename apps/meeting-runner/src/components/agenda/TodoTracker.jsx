@@ -44,6 +44,12 @@ export default function TodoTracker({ agenda, onClose }) {
     await persist(updated);
   };
 
+  const handleReassign = async (id, assignees) => {
+    const updated = todos.map((t) => (t.id === id ? { ...t, assignees } : t));
+    setTodos(updated);
+    await persist(updated);
+  };
+
   const handleToggleDone = async (id) => {
     const target = todos.find((t) => t.id === id);
     const doneRecord = { ...target, done: true };
@@ -131,7 +137,8 @@ export default function TodoTracker({ agenda, onClose }) {
                                 <p className="text-xs text-neutral-500 mt-0.5 leading-snug">{todo.description}</p>
                               )}
                               <div className="flex items-center gap-3 mt-1">
-                                {todo.assignees && <span className="text-xs text-neutral-400">{todo.assignees}</span>}
+                                <TeamSelect team={agenda.team || []} value={todo.assignees || ""} emptyLabel="Unassigned"
+                                  onChange={(v) => handleReassign(todo.id, v)} className="text-xs text-neutral-500 bg-transparent border border-neutral-200 rounded-md px-1.5 py-0.5 outline-none hover:border-neutral-300 max-w-[11rem]" />
                                 {todo.created_date && <span className="text-xs text-neutral-300">{todo.created_date}</span>}
                               </div>
                             </div>

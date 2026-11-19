@@ -45,6 +45,12 @@ export default function IssueTracker({ agenda, onClose }) {
     await persist(updated);
   };
 
+  const handleReassign = async (id, owner) => {
+    const updated = issues.map((i) => (i.id === id ? { ...i, owner } : i));
+    setIssues(updated);
+    await persist(updated);
+  };
+
   const handleToggleDone = async (id) => {
     // Mark as done (removes from active list)
     const target = issues.find((i) => i.id === id);
@@ -133,7 +139,8 @@ export default function IssueTracker({ agenda, onClose }) {
                                 <p className="text-xs text-neutral-500 mt-0.5 leading-snug">{issue.description}</p>
                               )}
                               <div className="flex items-center gap-3 mt-1">
-                                {issue.owner && <span className="text-xs text-neutral-400">{issue.owner}</span>}
+                                <TeamSelect team={agenda.team || []} value={issue.owner || ""}
+                                  onChange={(v) => handleReassign(issue.id, v)} className="text-xs text-neutral-500 bg-transparent border border-neutral-200 rounded-md px-1.5 py-0.5 outline-none hover:border-neutral-300 max-w-[11rem]" />
                                 {issue.created_date && <span className="text-xs text-neutral-300">{issue.created_date}</span>}
                               </div>
                             </div>
