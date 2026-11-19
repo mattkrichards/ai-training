@@ -61,7 +61,7 @@ export default function AgendaList({ onNew, onEdit }) {
   };
 
   const totalTime = (items = []) =>
-    items.reduce((sum, item) => sum + (item.duration || 0), 0);
+    items.reduce((sum, item) => sum + (Number(item.duration) || 0), 0);
 
   return (
     <div className="max-w-5xl mx-auto px-6 py-16">
@@ -124,19 +124,19 @@ export default function AgendaList({ onNew, onEdit }) {
       )}
 
       {issuesAgenda && (
-        <IssueTracker agenda={issuesAgenda} onClose={() => setIssuesAgenda(null)} />
+        <IssueTracker agenda={issuesAgenda} onClose={() => { setIssuesAgenda(null); load(); }} />
       )}
       {todosAgenda && (
-        <TodoTracker agenda={todosAgenda} onClose={() => setTodosAgenda(null)} />
+        <TodoTracker agenda={todosAgenda} onClose={() => { setTodosAgenda(null); load(); }} />
       )}
       {rocksAgenda && (
-        <RockTracker agenda={rocksAgenda} onClose={() => setRocksAgenda(null)} />
+        <RockTracker agenda={rocksAgenda} onClose={() => { setRocksAgenda(null); load(); }} />
       )}
       {scorecardAgenda && (
-        <ScorecardTracker agenda={scorecardAgenda} onClose={() => setScorecardAgenda(null)} />
+        <ScorecardTracker agenda={scorecardAgenda} onClose={() => { setScorecardAgenda(null); load(); }} />
       )}
       {teamAgenda && (
-        <TeamTracker agenda={teamAgenda} onClose={() => setTeamAgenda(null)} />
+        <TeamTracker agenda={teamAgenda} onClose={() => { setTeamAgenda(null); load(); }} />
       )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

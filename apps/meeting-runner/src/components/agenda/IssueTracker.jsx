@@ -1,13 +1,16 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { api as base44 } from "@/api/m365";
 import { Plus, Trash2, CheckCircle2, Circle, GripVertical, X, ChevronDown, ChevronUp } from "lucide-react";
+import TeamSelect from "./TeamSelect";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 
 const genId = () => Math.random().toString(36).slice(2, 9);
 
 export default function IssueTracker({ agenda, onClose }) {
+  // Latest saved copy of the agenda, so each save builds on the previous one
+  const latest = useRef(agenda);
   const [issues, setIssues] = useState(
-    (agenda.issues || []).filter((i) => !i.deleted && !i.done)
+    (latest.current.issues || []).filter((i) => !i.deleted && !i.done)
   );
   const [saving, setSaving] = useState(false);
   const [showForm, setShowForm] = useState(false);
@@ -16,9 +19,9 @@ export default function IssueTracker({ agenda, onClose }) {
   const persist = async (updated) => {
     setSaving(true);
     // Merge with existing done/deleted issues so we don't lose them
-    const existing = agenda.issues || [];
+    const existing = latest.current.issues || [];
     const hiddenIssues = existing.filter((i) => i.deleted || i.done);
-    await base44.entities.Agenda.update(agenda.id, {
+    latest.current = await base44.entities.Agenda.update(agenda.id, {
       issues: [...hiddenIssues, ...updated],
     });
     setSaving(false);
@@ -49,9 +52,9 @@ export default function IssueTracker({ agenda, onClose }) {
     const updated = issues.filter((i) => i.id !== id);
     setIssues(updated);
     setSaving(true);
-    const existing = agenda.issues || [];
+    const existing = latest.current.issues || [];
     const others = existing.filter((i) => i.id !== id && (i.deleted || i.done));
-    await base44.entities.Agenda.update(agenda.id, {
+    latest.current = await base44.entities.Agenda.update(agenda.id, {
       issues: [...others, donedIssue, ...updated],
     });
     setSaving(false);
@@ -63,9 +66,9 @@ export default function IssueTracker({ agenda, onClose }) {
     const updated = issues.filter((i) => i.id !== id);
     setIssues(updated);
     setSaving(true);
-    const existing = agenda.issues || [];
+    const existing = latest.current.issues || [];
     const others = existing.filter((i) => i.id !== id && (i.deleted || i.done));
-    await base44.entities.Agenda.update(agenda.id, {
+    latest.current = await base44.entities.Agenda.update(agenda.id, {
       issues: [...others, deletedIssue, ...updated],
     });
     setSaving(false);
@@ -180,13 +183,8 @@ export default function IssueTracker({ agenda, onClose }) {
                 rows={2}
                 className="w-full text-xs text-neutral-600 placeholder:text-neutral-300 bg-transparent outline-none resize-none"
               />
-              <input
-                type="text"
-                placeholder="Owner (optional)"
-                value={form.owner}
-                onChange={(e) => setForm((f) => ({ ...f, owner: e.target.value }))}
-                className="w-full text-xs text-neutral-500 placeholder:text-neutral-300 bg-transparent outline-none"
-              />
+              <TeamSelect team={agenda.team || []} value={form.owner}
+                onChange={(v) => setForm((f) => ({ ...f, owner: v }))} />
               <div className="flex gap-2 pt-1">
                 <button
                   onClick={handleAdd}

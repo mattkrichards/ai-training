@@ -113,7 +113,7 @@ export default function AgendaBuilder({ agenda, onBack }) {
                       min="1"
                       max="999"
                       value={item.duration}
-                      onChange={(e) => updateItem(idx, "duration", e.target.value)}
+                      onChange={(e) => updateItem(idx, "duration", e.target.value === "" ? "" : Number(e.target.value))}
                       className="w-10 text-sm font-semibold text-center text-neutral-700 bg-transparent outline-none"
                     />
                     <span className="text-xs text-neutral-400">min</span>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { api as base44 } from "@/api/m365";
 import { Target, Plus, Trash2, Pencil, X, TrendingUp, TrendingDown } from "lucide-react";
 
@@ -221,14 +221,16 @@ function MetricCard({ metric, onDelete, onUpdate, team }) {
 }
 
 export default function ScorecardTracker({ agenda, onClose }) {
-  const [metrics, setMetrics] = useState(agenda.scorecard || []);
+  // Latest saved copy of the agenda, so each save builds on the previous one
+  const latest = useRef(agenda);
+  const [metrics, setMetrics] = useState(latest.current.scorecard || []);
   const [saving, setSaving] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState(emptyMetric());
 
   const persist = async (updated) => {
     setSaving(true);
-    await base44.entities.Agenda.update(agenda.id, { scorecard: updated });
+    latest.current = await base44.entities.Agenda.update(agenda.id, { scorecard: updated });
     setSaving(false);
   };
 

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { api as base44 } from "@/api/m365";
 import { Plus, Trash2, Pencil, X, Users, Mail } from "lucide-react";
 
@@ -83,14 +83,16 @@ function MemberCard({ member, onDelete, onUpdate }) {
 }
 
 export default function TeamTracker({ agenda, onClose }) {
-  const [members, setMembers] = useState(agenda.team || []);
+  // Latest saved copy of the agenda, so each save builds on the previous one
+  const latest = useRef(agenda);
+  const [members, setMembers] = useState(latest.current.team || []);
   const [saving, setSaving] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState(emptyMember());
 
   const persist = async (updated) => {
     setSaving(true);
-    await base44.entities.Agenda.update(agenda.id, { team: updated });
+    latest.current = await base44.entities.Agenda.update(agenda.id, { team: updated });
     setSaving(false);
   };
 

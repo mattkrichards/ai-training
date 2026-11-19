@@ -1,13 +1,16 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { api as base44 } from "@/api/m365";
 import { Plus, Trash2, CheckCircle2, GripVertical, X } from "lucide-react";
+import TeamSelect from "./TeamSelect";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 
 const genId = () => Math.random().toString(36).slice(2, 9);
 
 export default function TodoTracker({ agenda, onClose }) {
+  // Latest saved copy of the agenda, so each save builds on the previous one
+  const latest = useRef(agenda);
   const [todos, setTodos] = useState(
-    (agenda.todos || []).filter((t) => !t.deleted && !t.done)
+    (latest.current.todos || []).filter((t) => !t.deleted && !t.done)
   );
   const [saving, setSaving] = useState(false);
   const [showForm, setShowForm] = useState(false);
@@ -15,9 +18,9 @@ export default function TodoTracker({ agenda, onClose }) {
 
   const persist = async (updated) => {
     setSaving(true);
-    const existing = agenda.todos || [];
+    const existing = latest.current.todos || [];
     const hidden = existing.filter((t) => t.deleted || t.done);
-    await base44.entities.Agenda.update(agenda.id, {
+    latest.current = await base44.entities.Agenda.update(agenda.id, {
       todos: [...hidden, ...updated],
     });
     setSaving(false);
@@ -47,9 +50,9 @@ export default function TodoTracker({ agenda, onClose }) {
     const updated = todos.filter((t) => t.id !== id);
     setTodos(updated);
     setSaving(true);
-    const existing = agenda.todos || [];
+    const existing = latest.current.todos || [];
     const others = existing.filter((t) => t.id !== id && (t.deleted || t.done));
-    await base44.entities.Agenda.update(agenda.id, {
+    latest.current = await base44.entities.Agenda.update(agenda.id, {
       todos: [...others, doneRecord, ...updated],
     });
     setSaving(false);
@@ -61,9 +64,9 @@ export default function TodoTracker({ agenda, onClose }) {
     const updated = todos.filter((t) => t.id !== id);
     setTodos(updated);
     setSaving(true);
-    const existing = agenda.todos || [];
+    const existing = latest.current.todos || [];
     const others = existing.filter((t) => t.id !== id && (t.deleted || t.done));
-    await base44.entities.Agenda.update(agenda.id, {
+    latest.current = await base44.entities.Agenda.update(agenda.id, {
       todos: [...others, deletedRecord, ...updated],
     });
     setSaving(false);
@@ -178,13 +181,8 @@ export default function TodoTracker({ agenda, onClose }) {
                 rows={2}
                 className="w-full text-xs text-neutral-600 placeholder:text-neutral-300 bg-transparent outline-none resize-none"
               />
-              <input
-                type="text"
-                placeholder="Assignees (optional)"
-                value={form.assignees}
-                onChange={(e) => setForm((f) => ({ ...f, assignees: e.target.value }))}
-                className="w-full text-xs text-neutral-500 placeholder:text-neutral-300 bg-transparent outline-none"
-              />
+              <TeamSelect team={agenda.team || []} value={form.assignees} emptyLabel="Unassigned"
+                onChange={(v) => setForm((f) => ({ ...f, assignees: v }))} />
               <div className="flex gap-2 pt-1">
                 <button
                   onClick={handleAdd}
