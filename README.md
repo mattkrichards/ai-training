@@ -83,7 +83,7 @@ Moved from Base44 in Nov 2026. It now runs on Microsoft 365:
 1. **Entra app registration** (Entra admin center → App registrations → New registration): name it `MeetingRunner`, single tenant. Under **Authentication** → Add a platform → **Single-page application**, redirect URI `https://hub.richardssupply.com/meeting-runner/` (add `http://localhost:5173/meeting-runner/` too for local testing).
 2. **API permissions** (Microsoft Graph, Delegated): `User.Read`, `Sites.ReadWrite.All`, `Mail.Send`. Click **Grant admin consent** so staff aren't asked to consent one by one.
 3. **SharePoint site**: pick the site that will hold the agendas, and give everyone who runs meetings **Edit** access to it. The app creates the `MeetingRunner/agendas` folder itself.
-4. Fill in `meeting-runner/config.js`: `tenantId` and `clientId` (from the app registration's Overview page) and `siteUrl` (e.g. `https://richardssupply.sharepoint.com/sites/Leadership`). Commit it; the app is live about a minute later.
+4. Fill in `meeting-runner/config.js`: `tenantId` and `clientId` (from the app registration's Overview page) and `siteUrl` (currently `https://rscadminrichardssupply.sharepoint.com/sites/MeetingRunner`, a private team site backed by the MeetingRunner Microsoft 365 group). Commit it; the app is live about a minute later.
 
 **Bringing over Base44 data**: in Base44, open the app's Dashboard → Data → Agenda → export as CSV. In MeetingRunner, click **Import** and choose that file. Agendas keep their IDs. Importing the same file again overwrites those agendas with the file's copy.
 

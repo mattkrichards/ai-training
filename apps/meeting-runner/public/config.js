@@ -7,7 +7,7 @@ window.MEETING_RUNNER_CONFIG = {
 
   // SharePoint site that stores the agendas. Everyone who uses the app needs
   // edit access to this site's document library.
-  siteUrl: "",    // e.g. "https://richardssupply.sharepoint.com/sites/Leadership"
+  siteUrl: "https://rscadminrichardssupply.sharepoint.com/sites/MeetingRunner",    // e.g. "https://richardssupply.sharepoint.com/sites/Leadership"
   library: "",    // blank = the site's default "Documents" library
   folder: "MeetingRunner", // agendas are saved as <folder>/agendas/<id>.json
 };
