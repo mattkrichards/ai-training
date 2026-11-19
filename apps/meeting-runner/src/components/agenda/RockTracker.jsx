@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
+import TeamSelect from "./TeamSelect";
 import { api as base44 } from "@/api/m365";
-import { Plus, Trash2, ChevronDown, ChevronUp, X, CheckCircle2, Pencil } from "lucide-react";
+import { Plus, Trash2, ChevronDown, ChevronUp, X, CheckCircle2, Pencil, Wand2 } from "lucide-react";
+import QuickImport from "./QuickImport";
 
 const genId = () => Math.random().toString(36).slice(2, 9);
 
@@ -12,7 +14,7 @@ const emptyForm = () => ({
 
 const emptyMilestone = () => ({ title: "", due_date: "" });
 
-function RockCard({ rock, onDelete, onUpdate, onComplete }) {
+function RockCard({ rock, onDelete, onUpdate, onComplete, team = [] }) {
   const [expanded, setExpanded] = useState(false);
   const [editing, setEditing] = useState(false);
   const [editForm, setEditForm] = useState({ title: rock.title, owner: rock.owner || "", start_date: rock.start_date || "", due_date: rock.due_date || "" });
@@ -74,12 +76,8 @@ function RockCard({ rock, onDelete, onUpdate, onComplete }) {
               onKeyDown={(e) => e.key === "Enter" && saveEdit()}
               className="w-full text-sm font-semibold text-neutral-800 bg-white rounded-lg border border-neutral-200 px-2 py-1 outline-none"
             />
-            <input
-              value={editForm.owner}
-              onChange={(e) => setEditForm((f) => ({ ...f, owner: e.target.value }))}
-              placeholder="Owner"
-              className="w-full text-xs text-neutral-500 bg-white rounded-lg border border-neutral-200 px-2 py-1 outline-none"
-            />
+            <TeamSelect team={team} value={editForm.owner}
+              onChange={(v) => setEditForm((f) => ({ ...f, owner: v }))} />
             <div className="grid grid-cols-2 gap-2">
               <div>
                 <label className="text-[10px] text-neutral-400 uppercase tracking-wider">Start Date</label>
@@ -250,17 +248,20 @@ function RockCard({ rock, onDelete, onUpdate, onComplete }) {
 }
 
 export default function RockTracker({ agenda, onClose }) {
+  // Latest saved copy of the agenda, so each save builds on the previous one
+  const latest = useRef(agenda);
   const [rocks, setRocks] = useState(
-    (agenda.rocks || []).filter((r) => !r.deleted && !r.done)
+    (latest.current.rocks || []).filter((r) => !r.deleted && !r.done)
   );
   const [saving, setSaving] = useState(false);
   const [showForm, setShowForm] = useState(false);
+  const [showImport, setShowImport] = useState(false);
   const [form, setForm] = useState(emptyForm());
 
   const persist = async (updated) => {
     setSaving(true);
-    const deleted = (agenda.rocks || []).filter((r) => r.deleted);
-    await base44.entities.Agenda.update(agenda.id, {
+    const deleted = (latest.current.rocks || []).filter((r) => r.deleted);
+    latest.current = await base44.entities.Agenda.update(agenda.id, {
       rocks: [...deleted, ...updated],
     });
     setSaving(false);
@@ -285,14 +286,30 @@ export default function RockTracker({ agenda, onClose }) {
     await persist(updated);
   };
 
+  const handleImport = async (found) => {
+    const added = found.map((x) => ({
+      id: genId(),
+      title: x.title,
+      owner: x.owner || "",
+      start_date: "",
+      due_date: x.due_date || "",
+      on_track: true,
+      deleted: false,
+      milestones: (x.milestones || []).map((m) => ({ id: genId(), title: m.title, due_date: m.due_date || "", done: false })),
+    }));
+    const updated = [...rocks, ...added];
+    setRocks(updated);
+    await persist(updated);
+  };
+
   const handleDelete = async (id) => {
     const target = rocks.find((r) => r.id === id);
     const updated = rocks.filter((r) => r.id !== id);
     setRocks(updated);
     setSaving(true);
-    const existing = agenda.rocks || [];
+    const existing = latest.current.rocks || [];
     const others = existing.filter((r) => r.id !== id && r.deleted);
-    await base44.entities.Agenda.update(agenda.id, {
+    latest.current = await base44.entities.Agenda.update(agenda.id, {
       rocks: [...others, { ...target, deleted: true }, ...updated],
     });
     setSaving(false);
@@ -309,8 +326,8 @@ export default function RockTracker({ agenda, onClose }) {
     const updated = rocks.filter((r) => r.id !== id);
     setRocks(updated);
     setSaving(true);
-    const existing = (agenda.rocks || []).filter((r) => r.id !== id);
-    await base44.entities.Agenda.update(agenda.id, {
+    const existing = (latest.current.rocks || []).filter((r) => r.id !== id);
+    latest.current = await base44.entities.Agenda.update(agenda.id, {
       rocks: [...existing, { ...target, done: true }],
     });
     setSaving(false);
@@ -343,7 +360,7 @@ export default function RockTracker({ agenda, onClose }) {
           )}
 
           {rocks.map((rock) => (
-            <RockCard key={rock.id} rock={rock} onDelete={handleDelete} onUpdate={handleUpdate} onComplete={handleComplete} />
+            <RockCard key={rock.id} rock={rock} onDelete={handleDelete} onUpdate={handleUpdate} onComplete={handleComplete} team={agenda.team || []} />
           ))}
 
           {/* Add form */}
@@ -358,13 +375,8 @@ export default function RockTracker({ agenda, onClose }) {
                 onKeyDown={(e) => e.key === "Enter" && handleAdd()}
                 className="w-full text-sm font-semibold text-neutral-800 placeholder:text-neutral-300 bg-transparent outline-none border-b border-neutral-200 pb-1"
               />
-              <input
-                type="text"
-                placeholder="Owner (optional)"
-                value={form.owner}
-                onChange={(e) => setForm((f) => ({ ...f, owner: e.target.value }))}
-                className="w-full text-xs text-neutral-500 placeholder:text-neutral-300 bg-transparent outline-none"
-              />
+              <TeamSelect team={agenda.team || []} value={form.owner}
+                onChange={(v) => setForm((f) => ({ ...f, owner: v }))} />
               <div className="grid grid-cols-2 gap-2">
                 <div>
                   <label className="text-[10px] text-neutral-400 uppercase tracking-wider">Start Date</label>
@@ -422,17 +434,29 @@ export default function RockTracker({ agenda, onClose }) {
 
         {/* Footer */}
         {!showForm && (
-          <div className="px-6 pb-5">
+          <div className="px-6 pb-5 flex gap-2">
             <button
               onClick={() => setShowForm(true)}
-              className="w-full flex items-center justify-center gap-2 py-2.5 border-2 border-dashed border-neutral-200 rounded-2xl text-sm text-neutral-400 hover:border-neutral-300 hover:text-neutral-600 transition-colors"
+              className="flex-1 flex items-center justify-center gap-2 py-2.5 border-2 border-dashed border-neutral-200 rounded-2xl text-sm text-neutral-400 hover:border-neutral-300 hover:text-neutral-600 transition-colors"
             >
               <Plus className="w-4 h-4" />
               Add Rock
             </button>
+            <button
+              onClick={() => setShowImport(true)}
+              title="Paste notes, a screenshot or a document"
+              className="flex items-center justify-center gap-2 px-4 py-2.5 border-2 border-dashed border-neutral-200 rounded-2xl text-sm text-neutral-400 hover:border-neutral-300 hover:text-neutral-600 transition-colors"
+            >
+              <Wand2 className="w-4 h-4" />
+              Quick Import
+            </button>
           </div>
         )}
       </div>
+      {showImport && (
+        <QuickImport kind="rocks" team={agenda.team || []} existing={rocks.map((x) => x.title)}
+          onImport={handleImport} onClose={() => setShowImport(false)} />
+      )}
     </div>
   );
 }

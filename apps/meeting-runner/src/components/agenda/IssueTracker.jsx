@@ -1,24 +1,31 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { api as base44 } from "@/api/m365";
-import { Plus, Trash2, CheckCircle2, Circle, GripVertical, X, ChevronDown, ChevronUp } from "lucide-react";
+import { Plus, Trash2, CheckCircle2, Circle, GripVertical, X, ChevronDown, ChevronUp, Wand2, Pencil } from "lucide-react";
+import QuickImport from "./QuickImport";
+import TeamSelect from "./TeamSelect";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 
 const genId = () => Math.random().toString(36).slice(2, 9);
 
 export default function IssueTracker({ agenda, onClose }) {
+  // Latest saved copy of the agenda, so each save builds on the previous one
+  const latest = useRef(agenda);
   const [issues, setIssues] = useState(
-    (agenda.issues || []).filter((i) => !i.deleted && !i.done)
+    (latest.current.issues || []).filter((i) => !i.deleted && !i.done)
   );
   const [saving, setSaving] = useState(false);
   const [showForm, setShowForm] = useState(false);
+  const [showImport, setShowImport] = useState(false);
+  const [editingId, setEditingId] = useState(null);
+  const [editDraft, setEditDraft] = useState({ title: "", description: "" });
   const [form, setForm] = useState({ title: "", description: "", owner: "" });
 
   const persist = async (updated) => {
     setSaving(true);
     // Merge with existing done/deleted issues so we don't lose them
-    const existing = agenda.issues || [];
+    const existing = latest.current.issues || [];
     const hiddenIssues = existing.filter((i) => i.deleted || i.done);
-    await base44.entities.Agenda.update(agenda.id, {
+    latest.current = await base44.entities.Agenda.update(agenda.id, {
       issues: [...hiddenIssues, ...updated],
     });
     setSaving(false);
@@ -42,6 +49,41 @@ export default function IssueTracker({ agenda, onClose }) {
     await persist(updated);
   };
 
+  const handleImport = async (found) => {
+    const today = new Date().toISOString().split("T")[0];
+    const added = found.map((x) => ({
+      id: genId(),
+      title: x.title,
+      description: x.description || "",
+      owner: x.owner || "",
+      created_date: today,
+      done: false,
+      deleted: false,
+    }));
+    const updated = [...issues, ...added];
+    setIssues(updated);
+    await persist(updated);
+  };
+
+  const startEdit = (item) => {
+    setEditingId(item.id);
+    setEditDraft({ title: item.title || "", description: item.description || "" });
+  };
+
+  const saveEdit = async () => {
+    if (!editDraft.title.trim()) return;
+    const updated = issues.map((x) => (x.id === editingId ? { ...x, title: editDraft.title.trim(), description: editDraft.description.trim() } : x));
+    setIssues(updated);
+    setEditingId(null);
+    await persist(updated);
+  };
+
+  const handleReassign = async (id, owner) => {
+    const updated = issues.map((i) => (i.id === id ? { ...i, owner } : i));
+    setIssues(updated);
+    await persist(updated);
+  };
+
   const handleToggleDone = async (id) => {
     // Mark as done (removes from active list)
     const target = issues.find((i) => i.id === id);
@@ -49,9 +91,9 @@ export default function IssueTracker({ agenda, onClose }) {
     const updated = issues.filter((i) => i.id !== id);
     setIssues(updated);
     setSaving(true);
-    const existing = agenda.issues || [];
+    const existing = latest.current.issues || [];
     const others = existing.filter((i) => i.id !== id && (i.deleted || i.done));
-    await base44.entities.Agenda.update(agenda.id, {
+    latest.current = await base44.entities.Agenda.update(agenda.id, {
       issues: [...others, donedIssue, ...updated],
     });
     setSaving(false);
@@ -63,9 +105,9 @@ export default function IssueTracker({ agenda, onClose }) {
     const updated = issues.filter((i) => i.id !== id);
     setIssues(updated);
     setSaving(true);
-    const existing = agenda.issues || [];
+    const existing = latest.current.issues || [];
     const others = existing.filter((i) => i.id !== id && (i.deleted || i.done));
-    await base44.entities.Agenda.update(agenda.id, {
+    latest.current = await base44.entities.Agenda.update(agenda.id, {
       issues: [...others, deletedIssue, ...updated],
     });
     setSaving(false);
@@ -125,16 +167,38 @@ export default function IssueTracker({ agenda, onClose }) {
                               <GripVertical className="w-4 h-4" />
                             </div>
                             <div className="flex-1 min-w-0">
-                              <p className="text-sm font-semibold text-neutral-800 leading-snug">{issue.title}</p>
-                              {issue.description && (
-                                <p className="text-xs text-neutral-500 mt-0.5 leading-snug">{issue.description}</p>
+                              {editingId === issue.id ? (
+                                <div className="space-y-1.5 mb-1">
+                                  <input autoFocus value={editDraft.title}
+                                    onChange={(e) => setEditDraft((d) => ({ ...d, title: e.target.value }))}
+                                    onKeyDown={(e) => { if (e.key === "Enter") saveEdit(); if (e.key === "Escape") setEditingId(null); }}
+                                    className="w-full text-sm font-semibold text-neutral-800 bg-white rounded-lg border border-neutral-200 px-2 py-1 outline-none" />
+                                  <textarea value={editDraft.description} rows={2} placeholder="Description (optional)"
+                                    onChange={(e) => setEditDraft((d) => ({ ...d, description: e.target.value }))}
+                                    className="w-full text-xs text-neutral-600 bg-white rounded-lg border border-neutral-200 px-2 py-1 outline-none resize-none" />
+                                  <div className="flex gap-2">
+                                    <button onClick={saveEdit} disabled={!editDraft.title.trim()} className="px-3 py-1 bg-neutral-900 text-white text-xs font-semibold rounded-lg disabled:opacity-40">Save</button>
+                                    <button onClick={() => setEditingId(null)} className="px-3 py-1 text-xs text-neutral-500">Cancel</button>
+                                  </div>
+                                </div>
+                              ) : (
+                                <>
+                                  <p className="text-sm font-semibold text-neutral-800 leading-snug">{issue.title}</p>
+                                  {issue.description && (
+                                    <p className="text-xs text-neutral-500 mt-0.5 leading-snug">{issue.description}</p>
+                                  )}
+                                </>
                               )}
                               <div className="flex items-center gap-3 mt-1">
-                                {issue.owner && <span className="text-xs text-neutral-400">{issue.owner}</span>}
+                                <TeamSelect team={agenda.team || []} value={issue.owner || ""}
+                                  onChange={(v) => handleReassign(issue.id, v)} className="text-xs text-neutral-500 bg-transparent border border-neutral-200 rounded-md px-1.5 py-0.5 outline-none hover:border-neutral-300 max-w-[11rem]" />
                                 {issue.created_date && <span className="text-xs text-neutral-300">{issue.created_date}</span>}
                               </div>
                             </div>
                             <div className="flex items-center gap-1 flex-shrink-0">
+                              <button onClick={() => startEdit(issue)} title="Edit" className="p-1.5 text-neutral-300 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors">
+                                <Pencil className="w-3.5 h-3.5" />
+                              </button>
                               <button
                                 onClick={() => handleToggleDone(issue.id)}
                                 title="Mark done"
@@ -180,13 +244,8 @@ export default function IssueTracker({ agenda, onClose }) {
                 rows={2}
                 className="w-full text-xs text-neutral-600 placeholder:text-neutral-300 bg-transparent outline-none resize-none"
               />
-              <input
-                type="text"
-                placeholder="Owner (optional)"
-                value={form.owner}
-                onChange={(e) => setForm((f) => ({ ...f, owner: e.target.value }))}
-                className="w-full text-xs text-neutral-500 placeholder:text-neutral-300 bg-transparent outline-none"
-              />
+              <TeamSelect team={agenda.team || []} value={form.owner}
+                onChange={(v) => setForm((f) => ({ ...f, owner: v }))} />
               <div className="flex gap-2 pt-1">
                 <button
                   onClick={handleAdd}
@@ -208,17 +267,29 @@ export default function IssueTracker({ agenda, onClose }) {
 
         {/* Footer */}
         {!showForm && (
-          <div className="px-6 pb-5">
+          <div className="px-6 pb-5 flex gap-2">
             <button
               onClick={() => setShowForm(true)}
-              className="w-full flex items-center justify-center gap-2 py-2.5 border-2 border-dashed border-neutral-200 rounded-2xl text-sm text-neutral-400 hover:border-neutral-300 hover:text-neutral-600 transition-colors"
+              className="flex-1 flex items-center justify-center gap-2 py-2.5 border-2 border-dashed border-neutral-200 rounded-2xl text-sm text-neutral-400 hover:border-neutral-300 hover:text-neutral-600 transition-colors"
             >
               <Plus className="w-4 h-4" />
               Add Issue
             </button>
+            <button
+              onClick={() => setShowImport(true)}
+              title="Paste notes, a screenshot or a document"
+              className="flex items-center justify-center gap-2 px-4 py-2.5 border-2 border-dashed border-neutral-200 rounded-2xl text-sm text-neutral-400 hover:border-neutral-300 hover:text-neutral-600 transition-colors"
+            >
+              <Wand2 className="w-4 h-4" />
+              Quick Import
+            </button>
           </div>
         )}
       </div>
+      {showImport && (
+        <QuickImport kind="issues" team={agenda.team || []} existing={issues.map((x) => x.title)}
+          onImport={handleImport} onClose={() => setShowImport(false)} />
+      )}
     </div>
   );
 }

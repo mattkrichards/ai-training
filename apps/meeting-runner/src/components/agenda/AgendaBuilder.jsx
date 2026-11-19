@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { api as base44 } from "@/api/m365";
+import TeamSelect from "./TeamSelect";
 import { ArrowLeft, Plus, GripVertical, Trash2, Save, Clock } from "lucide-react";
 
 const genId = () => Math.random().toString(36).slice(2, 9);
@@ -113,19 +114,15 @@ export default function AgendaBuilder({ agenda, onBack }) {
                       min="1"
                       max="999"
                       value={item.duration}
-                      onChange={(e) => updateItem(idx, "duration", e.target.value)}
+                      onChange={(e) => updateItem(idx, "duration", e.target.value === "" ? "" : Number(e.target.value))}
                       className="w-10 text-sm font-semibold text-center text-neutral-700 bg-transparent outline-none"
                     />
                     <span className="text-xs text-neutral-400">min</span>
                   </div>
                 </div>
-                <input
-                  type="text"
-                  placeholder="Presenter (optional)"
-                  value={item.presenter}
-                  onChange={(e) => updateItem(idx, "presenter", e.target.value)}
-                  className="w-full text-xs text-neutral-500 placeholder:text-neutral-300 bg-transparent outline-none"
-                />
+                <TeamSelect team={agenda?.team || []} value={item.presenter || ""} emptyLabel="No presenter"
+                  onChange={(v) => updateItem(idx, "presenter", v)}
+                  className="w-full text-xs text-neutral-500 bg-transparent border border-neutral-200 rounded-md px-1.5 py-1 outline-none" />
                 <textarea
                   placeholder="Notes (optional)"
                   value={item.notes}

@@ -2,11 +2,14 @@ import { useState, useEffect, useRef } from "react";
 import { createPageUrl } from "@/utils";
 import { api as base44 } from "@/api/m365";
 import {
-  ChevronLeft, ChevronRight, Play, Pause, RotateCcw, X,
-  CheckCircle, Copy, Mail, FileText, AlertCircle, GripVertical,
-  Trash2, CheckCircle2, Pencil, Plus, Target, ChevronDown
+  ChevronLeft, ChevronRight, Play, Pause, RotateCcw, X, CheckCircle, Copy, Mail, FileText, AlertCircle, GripVertical, Trash2, CheckCircle2, Pencil, Plus, Target, ChevronDown, Wand2, Users
 } from "lucide-react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
+import IssueTracker from "@/components/agenda/IssueTracker";
+import TodoTracker from "@/components/agenda/TodoTracker";
+import RockTracker from "@/components/agenda/RockTracker";
+import ScorecardTracker from "@/components/agenda/ScorecardTracker";
+import TeamTracker from "@/components/agenda/TeamTracker";
 
 function formatTime(seconds) {
   const m = Math.floor(Math.abs(seconds) / 60);
@@ -115,6 +118,39 @@ export default function MeetingTimer({ agenda }) {
   const [showLogFor, setShowLogFor] = useState(null);
   const [showAddMetricForm, setShowAddMetricForm] = useState(false);
   const [addMetricForm, setAddMetricForm] = useState({ name: "", description: "", owner: "", target: "", unit: "", higher_is_better: true });
+
+  // Team (can change mid-meeting from the Team panel)
+  const [team, setTeam] = useState(agenda.team || []);
+
+  // Full edit / Quick Import panels opened from the meeting: "issues" | "todos" | "rocks" | "scorecard" | "team"
+  const [manage, setManage] = useState(null);
+
+  // Current state of this agenda as the meeting sees it, for opening a panel.
+  const liveAgenda = () => ({
+    ...agenda,
+    issues: [...hiddenIssuesRef.current, ...issues],
+    todos: [...hiddenTodosRef.current, ...todos],
+    rocks: [...hiddenRocksRef.current, ...rocks],
+    scorecard,
+    team,
+  });
+
+  // After a panel closes, reload what was saved so the meeting shows it. The timer keeps running.
+  const closeManage = async () => {
+    setManage(null);
+    try {
+      const [rec] = await base44.entities.Agenda.filter({ id: agenda.id });
+      if (!rec) return;
+      const split = (list = []) => [list.filter((x) => !x.deleted && !x.done), list.filter((x) => x.deleted || x.done)];
+      const [ai, hi] = split(rec.issues); setIssues(ai); hiddenIssuesRef.current = hi;
+      const [at, ht] = split(rec.todos); setTodos(at); hiddenTodosRef.current = ht;
+      const [ar, hr] = split(rec.rocks); setRocks(ar); hiddenRocksRef.current = hr;
+      setScorecard(rec.scorecard || []);
+      setTeam(rec.team || []);
+    } catch (e) {
+      console.error("Couldn't refresh after editing:", e);
+    }
+  };
 
   // Right sidebar tab: "issues" | "todos" | "rocks"
   const [rightTab, setRightTab] = useState("issues");
@@ -771,7 +807,13 @@ export default function MeetingTimer({ agenda }) {
         <a href={createPageUrl("Home")} className="flex items-center gap-2 text-white/40 hover:text-white/80 text-sm transition-colors">
           <X className="w-4 h-4" /> Exit
         </a>
-        <p className="text-xs font-semibold tracking-[0.2em] text-white/30 uppercase">{agenda.title}</p>
+        <div className="flex items-center gap-3">
+          <p className="text-xs font-semibold tracking-[0.2em] text-white/30 uppercase">{agenda.title}</p>
+          <button onClick={() => setManage("team")} title="Team members"
+            className="flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-semibold uppercase tracking-wider text-white/30 hover:text-white/80 hover:bg-white/10 transition-colors">
+            <Users className="w-3 h-3" /> Team ({team.length})
+          </button>
+        </div>
         <div className="text-right">
           <p className="text-xs text-white/30">{completedMins} / {totalMins} min allocated</p>
           <p className="text-sm font-semibold tabular-nums text-white/60">{formatTime(totalElapsed)} elapsed</p>
@@ -953,13 +995,19 @@ export default function MeetingTimer({ agenda }) {
                 <p className="text-xs font-semibold tracking-[0.15em] text-white/30 uppercase flex items-center gap-1.5">
                   <AlertCircle className="w-3 h-3" /> Issues
                 </p>
-                <button
-                  onClick={() => setShowAddForm((v) => !v)}
-                  className="p-1 rounded-lg text-white/30 hover:text-white/70 hover:bg-white/10 transition-colors"
-                  title="Add issue"
-                >
-                  <Plus className="w-3.5 h-3.5" />
-                </button>
+                <div className="flex items-center gap-1">
+                  <button onClick={() => setManage("issues")} title="Edit everything here, or Quick Import"
+                    className="flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-semibold uppercase tracking-wider text-white/40 hover:text-white/80 hover:bg-white/10 transition-colors">
+                    <Wand2 className="w-3 h-3" /> Manage / Import
+                  </button>
+                  <button
+                    onClick={() => setShowAddForm((v) => !v)}
+                    className="p-1 rounded-lg text-white/30 hover:text-white/70 hover:bg-white/10 transition-colors"
+                    title="Add issue"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                  </button>
+                </div>
               </div>
 
               {showAddForm && (
@@ -975,7 +1023,7 @@ export default function MeetingTimer({ agenda }) {
                     onChange={(e) => setAddForm((f) => ({ ...f, owner: e.target.value }))}
                     className="w-full bg-[#1a1a1a] rounded text-xs text-white/90 outline-none px-2 py-1.5 timer-select">
                     <option value="">No owner</option>
-                    {(agenda.team || []).map((m) => (
+                    {team.map((m) => (
                       <option key={m.id} value={`${m.first_name} ${m.last_name}`.trim()}>
                         {m.first_name} {m.last_name}{m.title ? ` — ${m.title}` : ""}
                       </option>
@@ -1012,7 +1060,7 @@ export default function MeetingTimer({ agenda }) {
                                   <select value={editForm.owner} onChange={(e) => setEditForm((f) => ({ ...f, owner: e.target.value }))}
                                     className="w-full bg-[#1a1a1a] rounded text-xs text-white/90 outline-none px-2 py-1.5 timer-select">
                                     <option value="">No owner</option>
-                                    {(agenda.team || []).map((m) => (
+                                    {team.map((m) => (
                                       <option key={m.id} value={`${m.first_name} ${m.last_name}`.trim()}>
                                         {m.first_name} {m.last_name}{m.title ? ` — ${m.title}` : ""}
                                       </option>
@@ -1076,13 +1124,19 @@ export default function MeetingTimer({ agenda }) {
                 <p className="text-xs font-semibold tracking-[0.15em] text-white/30 uppercase flex items-center gap-1.5">
                   Rocks
                 </p>
-                <button
-                  onClick={() => setShowAddRockForm((v) => !v)}
-                  className="p-1 rounded-lg text-white/30 hover:text-white/70 hover:bg-white/10 transition-colors"
-                  title="Add rock"
-                >
-                  <Plus className="w-3.5 h-3.5" />
-                </button>
+                <div className="flex items-center gap-1">
+                  <button onClick={() => setManage("rocks")} title="Edit everything here, or Quick Import"
+                    className="flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-semibold uppercase tracking-wider text-white/40 hover:text-white/80 hover:bg-white/10 transition-colors">
+                    <Wand2 className="w-3 h-3" /> Manage / Import
+                  </button>
+                  <button
+                    onClick={() => setShowAddRockForm((v) => !v)}
+                    className="p-1 rounded-lg text-white/30 hover:text-white/70 hover:bg-white/10 transition-colors"
+                    title="Add rock"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                  </button>
+                </div>
               </div>
 
               {showAddRockForm && (
@@ -1095,7 +1149,7 @@ export default function MeetingTimer({ agenda }) {
                     onChange={(e) => setAddRockForm((f) => ({ ...f, owner: e.target.value }))}
                     className="w-full bg-[#1a1a1a] rounded text-xs text-white/90 outline-none px-2 py-1.5 timer-select">
                     <option value="">No owner</option>
-                    {(agenda.team || []).map((m) => (
+                    {team.map((m) => (
                       <option key={m.id} value={`${m.first_name} ${m.last_name}`.trim()}>
                         {m.first_name} {m.last_name}{m.title ? ` — ${m.title}` : ""}
                       </option>
@@ -1145,7 +1199,7 @@ export default function MeetingTimer({ agenda }) {
                           onChange={(e) => setEditRockForm((f) => ({ ...f, owner: e.target.value }))}
                           className="w-full bg-[#1a1a1a] rounded text-xs text-white/90 outline-none px-2 py-1.5 timer-select">
                           <option value="">No owner</option>
-                          {(agenda.team || []).map((m) => (
+                          {team.map((m) => (
                             <option key={m.id} value={`${m.first_name} ${m.last_name}`.trim()}>
                               {m.first_name} {m.last_name}{m.title ? ` — ${m.title}` : ""}
                             </option>
@@ -1218,13 +1272,19 @@ export default function MeetingTimer({ agenda }) {
                 <p className="text-xs font-semibold tracking-[0.15em] text-white/30 uppercase flex items-center gap-1.5">
                   <Target className="w-3 h-3" /> Scorecard
                 </p>
-                <button
-                  onClick={() => setShowAddMetricForm((v) => !v)}
-                  className="p-1 rounded-lg text-white/30 hover:text-white/70 hover:bg-white/10 transition-colors"
-                  title="Add metric"
-                >
-                  <Plus className="w-3.5 h-3.5" />
-                </button>
+                <div className="flex items-center gap-1">
+                  <button onClick={() => setManage("scorecard")} title="Edit everything here, or Quick Import"
+                    className="flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-semibold uppercase tracking-wider text-white/40 hover:text-white/80 hover:bg-white/10 transition-colors">
+                    <Wand2 className="w-3 h-3" /> Manage / Import past
+                  </button>
+                  <button
+                    onClick={() => setShowAddMetricForm((v) => !v)}
+                    className="p-1 rounded-lg text-white/30 hover:text-white/70 hover:bg-white/10 transition-colors"
+                    title="Add metric"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                  </button>
+                </div>
               </div>
 
               {showAddMetricForm && (
@@ -1248,7 +1308,7 @@ export default function MeetingTimer({ agenda }) {
                     onChange={(e) => setAddMetricForm((f) => ({ ...f, owner: e.target.value }))}
                     className="w-full bg-[#1a1a1a] rounded text-xs text-white/90 outline-none px-2 py-1.5 timer-select">
                     <option value="">No owner</option>
-                    {(agenda.team || []).map((m) => (
+                    {team.map((m) => (
                       <option key={m.id} value={`${m.first_name} ${m.last_name}`.trim()}>
                         {m.first_name} {m.last_name}{m.title ? ` — ${m.title}` : ""}
                       </option>
@@ -1374,13 +1434,19 @@ export default function MeetingTimer({ agenda }) {
                 <p className="text-xs font-semibold tracking-[0.15em] text-white/30 uppercase flex items-center gap-1.5">
                   <CheckCircle2 className="w-3 h-3" /> To Dos
                 </p>
-                <button
-                  onClick={() => setShowAddTodoForm((v) => !v)}
-                  className="p-1 rounded-lg text-white/30 hover:text-white/70 hover:bg-white/10 transition-colors"
-                  title="Add to do"
-                >
-                  <Plus className="w-3.5 h-3.5" />
-                </button>
+                <div className="flex items-center gap-1">
+                  <button onClick={() => setManage("todos")} title="Edit everything here, or Quick Import"
+                    className="flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-semibold uppercase tracking-wider text-white/40 hover:text-white/80 hover:bg-white/10 transition-colors">
+                    <Wand2 className="w-3 h-3" /> Manage / Import
+                  </button>
+                  <button
+                    onClick={() => setShowAddTodoForm((v) => !v)}
+                    className="p-1 rounded-lg text-white/30 hover:text-white/70 hover:bg-white/10 transition-colors"
+                    title="Add to do"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                  </button>
+                </div>
               </div>
 
               {showAddTodoForm && (
@@ -1396,7 +1462,7 @@ export default function MeetingTimer({ agenda }) {
                     onChange={(e) => setAddTodoForm((f) => ({ ...f, assignees: e.target.value }))}
                     className="w-full bg-[#1a1a1a] rounded text-xs text-white/90 outline-none px-2 py-1.5 timer-select">
                     <option value="">No assignee</option>
-                    {(agenda.team || []).map((m) => (
+                    {team.map((m) => (
                       <option key={m.id} value={`${m.first_name} ${m.last_name}`.trim()}>
                         {m.first_name} {m.last_name}{m.title ? ` — ${m.title}` : ""}
                       </option>
@@ -1433,7 +1499,7 @@ export default function MeetingTimer({ agenda }) {
                                   <select value={editTodoForm.assignees} onChange={(e) => setEditTodoForm((f) => ({ ...f, assignees: e.target.value }))}
                                     className="w-full bg-[#1a1a1a] rounded text-xs text-white/90 outline-none px-2 py-1.5 timer-select">
                                     <option value="">No assignee</option>
-                                    {(agenda.team || []).map((m) => (
+                                    {team.map((m) => (
                                       <option key={m.id} value={`${m.first_name} ${m.last_name}`.trim()}>
                                         {m.first_name} {m.last_name}{m.title ? ` — ${m.title}` : ""}
                                       </option>
@@ -1480,6 +1546,11 @@ export default function MeetingTimer({ agenda }) {
           )}
         </div>
       </div>
+      {manage === "issues" && <IssueTracker agenda={liveAgenda()} onClose={closeManage} />}
+      {manage === "todos" && <TodoTracker agenda={liveAgenda()} onClose={closeManage} />}
+      {manage === "rocks" && <RockTracker agenda={liveAgenda()} onClose={closeManage} />}
+      {manage === "scorecard" && <ScorecardTracker agenda={liveAgenda()} onClose={closeManage} />}
+      {manage === "team" && <TeamTracker agenda={liveAgenda()} onClose={closeManage} />}
     </div>
   );
 }

@@ -133,15 +133,33 @@ const enc = (s) => s.split("/").map(encodeURIComponent).join("/");
 const agendaPath = (id) => enc(`${config.folder}/agendas/${id}.json`);
 const agendasFolder = () => enc(`${config.folder}/agendas`);
 
+// Base44's CSV export (and text inputs) can hand back numbers as text ("05"), which then
+// get joined instead of added. Store and return them as real numbers.
+const toNum = (v) => (v === "" || v === null || v === undefined || Number.isNaN(Number(v)) ? v : Number(v));
+function normalize(rec) {
+  if (!rec || typeof rec !== "object") return rec;
+  const out = { ...rec };
+  if (Array.isArray(out.items)) out.items = out.items.map((i) => ({ ...i, duration: toNum(i.duration) }));
+  if (Array.isArray(out.scorecard)) {
+    out.scorecard = out.scorecard.map((m) => ({
+      ...m,
+      target: toNum(m.target),
+      history: Array.isArray(m.history) ? m.history.map((h) => ({ ...h, value: toNum(h.value) })) : m.history,
+    }));
+  }
+  return out;
+}
+
 async function readAgendaFile(id) {
   const base = await getDriveBase();
   const res = await graph(`${base}/root:/${agendaPath(id)}:/content`, { raw: true });
   if (res.status === 404) return null;
   if (!res.ok) throw new Error(`Couldn't open agenda ${id} (${res.status}).`);
-  return res.json();
+  return normalize(await res.json());
 }
 
-async function writeAgendaFile(record) {
+async function writeAgendaFile(input) {
+  const record = normalize(input);
   const base = await getDriveBase();
   await graph(`${base}/root:/${agendaPath(record.id)}:/content`, {
     method: "PUT",
@@ -186,7 +204,7 @@ const Agenda = {
       files.map(async (f) => {
         try {
           const url = f["@microsoft.graph.downloadUrl"];
-          if (url) return await (await fetch(url, { cache: "no-store" })).json();
+          if (url) return normalize(await (await fetch(url, { cache: "no-store" })).json());
           return await readAgendaFile(f.name.replace(/\.json$/, ""));
         } catch {
           return null;
