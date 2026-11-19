@@ -1,7 +1,8 @@
 import { useState, useRef } from "react";
 import TeamSelect from "./TeamSelect";
 import { api as base44 } from "@/api/m365";
-import { Plus, Trash2, ChevronDown, ChevronUp, X, CheckCircle2, Pencil } from "lucide-react";
+import { Plus, Trash2, ChevronDown, ChevronUp, X, CheckCircle2, Pencil, Wand2 } from "lucide-react";
+import QuickImport from "./QuickImport";
 
 const genId = () => Math.random().toString(36).slice(2, 9);
 
@@ -254,6 +255,7 @@ export default function RockTracker({ agenda, onClose }) {
   );
   const [saving, setSaving] = useState(false);
   const [showForm, setShowForm] = useState(false);
+  const [showImport, setShowImport] = useState(false);
   const [form, setForm] = useState(emptyForm());
 
   const persist = async (updated) => {
@@ -281,6 +283,22 @@ export default function RockTracker({ agenda, onClose }) {
     setRocks(updated);
     setForm(emptyForm());
     setShowForm(false);
+    await persist(updated);
+  };
+
+  const handleImport = async (found) => {
+    const added = found.map((x) => ({
+      id: genId(),
+      title: x.title,
+      owner: x.owner || "",
+      start_date: "",
+      due_date: x.due_date || "",
+      on_track: true,
+      deleted: false,
+      milestones: (x.milestones || []).map((m) => ({ id: genId(), title: m.title, due_date: m.due_date || "", done: false })),
+    }));
+    const updated = [...rocks, ...added];
+    setRocks(updated);
     await persist(updated);
   };
 
@@ -416,17 +434,29 @@ export default function RockTracker({ agenda, onClose }) {
 
         {/* Footer */}
         {!showForm && (
-          <div className="px-6 pb-5">
+          <div className="px-6 pb-5 flex gap-2">
             <button
               onClick={() => setShowForm(true)}
-              className="w-full flex items-center justify-center gap-2 py-2.5 border-2 border-dashed border-neutral-200 rounded-2xl text-sm text-neutral-400 hover:border-neutral-300 hover:text-neutral-600 transition-colors"
+              className="flex-1 flex items-center justify-center gap-2 py-2.5 border-2 border-dashed border-neutral-200 rounded-2xl text-sm text-neutral-400 hover:border-neutral-300 hover:text-neutral-600 transition-colors"
             >
               <Plus className="w-4 h-4" />
               Add Rock
             </button>
+            <button
+              onClick={() => setShowImport(true)}
+              title="Paste notes, a screenshot or a document"
+              className="flex items-center justify-center gap-2 px-4 py-2.5 border-2 border-dashed border-neutral-200 rounded-2xl text-sm text-neutral-400 hover:border-neutral-300 hover:text-neutral-600 transition-colors"
+            >
+              <Wand2 className="w-4 h-4" />
+              Quick Import
+            </button>
           </div>
         )}
       </div>
+      {showImport && (
+        <QuickImport kind="rocks" team={agenda.team || []} existing={rocks.map((x) => x.title)}
+          onImport={handleImport} onClose={() => setShowImport(false)} />
+      )}
     </div>
   );
 }

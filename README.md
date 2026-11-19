@@ -87,6 +87,10 @@ Moved from Base44 in Nov 2026. It now runs on Microsoft 365:
 
 **Bringing over Base44 data**: in Base44, open the app's Dashboard → Data → Agenda → export as CSV. In MeetingRunner, click **Import** and choose that file. Agendas keep their IDs. Importing the same file again overwrites those agendas with the file's copy.
 
+**Quick Import**: the Issues, To Dos and Rocks panels have a **Quick Import** button: paste notes or a screenshot (Ctrl+V), or drop a Word, PDF, Excel, picture or text file. It finds one item per line or bullet, picks up teammate names as owners and dates as due dates (indented lines under a rock become milestones), and shows them for review before adding. The Scorecard panel's **Import past data** reads a pasted Excel/Sheets range, CSV, Excel, PDF or a screenshot (weeks across the top, weeks down the side, or Metric/Date/Value rows), matches rows to existing metrics or creates new ones, and fills the weekly history. Pictures are read in the browser (Tesseract OCR); its files are served from `meeting-runner/ocr/`, not a third-party site.
+
+**During a meeting**: each tab has **Manage / Import**, which opens the same panel (full editing plus Quick Import) without stopping the timer, and the top bar has **Team**.
+
 **Saving**: each change re-reads the agenda file and then saves it, so two people editing different sections (say, to-dos and the scorecard) don't wipe out each other's changes. If two people change the same section at the same moment, the later save wins, as it did in Base44.
 
 **Changing the app**: edit the source in `apps/meeting-runner/`, then:

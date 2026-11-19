@@ -1,6 +1,7 @@
 import { useState, useRef } from "react";
 import { api as base44 } from "@/api/m365";
-import { Target, Plus, Trash2, Pencil, X, TrendingUp, TrendingDown } from "lucide-react";
+import { Target, Plus, Trash2, Pencil, X, TrendingUp, TrendingDown, Wand2 } from "lucide-react";
+import ScorecardImport from "./ScorecardImport";
 
 const genId = () => Math.random().toString(36).slice(2, 9);
 const todayStr = () => new Date().toISOString().split("T")[0];
@@ -65,6 +66,13 @@ function MetricCard({ metric, onDelete, onUpdate, team }) {
     onUpdate({ ...metric, history: [...(metric.history || []), entry] });
     setLogForm({ date: todayStr(), value: "" });
     setShowLog(false);
+  };
+
+  const [editLog, setEditLog] = useState(null); // { id, date, value }
+  const saveLog = () => {
+    if (!editLog || editLog.value === "" || isNaN(Number(editLog.value))) return;
+    onUpdate({ ...metric, history: (metric.history || []).map((h) => (h.id === editLog.id ? { ...h, date: editLog.date, value: Number(editLog.value) } : h)) });
+    setEditLog(null);
   };
 
   const deleteLog = (id) => {
@@ -200,15 +208,28 @@ function MetricCard({ metric, onDelete, onUpdate, team }) {
                 {sortedHistory.slice(0, 8).map((h) => {
                   const met = metric.higher_is_better ? h.value >= metric.target : h.value <= metric.target;
                   return (
+                    editLog?.id === h.id ? (
+                    <div key={h.id} className="flex items-center gap-2">
+                      <input type="date" value={editLog.date} onChange={(e) => setEditLog((x) => ({ ...x, date: e.target.value }))}
+                        className="text-xs text-neutral-700 bg-white rounded border border-neutral-200 px-1 py-0.5 outline-none" />
+                      <input type="number" autoFocus value={editLog.value} onChange={(e) => setEditLog((x) => ({ ...x, value: e.target.value }))}
+                        onKeyDown={(e) => { if (e.key === "Enter") saveLog(); if (e.key === "Escape") setEditLog(null); }}
+                        className="w-20 text-xs text-neutral-700 bg-white rounded border border-neutral-200 px-1 py-0.5 outline-none" />
+                      <button onClick={saveLog} className="text-[11px] font-semibold text-neutral-800">Save</button>
+                      <button onClick={() => setEditLog(null)} className="text-[11px] text-neutral-400">Cancel</button>
+                    </div>
+                    ) : (
                     <div key={h.id} className="flex items-center gap-2 group">
                       <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${met ? "bg-emerald-500" : "bg-red-500"}`} />
                       <span className="text-xs text-neutral-500 w-24">{h.date}</span>
-                      <span className={`text-xs font-semibold ${met ? "text-emerald-600" : "text-red-600"}`}>{h.value}{metric.unit ? ` ${metric.unit}` : ""}</span>
+                      <button onClick={() => setEditLog({ id: h.id, date: h.date, value: String(h.value) })} title="Edit value"
+                        className={`text-xs font-semibold hover:underline ${met ? "text-emerald-600" : "text-red-600"}`}>{h.value}{metric.unit ? ` ${metric.unit}` : ""}</button>
                       <span className="text-[10px] text-neutral-300 ml-auto">{met ? "✓" : "below target"}</span>
                       <button onClick={() => deleteLog(h.id)} className="opacity-0 group-hover:opacity-100 text-neutral-300 hover:text-red-400 transition-all">
                         <X className="w-3 h-3" />
                       </button>
                     </div>
+                    )
                   );
                 })}
               </div>
@@ -226,6 +247,7 @@ export default function ScorecardTracker({ agenda, onClose }) {
   const [metrics, setMetrics] = useState(latest.current.scorecard || []);
   const [saving, setSaving] = useState(false);
   const [showForm, setShowForm] = useState(false);
+  const [showImport, setShowImport] = useState(false);
   const [form, setForm] = useState(emptyMetric());
 
   const persist = async (updated) => {
@@ -250,6 +272,11 @@ export default function ScorecardTracker({ agenda, onClose }) {
     setMetrics(updated);
     setForm(emptyMetric());
     setShowForm(false);
+    await persist(updated);
+  };
+
+  const handleImport = async (updated) => {
+    setMetrics(updated);
     await persist(updated);
   };
 
@@ -347,14 +374,22 @@ export default function ScorecardTracker({ agenda, onClose }) {
         </div>
 
         {!showForm && (
-          <div className="px-6 pb-5">
+          <div className="px-6 pb-5 flex gap-2">
             <button onClick={() => setShowForm(true)}
-              className="w-full flex items-center justify-center gap-2 py-2.5 border-2 border-dashed border-neutral-200 rounded-2xl text-sm text-neutral-400 hover:border-neutral-300 hover:text-neutral-600 transition-colors">
+              className="flex-1 flex items-center justify-center gap-2 py-2.5 border-2 border-dashed border-neutral-200 rounded-2xl text-sm text-neutral-400 hover:border-neutral-300 hover:text-neutral-600 transition-colors">
               <Plus className="w-4 h-4" /> Add Metric
+            </button>
+            <button onClick={() => setShowImport(true)} title="Paste or upload past weeks"
+              className="flex items-center justify-center gap-2 px-4 py-2.5 border-2 border-dashed border-neutral-200 rounded-2xl text-sm text-neutral-400 hover:border-neutral-300 hover:text-neutral-600 transition-colors">
+              <Wand2 className="w-4 h-4" /> Import past data
             </button>
           </div>
         )}
       </div>
+      {showImport && (
+        <ScorecardImport metrics={metrics} team={agenda.team || []}
+          onImport={handleImport} onClose={() => setShowImport(false)} />
+      )}
     </div>
   );
 }

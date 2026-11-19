@@ -1,6 +1,7 @@
 // Owner picker fed by the agenda's team members. Keeps an older free-text owner
 // (e.g. from Base44) selectable so editing an item doesn't silently clear it.
-export const memberName = (m) => `${m.first_name || ""} ${m.last_name || ""}`.trim();
+import { memberName } from "@/lib/team";
+export { memberName };
 
 export default function TeamSelect({ team = [], value = "", onChange, emptyLabel = "No owner", className = "" }) {
   const names = team.map(memberName).filter(Boolean);

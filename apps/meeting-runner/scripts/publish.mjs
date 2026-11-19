@@ -17,6 +17,17 @@ fs.rmSync(out, { recursive: true, force: true });
 fs.cpSync(dist, out, { recursive: true });
 if (keepConfig) fs.writeFileSync(liveConfig, keepConfig);
 
+// Picture reading (OCR) runs in the browser from files served by the hub, not a third-party CDN.
+const nm = path.resolve(here, '../node_modules');
+const ocr = path.join(out, 'ocr');
+fs.mkdirSync(path.join(ocr, 'core'), { recursive: true });
+fs.mkdirSync(path.join(ocr, 'lang'), { recursive: true });
+fs.copyFileSync(path.join(nm, 'tesseract.js/dist/worker.min.js'), path.join(ocr, 'worker.min.js'));
+for (const f of ['tesseract-core-lstm.wasm.js', 'tesseract-core-simd-lstm.wasm.js']) {
+  fs.copyFileSync(path.join(nm, 'tesseract.js-core', f), path.join(ocr, 'core', f));
+}
+fs.copyFileSync(path.join(nm, '@tesseract.js-data/eng/4.0.0_best_int/eng.traineddata.gz'), path.join(ocr, 'lang', 'eng.traineddata.gz'));
+
 for (const page of PAGES) {
   fs.mkdirSync(path.join(out, page), { recursive: true });
   fs.copyFileSync(path.join(out, 'index.html'), path.join(out, page, 'index.html'));
