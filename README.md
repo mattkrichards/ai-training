@@ -61,6 +61,45 @@ Live at **https://hub.richardssupply.com/rx-fit/**. A five-minute self-guided pe
 
 **Results** stay in the visitor's browser. They can email them (opens their mail app addressed to `CONFIG.contactEmail`), copy a summary, or print / save a PDF. Set `CONFIG.submitEndpoint` to a Retool Workflow webhook to log submissions instead.
 
+## MeetingRunner (`/meeting-runner/`)
+
+Live at **https://hub.richardssupply.com/meeting-runner/**. Runs team meetings: agendas are blueprints with timed items, and each one carries its own issues, to-dos, rocks (with milestones), scorecard metrics and team members. The timer steps through the items, and at the end it builds a summary you can copy or email.
+
+Moved from Base44 in Nov 2026. It now runs on Microsoft 365:
+
+| Piece | Where it lives now |
+| --- | --- |
+| Sign-in | Microsoft Entra ID (Richards Supply M365 accounts only) |
+| Data | One JSON file per agenda in a SharePoint document library: `<folder>/agendas/<id>.json` |
+| Summary email | Sent from the signed-in person's Outlook (shows in their Sent Items) |
+| Settings | `meeting-runner/config.js` (edit on GitHub, no rebuild needed) |
+
+| Path | What it is |
+| --- | --- |
+| `apps/meeting-runner/` | Source (React + Vite). `src/api/m365.js` is the Microsoft 365 back end |
+| `meeting-runner/` | The built app that GitHub Pages serves. Don't edit by hand, except `config.js` |
+
+**One-time setup**
+1. **Entra app registration** (Entra admin center → App registrations → New registration): name it `MeetingRunner`, single tenant. Under **Authentication** → Add a platform → **Single-page application**, redirect URI `https://hub.richardssupply.com/meeting-runner/` (add `http://localhost:5173/meeting-runner/` too for local testing).
+2. **API permissions** (Microsoft Graph, Delegated): `User.Read`, `Sites.ReadWrite.All`, `Mail.Send`. Click **Grant admin consent** so staff aren't asked to consent one by one.
+3. **SharePoint site**: pick the site that will hold the agendas, and give everyone who runs meetings **Edit** access to it. The app creates the `MeetingRunner/agendas` folder itself.
+4. Fill in `meeting-runner/config.js`: `tenantId` and `clientId` (from the app registration's Overview page) and `siteUrl` (currently `https://rscadminrichardssupply.sharepoint.com/sites/MeetingRunner`, a private team site backed by the MeetingRunner Microsoft 365 group). Commit it; the app is live about a minute later.
+
+**Bringing over Base44 data**: in Base44, open the app's Dashboard → Data → Agenda → export as CSV. In MeetingRunner, click **Import** and choose that file. Agendas keep their IDs. Importing the same file again overwrites those agendas with the file's copy.
+
+**Saving**: each change re-reads the agenda file and then saves it, so two people editing different sections (say, to-dos and the scorecard) don't wipe out each other's changes. If two people change the same section at the same moment, the later save wins, as it did in Base44.
+
+**Changing the app**: edit the source in `apps/meeting-runner/`, then:
+
+```
+cd apps/meeting-runner
+npm install
+npm run dev       # local preview at http://localhost:5173/meeting-runner/
+npm run publish   # builds and copies into /meeting-runner (keeps config.js), then commit
+```
+
+New pages go in `src/pages/` and `src/pages.config.js`; add the page name to `PAGES` in `scripts/publish.mjs` so its link works on GitHub Pages.
+
 ## RX brand files (`/brand/rx-logos/`)
 
 Official Richards Xpress logo PNGs from the Managers SharePoint (RX / Richards Xpress Artwork / Logo Files): `horizontal/`, `horizontal-no-spacing/` (tightly cropped), `vertical/`, `icon/` and `monochrome/`. In each set, odd numbers include the "Inventory Solutions" tagline and even numbers don't for horizontal/vertical; variants with white lettering are for dark backgrounds. Source files (AI, EPS, PSD, SVG) stay on SharePoint.
