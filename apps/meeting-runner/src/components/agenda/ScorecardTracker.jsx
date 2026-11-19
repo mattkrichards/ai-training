@@ -29,7 +29,7 @@ function isOnTrack(metric) {
   return met;
 }
 
-function MetricCard({ metric, onDelete, onUpdate, team }) {
+function MetricCard({ metric, onDelete, onUpdate, onImport, team }) {
   const [editing, setEditing] = useState(false);
   const [editForm, setEditForm] = useState({
     name: metric.name,
@@ -69,6 +69,7 @@ function MetricCard({ metric, onDelete, onUpdate, team }) {
   };
 
   const [editLog, setEditLog] = useState(null); // { id, date, value }
+  const [showAllHistory, setShowAllHistory] = useState(false);
   const saveLog = () => {
     if (!editLog || editLog.value === "" || isNaN(Number(editLog.value))) return;
     onUpdate({ ...metric, history: (metric.history || []).map((h) => (h.id === editLog.id ? { ...h, date: editLog.date, value: Number(editLog.value) } : h)) });
@@ -165,6 +166,10 @@ function MetricCard({ metric, onDelete, onUpdate, team }) {
                 className="p-1.5 text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100 rounded-lg transition-colors">
                 <Plus className="w-3.5 h-3.5" />
               </button>
+              <button onClick={() => onImport(metric.id)} title="Import past values into this metric"
+                className="p-1.5 text-neutral-400 hover:text-violet-500 hover:bg-violet-50 rounded-lg transition-colors">
+                <Wand2 className="w-3.5 h-3.5" />
+              </button>
               <button onClick={() => setEditing(true)} title="Edit"
                 className="p-1.5 text-neutral-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors">
                 <Pencil className="w-3.5 h-3.5" />
@@ -205,7 +210,7 @@ function MetricCard({ metric, onDelete, onUpdate, team }) {
             <div className="mt-3 pt-2 border-t border-neutral-200/60">
               <p className="text-[10px] font-semibold tracking-widest text-neutral-400 uppercase mb-1.5">Weekly History</p>
               <div className="space-y-1">
-                {sortedHistory.slice(0, 8).map((h) => {
+                {(showAllHistory ? sortedHistory : sortedHistory.slice(0, 8)).map((h) => {
                   const met = metric.higher_is_better ? h.value >= metric.target : h.value <= metric.target;
                   return (
                     editLog?.id === h.id ? (
@@ -233,6 +238,11 @@ function MetricCard({ metric, onDelete, onUpdate, team }) {
                   );
                 })}
               </div>
+              {sortedHistory.length > 8 && (
+                <button onClick={() => setShowAllHistory((v) => !v)} className="mt-1.5 text-[11px] text-neutral-400 hover:text-neutral-700">
+                  {showAllHistory ? "Show latest 8" : `Show all ${sortedHistory.length} weeks`}
+                </button>
+              )}
             </div>
           )}
         </>
@@ -316,7 +326,7 @@ export default function ScorecardTracker({ agenda, onClose }) {
           )}
 
           {metrics.map((metric) => (
-            <MetricCard key={metric.id} metric={metric} onDelete={handleDelete} onUpdate={handleUpdate} team={agenda.team || []} />
+            <MetricCard key={metric.id} metric={metric} onDelete={handleDelete} onUpdate={handleUpdate} onImport={(id) => setShowImport(id)} team={agenda.team || []} />
           ))}
 
           {showForm && (
@@ -387,7 +397,7 @@ export default function ScorecardTracker({ agenda, onClose }) {
         )}
       </div>
       {showImport && (
-        <ScorecardImport metrics={metrics} team={agenda.team || []}
+        <ScorecardImport metrics={metrics} team={agenda.team || []} defaultMetricId={typeof showImport === "string" ? showImport : null}
           onImport={handleImport} onClose={() => setShowImport(false)} />
       )}
     </div>
