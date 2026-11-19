@@ -2,13 +2,13 @@
 // file, or paste a screenshot. Matches rows to existing metrics (or creates new ones) and
 // fills in their weekly history.
 import { useEffect, useRef, useState } from "react";
-import { X, Upload, Wand2, ArrowLeft, Loader2 } from "lucide-react";
+import { X, Upload, Wand2, ArrowLeft, Loader2, Plus } from "lucide-react";
 import TeamSelect from "./TeamSelect";
 import { ACCEPT, extractFromFile, fileFromClipboard, htmlTableFromClipboard } from "@/lib/extractText";
 import { parseScorecard, textToRows, matchMetric, mergeScorecard } from "@/lib/parseScorecard";
 import { todayIso } from "@/lib/dates";
 
-export default function ScorecardImport({ metrics = [], team = [], onImport, onClose }) {
+export default function ScorecardImport({ metrics = [], team = [], defaultMetricId = null, onImport, onClose }) {
   const [text, setText] = useState("");
   const [gridRows, setGridRows] = useState(null); // rows from an Excel file or HTML paste
   const [found, setFound] = useState(null);
@@ -60,13 +60,16 @@ export default function ScorecardImport({ metrics = [], team = [], onImport, onC
     setFound(
       parsed.map((m, i) => {
         const match = matchMetric(m.name, metrics);
+        // Unnamed list (just dates and values): goes to the metric the import was opened from,
+        // or the only metric there is.
+        const fallback = !m.name && (defaultMetricId || (metrics.length === 1 ? metrics[0].id : null));
         return {
           key: i,
           name: m.name,
-          target: match ? match.id : "new",
+          target: match ? match.id : fallback || (defaultMetricId && parsed.length === 1 ? defaultMetricId : "new"),
           owner: m.owner || "",
           goal: m.target ?? "",
-          unit: /%/.test(m.name) ? "%" : /\$/.test(m.name) ? "$" : "",
+          unit: m.unit || (/%/.test(m.name) ? "%" : /\$/.test(m.name) ? "$" : ""),
           higher_is_better: true,
           values: m.values,
         };
@@ -77,7 +80,18 @@ export default function ScorecardImport({ metrics = [], team = [], onImport, onC
   const update = (key, field, value) => setFound((fs) => fs.map((f) => (f.key === key ? { ...f, [field]: value } : f)));
   const undated = (found || []).some((f) => f.values.some((v) => !v.date));
   const active = (found || []).filter((f) => f.target !== "skip");
-  const valueCount = active.reduce((n, f) => n + f.values.length, 0);
+  // Counts weeks that will be saved (a repeated date counts once: the last value wins).
+  const valueCount = active.reduce((n, f) => n + new Set(f.values.filter((v) => v.value !== null && v.value !== undefined).map((v) => v.date || "undated")).size, 0);
+  const missingName = active.some((f) => f.target === "new" && !f.name.trim());
+  const setValue = (key, i, patch) => setFound((fs) => fs.map((f) => (f.key === key ? { ...f, values: f.values.map((x, k) => (k === i ? { ...x, ...patch } : x)) } : f)));
+  const removeValue = (key, i) => setFound((fs) => fs.map((f) => (f.key === key ? { ...f, values: f.values.filter((_, k) => k !== i) } : f)));
+  const addValue = (key) => setFound((fs) => fs.map((f) => (f.key === key ? { ...f, values: [...f.values, { date: todayIso(), value: null }] } : f)));
+  const dupDates = (f) => {
+    const seen = new Set();
+    const d = new Set();
+    for (const v of f.values) { if (v.date && seen.has(v.date)) d.add(v.date); seen.add(v.date); }
+    return [...d];
+  };
 
   const doImport = async () => {
     setSaving(true);
@@ -115,7 +129,7 @@ export default function ScorecardImport({ metrics = [], team = [], onImport, onC
               autoFocus
               value={text}
               onChange={(e) => { setText(e.target.value); setGridRows(null); }}
-              placeholder={"Paste your scorecard here. Weeks across the top works best, for example:\n\nMeasurable\tOwner\tGoal\t11/3\t11/10\t11/17\nTickets closed\tMatt\t25\t22\t27\t30\nAR over 60 days\tJanet\t50000\t61200\t55000\t48500\n\nA Metric, Date, Value list, or weeks down the side, also work."}
+              placeholder={"Paste your scorecard here. Any of these work:\n\n• A list of dates and values for one metric\n   2026-11-18   90 %\n   2026-11-11   99.96 %\n\n• Weeks across the top\n   Measurable  Owner  Goal  11/3  11/10  11/17\n   Tickets closed  Matt  25  22  27  30\n\n• Metric, date and value on each line\n   Sales  11/3  $125,000"}
               rows={12}
               className="w-full text-sm text-neutral-800 bg-neutral-50 rounded-2xl border border-neutral-200 p-4 outline-none focus:border-neutral-400 resize-y font-mono"
             />
@@ -142,7 +156,9 @@ export default function ScorecardImport({ metrics = [], team = [], onImport, onC
             {found.map((f) => (
               <div key={f.key} className={`rounded-2xl border p-3 ${f.target === "skip" ? "opacity-50 border-neutral-100" : "border-neutral-200 bg-neutral-50"}`}>
                 <div className="flex flex-wrap items-center gap-2 mb-2">
-                  <span className="text-sm font-semibold flex-1 min-w-[10rem]">{f.name}</span>
+                  <span className="text-sm font-semibold flex-1 min-w-[10rem]">
+                    {f.name || <span className="text-neutral-400 font-normal">List of {f.values.length} dated values. Pick the metric →</span>}
+                  </span>
                   <select value={f.target} onChange={(e) => update(f.key, "target", e.target.value)} className={input}>
                     {metrics.map((m) => <option key={m.id} value={m.id}>Add to: {m.name}</option>)}
                     <option value="new">Create new metric</option>
@@ -151,7 +167,7 @@ export default function ScorecardImport({ metrics = [], team = [], onImport, onC
                 </div>
                 {f.target === "new" && (
                   <div className="flex flex-wrap gap-2 mb-2">
-                    <input value={f.name} onChange={(e) => update(f.key, "name", e.target.value)} className={`${input} flex-1 min-w-[10rem]`} title="Metric name" />
+                    <input value={f.name} onChange={(e) => update(f.key, "name", e.target.value)} placeholder="New metric name *" className={`${input} flex-1 min-w-[10rem] ${!f.name.trim() ? "border-amber-400" : ""}`} title="Metric name" />
                     <input type="number" value={f.goal} onChange={(e) => update(f.key, "goal", e.target.value)} placeholder="Goal" className={`${input} w-24`} />
                     <input value={f.unit} onChange={(e) => update(f.key, "unit", e.target.value)} placeholder="Unit" className={`${input} w-16`} />
                     <div className="w-44"><TeamSelect team={team} value={f.owner} onChange={(v) => update(f.key, "owner", v)} className={`${input} w-full`} /></div>
@@ -163,17 +179,25 @@ export default function ScorecardImport({ metrics = [], team = [], onImport, onC
                 )}
                 <div className="flex flex-wrap gap-1.5">
                   {f.values.map((v, i) => (
-                    <label key={i} className="flex items-center gap-1 bg-white border border-neutral-200 rounded-lg px-2 py-1 text-[11px] text-neutral-500">
-                      {v.date || "week above"}
-                      <input
-                        type="number"
-                        value={v.value ?? ""}
-                        onChange={(e) => update(f.key, "values", f.values.map((x, k) => (k === i ? { ...x, value: e.target.value === "" ? null : Number(e.target.value) } : x)))}
-                        className="w-20 text-xs font-semibold text-neutral-800 outline-none bg-transparent"
-                      />
-                    </label>
+                    <div key={i} className={`flex items-center gap-1 bg-white border rounded-lg pl-1.5 pr-1 py-1 ${dupDates(f).includes(v.date) ? "border-amber-400" : "border-neutral-200"}`}>
+                      <input type="date" value={v.date || ""} onChange={(e) => setValue(f.key, i, { date: e.target.value })}
+                        className="text-[11px] text-neutral-500 outline-none bg-transparent w-[7.5rem]" />
+                      <input type="number" step="any" value={v.value ?? ""} placeholder="value"
+                        onChange={(e) => setValue(f.key, i, { value: e.target.value === "" ? null : Number(e.target.value) })}
+                        className="w-20 text-xs font-semibold text-neutral-800 outline-none bg-transparent" />
+                      {f.unit && <span className="text-[11px] text-neutral-400">{f.unit}</span>}
+                      <button onClick={() => removeValue(f.key, i)} title="Remove" className="text-neutral-300 hover:text-red-400"><X className="w-3 h-3" /></button>
+                    </div>
                   ))}
+                  <button onClick={() => addValue(f.key)} className="flex items-center gap-1 px-2 py-1 text-[11px] text-neutral-400 border border-dashed border-neutral-300 rounded-lg hover:text-neutral-700">
+                    <Plus className="w-3 h-3" /> Add week
+                  </button>
                 </div>
+                {dupDates(f).length > 0 && (
+                  <p className="text-[11px] text-amber-600 mt-1.5">
+                    {dupDates(f).join(", ")} appears more than once. Fix the date or remove one; otherwise the last value is kept.
+                  </p>
+                )}
               </div>
             ))}
             {error && <p className="text-xs text-red-600">{error}</p>}
@@ -185,7 +209,7 @@ export default function ScorecardImport({ metrics = [], team = [], onImport, onC
             <button onClick={() => setFound(null)} className="flex items-center gap-1 text-xs text-neutral-500 hover:text-neutral-800"><ArrowLeft className="w-3.5 h-3.5" /> Back to data</button>
           ) : <span />}
           {found ? (
-            <button onClick={doImport} disabled={!valueCount || saving}
+            <button onClick={doImport} disabled={!valueCount || saving || missingName} title={missingName ? "Name the new metric, or pick an existing one" : ""}
               className="px-5 py-2.5 bg-neutral-900 text-white text-sm font-semibold rounded-xl hover:bg-neutral-700 disabled:opacity-40">
               {saving ? "Importing…" : `Import ${valueCount} value${valueCount === 1 ? "" : "s"}`}
             </button>

@@ -49,7 +49,12 @@ export function findDate(str, mode = "future") {
     const [, y, mo, d] = m.map(Number);
     if (valid(y, mo, d)) return { date: iso(y, mo, d), match: m[0] };
   }
-  if ((m = s.match(/\b(\d{1,2})[/.-](\d{1,2})(?:[/.-](\d{2,4}))?\b/))) {
+  if ((m = s.match(/\b(\d{4})[/.](\d{1,2})[/.](\d{1,2})\b/))) {
+    const [, y, mo, d] = m.map(Number);
+    if (valid(y, mo, d)) return { date: iso(y, mo, d), match: m[0] };
+  }
+  // m/d, m/d/yy, m-d-yyyy, m.d.yyyy (a dot needs the year so "12.5" stays a number)
+  if ((m = s.match(/(?<![\d.])(\d{1,2})[/-](\d{1,2})(?:[/-](\d{2,4}))?(?![\d.])/) || s.match(/(?<![\d.])(\d{1,2})\.(\d{1,2})\.(\d{2,4})(?![\d.])/))) {
     const mo = Number(m[1]);
     const d = Number(m[2]);
     const y = fixYear(m[3]) ?? guessYear(mo, d, mode);
@@ -61,7 +66,7 @@ export function findDate(str, mode = "future") {
     const y = fixYear(m[3]) ?? guessYear(mo, d, mode);
     if (valid(y, mo, d)) return { date: iso(y, mo, d), match: m[0] };
   }
-  if ((m = s.match(/\b(\d{1,2})\s+(jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)[a-z]*\.?(?:\s+(\d{4}))?\b/i))) {
+  if ((m = s.match(/\b(\d{1,2})[\s-]+(jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)[a-z]*\.?(?:[\s,-]+(\d{2,4}))?\b/i))) {
     const mo = MONTHS.indexOf(m[2].slice(0, 3).toLowerCase()) + 1;
     const d = Number(m[1]);
     const y = fixYear(m[3]) ?? guessYear(mo, d, mode);

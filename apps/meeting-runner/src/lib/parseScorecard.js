@@ -44,7 +44,7 @@ export function textToRows(text) {
   }
   // OCR text: words up to the first number/date are the label, the rest are separate cells.
   return lines.map((l) => {
-    const tokens = l.trim().split(/\s+/);
+    const tokens = l.trim().split(/\s+/).filter((t) => /[a-z0-9%$]/i.test(t) && !/^[eo©®@•·«»*-]$/i.test(t));
     const cells = [];
     let label = [];
     for (let i = 0; i < tokens.length; i++) {
@@ -165,8 +165,9 @@ export function parseScorecard(rows, { team = [] } = {}) {
     return finish(out);
   }
 
-  if (firstColDates >= 2) {
-    const hdr = rows.find((r) => !looksLikeDate(r[0])) || [];
+  const transposedHdr = rows.find((r) => !looksLikeDate(r[0]) && r.slice(1).some((c) => c && !isNumeric(c) && !/^[%$]$/.test(String(c))));
+  if (firstColDates >= 2 && transposedHdr) {
+    const hdr = transposedHdr;
     const out = hdr.slice(1).map((name, k) => ({ name: String(name || "").trim(), owner: "", target: null, values: [] }));
     for (const r of rows.filter((x) => looksLikeDate(x[0]))) {
       const date = findDate(r[0], "past").date;
@@ -176,6 +177,36 @@ export function parseScorecard(rows, { team = [] } = {}) {
       });
     }
     return finish(out.filter((m) => m.name));
+  }
+
+  // ── row-wise: every row has its own date, e.g. "2026-11-18  90 %" or "Sales 11/3 125,000"
+  const recs = [];
+  for (const r of rows) {
+    const cells = r.flatMap((c) => (typeof c === "string" ? c.split(/\s{2,}/) : [c])).filter((c) => c !== "" && c !== null && c !== undefined);
+    const di = cells.findIndex((c) => looksLikeDate(c));
+    if (di < 0) continue;
+    const date = findDate(cells[di], "past").date;
+    const rest = cells.filter((_, i) => i !== di);
+    const nums = rest.map(parseNumber).filter((n) => n !== null);
+    if (!nums.length) continue;
+    const words = rest.filter((c) => !isNumeric(c) && /[a-z]{2,}/i.test(String(c)) && !teamName(c, team) && !/^(week|wk|w\/e|date|value)$/i.test(String(c).trim()));
+    recs.push({
+      name: words.join(" ").trim(),
+      owner: rest.map((c) => teamName(c, team)).find(Boolean) || "",
+      date,
+      value: nums[nums.length - 1],
+      unit: rest.some((c) => /%/.test(String(c))) ? "%" : rest.some((c) => /\$/.test(String(c))) ? "$" : "",
+    });
+  }
+  if (recs.length >= 2 || (recs.length === 1 && rows.length === 1)) {
+    const byName = new Map();
+    for (const x of recs) {
+      if (!byName.has(x.name)) byName.set(x.name, { name: x.name, owner: x.owner, target: null, unit: x.unit, values: [] });
+      const g = byName.get(x.name);
+      if (!g.unit && x.unit) g.unit = x.unit;
+      g.values.push({ date: x.date, value: x.value });
+    }
+    return finish([...byName.values()], true);
   }
 
   // ── no dates found: "Metric  value" lines for a single week (date picked in the preview)
@@ -189,10 +220,11 @@ export function parseScorecard(rows, { team = [] } = {}) {
   return finish(out);
 }
 
-function finish(list) {
+function finish(list, keepDuplicates = false) {
   return list
-    .filter((m) => m.name && m.values.length)
+    .filter((m) => (m.name || keepDuplicates) && m.values.length)
     .map((m) => {
+      if (keepDuplicates) return { ...m, values: [...m.values].sort((a, b) => String(a.date).localeCompare(String(b.date))) };
       const byDate = new Map();
       for (const v of m.values) byDate.set(v.date, v.value);
       return { ...m, values: [...byDate.entries()].map(([date, value]) => ({ date, value })).sort((a, b) => String(a.date).localeCompare(String(b.date))) };
