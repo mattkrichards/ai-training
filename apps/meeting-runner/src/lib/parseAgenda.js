@@ -12,7 +12,8 @@ const BULLET = /^\s*(?:[-*•‣◦▪▫●○■□☐☑☒✓✔➢➤>→·
 const T = String.raw`(\d{1,2})(?::(\d{2}))\s*([ap]\.?m?\.?)?|(\d{1,2})\s*([ap]\.?m\.?)`;
 const RANGE = new RegExp(String.raw`(?:${T})\s*(?:-|–|—|to|until)\s*(?:${T})`, "i");
 const SINGLE_TIME = new RegExp(String.raw`(?:^|\s)(?:${T})(?=\s|$|[-–—:|.,])`, "i");
-const SKIP = /^(total|totals?\s*time|date|time|location|where|when|attendees?|facilitator|scribe|page \d+|notes?)\b\s*[:\-]?/i;
+const SKIP = /^(total|totals?\s*time|date|time|location|where|when|attendees?|facilitator|scribe|page \d+|notes?|presenter)\b\s*(\(optional\))?\s*[:\-]?/i;
+const ENDS_IN_NUMBER = /[a-z)\]]\s+(\d{1,3})\s*$/i;
 const TITLE_HINT = /\b(agenda|meeting|l-?10|level\s*10|weekly|monthly|quarterly|annual|huddle|sync|stand-?up|review)\b/i;
 
 function toMinutes(h, m, ap, refPm) {
@@ -70,6 +71,11 @@ export function parseAgenda(text, { team = [] } = {}) {
     lines.push({ text: line.replace(BULLET, "").replace(/\t/g, "  ").trim(), bulleted, indent });
   }
 
+  // When most lines end in a bare number ("IDS 35"), that number is the minutes,
+  // e.g. a screenshot where a faint "min" label wasn't picked up.
+  const endsInNumber = lines.filter((l) => ENDS_IN_NUMBER.test(l.text)).length;
+  const bareNumberIsMinutes = endsInNumber >= 2 && endsInNumber >= lines.length * 0.5;
+
   let title = "";
   const items = [];
   let sawPm = false;
@@ -105,7 +111,11 @@ export function parseAgenda(text, { team = [] } = {}) {
         t = t.replace(d[0], " ");
       } else {
         const p = t.match(/\(\s*(\d{1,3})\s*\)\s*$/) || t.match(/(?:\.{2,}|…|_{2,}|\s{2,}|[-–—|])\s*(\d{1,3})\s*$/) || t.match(/^(\d{1,3})\s*(?:[-–—|:]\s+|\s{2,})/);
-        if (p && Number(p[1]) > 0 && Number(p[1]) <= 240) {
+        const bare = !p && bareNumberIsMinutes ? t.match(ENDS_IN_NUMBER) : null;
+        if (bare && Number(bare[1]) > 0 && Number(bare[1]) <= 240) {
+          duration = Number(bare[1]);
+          t = t.replace(new RegExp(`\\s+${bare[1]}\\s*$`), " ");
+        } else if (p && Number(p[1]) > 0 && Number(p[1]) <= 240) {
           duration = Number(p[1]);
           t = t.replace(p[0], " ");
         }
@@ -125,6 +135,13 @@ export function parseAgenda(text, { team = [] } = {}) {
 
     const pr = pullPresenter(t.replace(/\.{2,}|…+|_{2,}/g, " ").replace(/[\s\-–—|:,]+$/, "").trim(), team);
     const name = clean(pr.text);
+    // A line that is only a length ("4 min") belongs to the item above it.
+    if (!name && duration !== null) {
+      const prev = items[items.length - 1];
+      if (prev && prev.duration === null && prev.start === null) { prev.duration = duration; continue; }
+      if (!prev && title) { items.push({ title, duration, presenter: "", notes: "", start: null, end: null, indent: 0, bulleted: false }); title = ""; continue; }
+      continue;
+    }
     if (!name || SKIP.test(name)) continue;
 
     const isTimed = duration !== null || start !== null;
