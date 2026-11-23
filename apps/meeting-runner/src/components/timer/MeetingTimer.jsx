@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { createPageUrl } from "@/utils";
+import { useAuth } from "@/lib/AuthContext";
 import { api as base44 } from "@/api/m365";
 import {
   ChevronLeft, ChevronRight, Play, Pause, RotateCcw, X, CheckCircle, Copy, Mail, FileText, AlertCircle, GripVertical, Trash2, CheckCircle2, Pencil, Plus, Target, ChevronDown, Wand2, Users
@@ -118,6 +119,8 @@ export default function MeetingTimer({ agenda }) {
   const [showLogFor, setShowLogFor] = useState(null);
   const [showAddMetricForm, setShowAddMetricForm] = useState(false);
   const [addMetricForm, setAddMetricForm] = useState({ name: "", description: "", owner: "", target: "", unit: "", higher_is_better: true });
+
+  const { user } = useAuth();
 
   // Team (can change mid-meeting from the Team panel)
   const [team, setTeam] = useState(agenda.team || []);
@@ -613,6 +616,64 @@ export default function MeetingTimer({ agenda }) {
 
   const allDone = completed.length === items.length;
 
+  // ── Meeting record (last meeting + history on the agenda) ─────────
+  const startRef = useRef({
+    startedAt: null,
+    doneIssues: new Set((agenda.issues || []).filter((i) => i.done && !i.deleted).map((i) => i.id)),
+    allTodos: new Set((agenda.todos || []).map((t) => t.id)),
+    doneTodos: new Set((agenda.todos || []).filter((t) => t.done && !t.deleted).map((t) => t.id)),
+  });
+  const recordedRef = useRef(false);
+  useEffect(() => {
+    if (running && !startRef.current.startedAt) startRef.current.startedAt = new Date().toISOString();
+  }, [running]);
+
+  const recordMeeting = async (endedEarly) => {
+    if (recordedRef.current || !startRef.current.startedAt) return;
+    recordedRef.current = true;
+    const now = new Date();
+    const allIssues = [...hiddenIssuesRef.current, ...issues];
+    const allTodos = [...hiddenTodosRef.current, ...todos].filter((t) => !t.deleted);
+    const pad = (n) => String(n).padStart(2, "0");
+    const entry = {
+      id: Math.random().toString(36).slice(2, 10),
+      date: `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`,
+      started_at: startRef.current.startedAt,
+      ended_at: now.toISOString(),
+      duration_seconds: totalElapsed,
+      planned_minutes: items.reduce((n, it) => n + (Number(it.duration) || 0), 0),
+      items_completed: completed.length,
+      items_total: items.length,
+      issues_solved: allIssues.filter((i) => i.done && !i.deleted && !startRef.current.doneIssues.has(i.id)).length,
+      todos_added: allTodos.filter((t) => !startRef.current.allTodos.has(t.id)).length,
+      todos_completed: allTodos.filter((t) => t.done && !startRef.current.doneTodos.has(t.id)).length,
+      notes: items.map((it, idx) => (meetingNotes[idx] ? `${it.title}: ${meetingNotes[idx]}` : null)).filter(Boolean).join("\n"),
+      ended_early: !!endedEarly,
+      run_by: user?.full_name || user?.email || "",
+    };
+    try {
+      const [fresh] = await base44.entities.Agenda.filter({ id: agenda.id });
+      const history = [entry, ...((fresh && fresh.meeting_history) || [])].slice(0, 100);
+      await base44.entities.Agenda.update(agenda.id, { last_meeting: entry, meeting_history: history });
+    } catch (e) {
+      console.error("Couldn't save the meeting record:", e);
+      recordedRef.current = false;
+    }
+  };
+
+  useEffect(() => {
+    if (showSummary || allDone) recordMeeting(false);
+  }, [showSummary, allDone]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Leaving mid-meeting after at least a minute still counts as a meeting (marked ended early).
+  const exitMeeting = async (e) => {
+    if (!recordedRef.current && startRef.current.startedAt && totalElapsed >= 60) {
+      e.preventDefault();
+      await recordMeeting(true);
+      window.location.href = createPageUrl("Home");
+    }
+  };
+
   // ── Background ─────────────────────────────────────────────────
   const elapsed = 1 - progress;
   let bgColor = "#0A0A0A";
@@ -631,7 +692,7 @@ export default function MeetingTimer({ agenda }) {
     return (
       <div className="min-h-screen bg-[#0A0A0A] text-white flex flex-col">
         <div className="flex items-center justify-between px-8 py-5 border-b border-white/5">
-          <a href={createPageUrl("Home")} className="flex items-center gap-2 text-white/40 hover:text-white/80 text-sm transition-colors">
+          <a href={createPageUrl("Home")} onClick={exitMeeting} className="flex items-center gap-2 text-white/40 hover:text-white/80 text-sm transition-colors">
             <X className="w-4 h-4" /> Exit
           </a>
           <p className="text-xs font-semibold tracking-[0.2em] text-white/30 uppercase">{agenda.title}</p>
@@ -804,7 +865,7 @@ export default function MeetingTimer({ agenda }) {
     <div className="min-h-screen text-white flex flex-col transition-colors duration-1000" style={{ backgroundColor: bgColor }}>
       {/* Top bar */}
       <div className="flex items-center justify-between px-8 py-5 border-b border-white/5">
-        <a href={createPageUrl("Home")} className="flex items-center gap-2 text-white/40 hover:text-white/80 text-sm transition-colors">
+        <a href={createPageUrl("Home")} onClick={exitMeeting} className="flex items-center gap-2 text-white/40 hover:text-white/80 text-sm transition-colors">
           <X className="w-4 h-4" /> Exit
         </a>
         <div className="flex items-center gap-3">

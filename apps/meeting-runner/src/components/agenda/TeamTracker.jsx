@@ -82,7 +82,7 @@ function MemberCard({ member, onDelete, onUpdate }) {
   );
 }
 
-export default function TeamTracker({ agenda, onClose }) {
+export default function TeamTracker({ agenda, onClose, save }) {
   // Latest saved copy of the agenda, so each save builds on the previous one
   const latest = useRef(agenda);
   const [members, setMembers] = useState(latest.current.team || []);
@@ -92,7 +92,8 @@ export default function TeamTracker({ agenda, onClose }) {
 
   const persist = async (updated) => {
     setSaving(true);
-    latest.current = await base44.entities.Agenda.update(agenda.id, { team: updated });
+    // A custom save (Teams manager) or the agenda's own save (which goes to its team if it has one).
+    latest.current = save ? { ...latest.current, team: updated, ...(await save(updated)) } : await base44.entities.Agenda.update(agenda.id, { team: updated });
     setSaving(false);
   };
 
@@ -126,7 +127,9 @@ export default function TeamTracker({ agenda, onClose }) {
             <h2 className="text-lg font-bold text-neutral-900 flex items-center gap-2">
               <Users className="w-4 h-4 text-neutral-400" /> Team
             </h2>
-            <p className="text-xs text-neutral-400 truncate max-w-xs">{agenda.title}</p>
+            <p className="text-xs text-neutral-400 truncate max-w-xs">
+              {agenda.title}{agenda.team_name && !save ? ` · members of the ${agenda.team_name} team (shared with its other agendas)` : ""}
+            </p>
           </div>
           <div className="flex items-center gap-2">
             {saving && <span className="text-xs text-neutral-400">Saving…</span>}
