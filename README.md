@@ -87,6 +87,8 @@ Moved from Base44 in Nov 2026. It now runs on Microsoft 365:
 
 **Bringing over Base44 data**: in Base44, open the app's Dashboard → Data → Agenda → export as CSV. In MeetingRunner, click **Import** and choose that file. Agendas keep their IDs. Importing the same file again overwrites those agendas with the file's copy.
 
+**Look**: Richards Supply brand base colors (Deep Red #AB2C24, charcoal/black from the logo, Cool Slate #65737E, warm off-white #F3F2EF) with Montserrat headings, matching the rest of the hub; the Richards Supply logo is in `meeting-runner/brand/`. The colors for issues, to-dos, rocks, scorecard and team, and the timer's countdown colors, are unchanged.
+
 **Teams**: the **Teams** button creates teams and manages their members (a new team can copy the members of an existing agenda). Each agenda is put on a team in the agenda editor, and the home page shows a row per team with its agendas under it (plus a "No team" row). A team's agendas share its member list, so adding someone from any of them adds them to the team. Teams are saved as `<folder>/teams/<id>.json` next to the agendas.
 
 **Last meeting**: when a meeting is finished (or left after at least a minute, marked "ended early"), the agenda saves the date, length, items covered, issues solved, to-dos added/completed, who ran it and the notes. Cards show "Last met …"; click it for the full history.

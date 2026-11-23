@@ -175,7 +175,7 @@ export default function TodoTracker({ agenda, onClose }) {
                                     onChange={(e) => setEditDraft((d) => ({ ...d, description: e.target.value }))}
                                     className="w-full text-xs text-neutral-600 bg-white rounded-lg border border-neutral-200 px-2 py-1 outline-none resize-none" />
                                   <div className="flex gap-2">
-                                    <button onClick={saveEdit} disabled={!editDraft.title.trim()} className="px-3 py-1 bg-neutral-900 text-white text-xs font-semibold rounded-lg disabled:opacity-40">Save</button>
+                                    <button onClick={saveEdit} disabled={!editDraft.title.trim()} className="px-3 py-1 bg-rs-red text-white text-xs font-semibold rounded-lg disabled:opacity-40">Save</button>
                                     <button onClick={() => setEditingId(null)} className="px-3 py-1 text-xs text-neutral-500">Cancel</button>
                                   </div>
                                 </div>
@@ -248,7 +248,7 @@ export default function TodoTracker({ agenda, onClose }) {
                 <button
                   onClick={handleAdd}
                   disabled={!form.title.trim()}
-                  className="px-4 py-1.5 bg-neutral-900 text-white text-xs font-semibold rounded-lg hover:bg-neutral-700 disabled:opacity-40 transition-colors"
+                  className="px-4 py-1.5 bg-rs-red text-white text-xs font-semibold rounded-lg hover:bg-rs-red-deep disabled:opacity-40 transition-colors"
                 >
                   Add To Do
                 </button>

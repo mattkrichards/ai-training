@@ -136,7 +136,7 @@ function MetricCard({ metric, onDelete, onUpdate, onImport, team }) {
           </div>
           <div className="flex gap-2 pt-1">
             <button onClick={saveEdit} disabled={!editForm.name.trim()}
-              className="px-3 py-1 bg-neutral-900 text-white text-xs font-semibold rounded-lg disabled:opacity-40 hover:bg-neutral-700 transition-colors">Save</button>
+              className="px-3 py-1 bg-rs-red text-white text-xs font-semibold rounded-lg disabled:opacity-40 hover:bg-rs-red-deep transition-colors">Save</button>
             <button onClick={() => setEditing(false)}
               className="px-3 py-1 text-xs text-neutral-400 hover:text-neutral-700">Cancel</button>
           </div>
@@ -201,7 +201,7 @@ function MetricCard({ metric, onDelete, onUpdate, onImport, team }) {
                   />
                 </div>
                 <button onClick={addLog} disabled={logForm.value === ""}
-                  className="px-3 py-1.5 bg-neutral-900 text-white text-xs font-semibold rounded-lg disabled:opacity-40 hover:bg-neutral-700 transition-colors">Add</button>
+                  className="px-3 py-1.5 bg-rs-red text-white text-xs font-semibold rounded-lg disabled:opacity-40 hover:bg-rs-red-deep transition-colors">Add</button>
               </div>
             </div>
           )}
@@ -375,7 +375,7 @@ export default function ScorecardTracker({ agenda, onClose }) {
               </div>
               <div className="flex gap-2 pt-1">
                 <button onClick={handleAdd} disabled={!form.name.trim()}
-                  className="px-4 py-1.5 bg-neutral-900 text-white text-xs font-semibold rounded-lg disabled:opacity-40 hover:bg-neutral-700 transition-colors">Add Metric</button>
+                  className="px-4 py-1.5 bg-rs-red text-white text-xs font-semibold rounded-lg disabled:opacity-40 hover:bg-rs-red-deep transition-colors">Add Metric</button>
                 <button onClick={() => { setShowForm(false); setForm(emptyMetric()); }}
                   className="px-4 py-1.5 text-xs text-neutral-500 hover:text-neutral-800 transition-colors">Cancel</button>
               </div>

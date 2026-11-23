@@ -10,7 +10,7 @@
     --card-foreground: 0 0% 3.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 3.9%;
-    --primary: 0 0% 9%;
+    --primary: 3 65% 41%; /* Richards Deep Red #AB2C24 */
     --primary-foreground: 0 0% 98%;
     --secondary: 0 0% 96.1%;
     --secondary-foreground: 0 0% 9%;
@@ -22,7 +22,7 @@
     --destructive-foreground: 0 0% 98%;
     --border: 0 0% 89.8%;
     --input: 0 0% 89.8%;
-    --ring: 0 0% 3.9%;
+    --ring: 206 11% 45%; /* Cool Slate #65737E */
     --chart-1: 12 76% 61%;
     --chart-2: 173 58% 39%;
     --chart-3: 197 37% 24%;
@@ -92,3 +92,6 @@
   background-color: #1a1a1a;
   color: #ffffff;
 }
+/* Richards brand touches */
+input[type="checkbox"], input[type="radio"] { accent-color: #AB2C24; }
+h1, h2 { font-family: Montserrat, "Segoe UI", system-ui, sans-serif; }

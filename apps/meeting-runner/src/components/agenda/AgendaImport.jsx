@@ -66,7 +66,7 @@ export default function AgendaImport({ team = [], currentTitle = "", hasItems = 
     onClose();
   };
 
-  const input = "text-xs text-neutral-700 bg-white rounded-lg border border-neutral-200 px-2 py-1.5 outline-none focus:border-neutral-400";
+  const input = "text-xs text-neutral-700 bg-white rounded-lg border border-neutral-200 px-2 py-1.5 outline-none focus:border-rs-slate";
 
   return (
     <div className="fixed inset-0 bg-black/50 z-[70] flex items-center justify-center p-4" onClick={onClose}>
@@ -91,7 +91,7 @@ export default function AgendaImport({ team = [], currentTitle = "", hasItems = 
               onChange={(e) => setText(e.target.value)}
               placeholder={`Paste here. Ctrl+V works for screenshots too. For example:\n\n${EXAMPLE}`}
               rows={12}
-              className="w-full text-sm text-neutral-800 bg-neutral-50 rounded-2xl border border-neutral-200 p-4 outline-none focus:border-neutral-400 resize-y font-mono"
+              className="w-full text-sm text-neutral-800 bg-neutral-50 rounded-2xl border border-neutral-200 p-4 outline-none focus:border-rs-slate resize-y font-mono"
             />
             <div className="flex items-center gap-2 flex-wrap">
               <input ref={fileRef} type="file" accept={ACCEPT} className="hidden" onChange={(e) => { const f = e.target.files?.[0]; e.target.value = ""; if (f) readFile(f); }} />
@@ -148,11 +148,11 @@ export default function AgendaImport({ team = [], currentTitle = "", hasItems = 
             <button onClick={() => setFound(null)} className="flex items-center gap-1 text-xs text-neutral-500 hover:text-neutral-800"><ArrowLeft className="w-3.5 h-3.5" /> Back to text</button>
           ) : <span />}
           {found ? (
-            <button onClick={doImport} disabled={!valid.length} className="px-5 py-2.5 bg-neutral-900 text-white text-sm font-semibold rounded-xl hover:bg-neutral-700 disabled:opacity-40">
+            <button onClick={doImport} disabled={!valid.length} className="px-5 py-2.5 bg-rs-red text-white text-sm font-semibold rounded-xl hover:bg-rs-red-deep disabled:opacity-40">
               {`Use ${valid.length} item${valid.length === 1 ? "" : "s"}`}
             </button>
           ) : (
-            <button onClick={find} disabled={!text.trim() || !!busy} className="px-5 py-2.5 bg-neutral-900 text-white text-sm font-semibold rounded-xl hover:bg-neutral-700 disabled:opacity-40">
+            <button onClick={find} disabled={!text.trim() || !!busy} className="px-5 py-2.5 bg-rs-red text-white text-sm font-semibold rounded-xl hover:bg-rs-red-deep disabled:opacity-40">
               Find agenda items
             </button>
           )}

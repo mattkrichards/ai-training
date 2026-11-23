@@ -22,7 +22,7 @@ export default function Timer() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0F0F0F] flex items-center justify-center">
+      <div className="min-h-screen bg-rs-black flex items-center justify-center">
         <div className="w-8 h-8 border-2 border-white/20 border-t-white rounded-full animate-spin" />
       </div>
     );
@@ -30,7 +30,7 @@ export default function Timer() {
 
   if (!agenda) {
     return (
-      <div className="min-h-screen bg-[#0F0F0F] flex flex-col items-center justify-center gap-4">
+      <div className="min-h-screen bg-rs-black flex flex-col items-center justify-center gap-4">
         <p className="text-white/50 text-lg">No agenda found.</p>
         <a href={createPageUrl("Home")} className="text-white underline text-sm">
           Go back

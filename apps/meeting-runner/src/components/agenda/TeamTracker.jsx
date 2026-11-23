@@ -44,7 +44,7 @@ function MemberCard({ member, onDelete, onUpdate }) {
         />
         <div className="flex gap-2 pt-1">
           <button onClick={saveEdit}
-            className="px-3 py-1 bg-neutral-900 text-white text-xs font-semibold rounded-lg hover:bg-neutral-700 transition-colors">Save</button>
+            className="px-3 py-1 bg-rs-red text-white text-xs font-semibold rounded-lg hover:bg-rs-red-deep transition-colors">Save</button>
           <button onClick={() => setEditing(false)}
             className="px-3 py-1 text-xs text-neutral-400 hover:text-neutral-700">Cancel</button>
         </div>
@@ -170,7 +170,7 @@ export default function TeamTracker({ agenda, onClose, save }) {
               />
               <div className="flex gap-2 pt-1">
                 <button onClick={handleAdd} disabled={!form.first_name.trim() && !form.last_name.trim()}
-                  className="px-4 py-1.5 bg-neutral-900 text-white text-xs font-semibold rounded-lg disabled:opacity-40 hover:bg-neutral-700 transition-colors">Add Member</button>
+                  className="px-4 py-1.5 bg-rs-red text-white text-xs font-semibold rounded-lg disabled:opacity-40 hover:bg-rs-red-deep transition-colors">Add Member</button>
                 <button onClick={() => { setShowForm(false); setForm(emptyMember()); }}
                   className="px-4 py-1.5 text-xs text-neutral-500 hover:text-neutral-800 transition-colors">Cancel</button>
               </div>

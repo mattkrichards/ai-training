@@ -122,8 +122,8 @@ export default function TeamsManager({ agendas = [], onClose }) {
         <div className="px-6 py-4 border-t border-neutral-100 space-y-2">
           <div className="flex gap-2">
             <input value={newName} onChange={(e) => setNewName(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") create(); }}
-              placeholder="New team name, e.g. Leadership" className="flex-1 text-sm border border-neutral-200 rounded-xl px-3 py-2 outline-none focus:border-neutral-400" />
-            <button onClick={create} disabled={!newName.trim()} className="flex items-center gap-1 px-4 py-2 bg-neutral-900 text-white text-sm font-semibold rounded-xl disabled:opacity-40">
+              placeholder="New team name, e.g. Leadership" className="flex-1 text-sm border border-neutral-200 rounded-xl px-3 py-2 outline-none focus:border-rs-slate" />
+            <button onClick={create} disabled={!newName.trim()} className="flex items-center gap-1 px-4 py-2 bg-rs-red text-white text-sm font-semibold rounded-xl disabled:opacity-40">
               <Plus className="w-4 h-4" /> Create
             </button>
           </div>
