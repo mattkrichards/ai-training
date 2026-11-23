@@ -106,7 +106,7 @@ export default function ScorecardImport({ metrics = [], team = [], defaultMetric
     }
   };
 
-  const input = "text-xs text-neutral-700 bg-white rounded-lg border border-neutral-200 px-2 py-1.5 outline-none focus:border-neutral-400";
+  const input = "text-xs text-neutral-700 bg-white rounded-lg border border-neutral-200 px-2 py-1.5 outline-none focus:border-rs-slate";
 
   return (
     <div className="fixed inset-0 bg-black/50 z-[70] flex items-center justify-center p-4" onClick={onClose}>
@@ -131,7 +131,7 @@ export default function ScorecardImport({ metrics = [], team = [], defaultMetric
               onChange={(e) => { setText(e.target.value); setGridRows(null); }}
               placeholder={"Paste your scorecard here. Any of these work:\n\n• A list of dates and values for one metric\n   2026-11-18   90 %\n   2026-11-11   99.96 %\n\n• Weeks across the top\n   Measurable  Owner  Goal  11/3  11/10  11/17\n   Tickets closed  Matt  25  22  27  30\n\n• Metric, date and value on each line\n   Sales  11/3  $125,000"}
               rows={12}
-              className="w-full text-sm text-neutral-800 bg-neutral-50 rounded-2xl border border-neutral-200 p-4 outline-none focus:border-neutral-400 resize-y font-mono"
+              className="w-full text-sm text-neutral-800 bg-neutral-50 rounded-2xl border border-neutral-200 p-4 outline-none focus:border-rs-slate resize-y font-mono"
             />
             <div className="flex items-center gap-2 flex-wrap">
               <input ref={fileRef} type="file" accept={ACCEPT} className="hidden" onChange={(e) => { const f = e.target.files?.[0]; e.target.value = ""; if (f) readFile(f); }} />
@@ -210,12 +210,12 @@ export default function ScorecardImport({ metrics = [], team = [], defaultMetric
           ) : <span />}
           {found ? (
             <button onClick={doImport} disabled={!valueCount || saving || missingName} title={missingName ? "Name the new metric, or pick an existing one" : ""}
-              className="px-5 py-2.5 bg-neutral-900 text-white text-sm font-semibold rounded-xl hover:bg-neutral-700 disabled:opacity-40">
+              className="px-5 py-2.5 bg-rs-red text-white text-sm font-semibold rounded-xl hover:bg-rs-red-deep disabled:opacity-40">
               {saving ? "Importing…" : `Import ${valueCount} value${valueCount === 1 ? "" : "s"}`}
             </button>
           ) : (
             <button onClick={find} disabled={!text.trim() || !!busy}
-              className="px-5 py-2.5 bg-neutral-900 text-white text-sm font-semibold rounded-xl hover:bg-neutral-700 disabled:opacity-40">
+              className="px-5 py-2.5 bg-rs-red text-white text-sm font-semibold rounded-xl hover:bg-rs-red-deep disabled:opacity-40">
               Find numbers
             </button>
           )}

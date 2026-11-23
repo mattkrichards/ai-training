@@ -102,7 +102,7 @@ export default function AgendaList({ onNew, onEdit }) {
         key={agenda.id}
         className="group bg-white rounded-2xl border border-neutral-100 p-5 hover:border-neutral-200 hover:shadow-md transition-all flex flex-col"
       >
-        <h2 className="text-base font-semibold text-neutral-900 leading-snug">{agenda.title}</h2>
+        <h2 className="font-heading text-base font-bold text-rs-ink leading-snug">{agenda.title}</h2>
         <div className="flex flex-wrap items-center gap-x-2 gap-y-1 mt-2">
           <span className="text-xs text-neutral-400 flex items-center gap-1">
             <Clock className="w-3 h-3" /> {mins}m
@@ -155,7 +155,7 @@ export default function AgendaList({ onNew, onEdit }) {
           </button>
           <a
             href={`${createPageUrl("Timer")}?id=${agenda.id}`}
-            className="flex items-center gap-1.5 px-3.5 py-2 bg-emerald-500 text-white text-sm font-medium rounded-xl hover:bg-emerald-600 transition-colors ml-1"
+            className="flex items-center gap-1.5 px-3.5 py-2 bg-rs-red text-white text-sm font-medium rounded-xl hover:bg-rs-red-deep transition-colors ml-1"
           >
             <Play className="w-3.5 h-3.5 fill-white" />
             Run
@@ -166,12 +166,12 @@ export default function AgendaList({ onNew, onEdit }) {
   };
 
   return (
-    <div className="max-w-5xl mx-auto px-6 py-16">
+    <div className="max-w-5xl mx-auto px-6 py-12">
       {/* Header */}
       <div className="flex items-end justify-between mb-12">
         <div>
-          <p className="text-xs font-semibold tracking-[0.2em] text-neutral-400 uppercase mb-2">Meeting Planner</p>
-          <h1 className="text-4xl font-bold text-neutral-900 tracking-tight">Agendas</h1>
+          <p className="text-xs font-semibold tracking-[0.2em] text-rs-red uppercase mb-2">Meeting Planner</p>
+          <h1 className="font-heading text-4xl font-extrabold text-rs-ink tracking-tight">Agendas</h1>
         </div>
         <div className="flex items-center gap-2">
         <input ref={fileRef} type="file" accept=".csv,.json" className="hidden" onChange={handleImport} />
@@ -192,7 +192,7 @@ export default function AgendaList({ onNew, onEdit }) {
         </button>
         <button
           onClick={() => onNew()}
-          className="flex items-center gap-2 px-5 py-2.5 bg-neutral-900 text-white text-sm font-medium rounded-xl hover:bg-neutral-700 transition-colors"
+          className="flex items-center gap-2 px-5 py-2.5 bg-rs-red text-white text-sm font-medium rounded-xl hover:bg-rs-red-deep transition-colors"
         >
           <Plus className="w-4 h-4" />
           New Agenda
@@ -260,9 +260,9 @@ export default function AgendaList({ onNew, onEdit }) {
         const members = team.members || [];
         return (
           <section key={team.id} className="mb-10">
-            <div className="flex flex-wrap items-end justify-between gap-2 mb-3 pb-2 border-b border-neutral-200">
+            <div className="flex flex-wrap items-end justify-between gap-2 mb-3 pb-2 border-b border-rs-line">
               <div>
-                <h2 className="text-xl font-bold text-neutral-900">{team.name}</h2>
+                <h2 className="font-heading text-xl font-bold text-rs-ink flex items-center gap-2"><span className="w-1 h-5 bg-rs-red rounded-full" />{team.name}</h2>
                 <p className="text-xs text-neutral-400 mt-0.5 truncate max-w-xl">
                   {members.length ? members.map(memberName).join(", ") : "No members yet"}
                 </p>
@@ -271,7 +271,7 @@ export default function AgendaList({ onNew, onEdit }) {
                 <button onClick={() => setTeamMembersOf(team)} className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-neutral-600 rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50">
                   <Users className="w-3.5 h-3.5" /> Members ({members.length})
                 </button>
-                <button onClick={() => onNew(team.id)} className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white bg-neutral-900 rounded-xl hover:bg-neutral-700">
+                <button onClick={() => onNew(team.id)} className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white bg-rs-red rounded-xl hover:bg-rs-red-deep">
                   <Plus className="w-3.5 h-3.5" /> New agenda
                 </button>
               </div>
@@ -288,7 +288,7 @@ export default function AgendaList({ onNew, onEdit }) {
       {!loading && noTeam.length > 0 && (
         <section className="mb-10">
           {teams.length > 0 && (
-            <div className="mb-3 pb-2 border-b border-neutral-200">
+            <div className="mb-3 pb-2 border-b border-rs-line">
               <h2 className="text-xl font-bold text-neutral-400">No team</h2>
               <p className="text-xs text-neutral-400 mt-0.5">Edit an agenda to put it on a team.</p>
             </div>

@@ -676,7 +676,7 @@ export default function MeetingTimer({ agenda }) {
 
   // ── Background ─────────────────────────────────────────────────
   const elapsed = 1 - progress;
-  let bgColor = "#0A0A0A";
+  let bgColor = "#111214";
   if (isOvertime) bgColor = "#3b0000";
   else if (elapsed >= 0.8) bgColor = "#3b0000";
   else if (elapsed >= 0.6) bgColor = "#3b1500";
@@ -690,8 +690,8 @@ export default function MeetingTimer({ agenda }) {
   // ── Summary screen ─────────────────────────────────────────────
   if (showSummary || allDone) {
     return (
-      <div className="min-h-screen bg-[#0A0A0A] text-white flex flex-col">
-        <div className="flex items-center justify-between px-8 py-5 border-b border-white/5">
+      <div className="min-h-screen bg-rs-black text-white flex flex-col">
+        <div className="flex items-center justify-between px-8 py-5 border-b-[3px] border-rs-red">
           <a href={createPageUrl("Home")} onClick={exitMeeting} className="flex items-center gap-2 text-white/40 hover:text-white/80 text-sm transition-colors">
             <X className="w-4 h-4" /> Exit
           </a>
@@ -864,11 +864,13 @@ export default function MeetingTimer({ agenda }) {
   return (
     <div className="min-h-screen text-white flex flex-col transition-colors duration-1000" style={{ backgroundColor: bgColor }}>
       {/* Top bar */}
-      <div className="flex items-center justify-between px-8 py-5 border-b border-white/5">
+      <div className="flex items-center justify-between px-8 py-5 border-b-[3px] border-rs-red">
         <a href={createPageUrl("Home")} onClick={exitMeeting} className="flex items-center gap-2 text-white/40 hover:text-white/80 text-sm transition-colors">
           <X className="w-4 h-4" /> Exit
         </a>
         <div className="flex items-center gap-3">
+          <img src={`${import.meta.env.BASE_URL}brand/rs-logo-horizontal-white.png`} alt="Richards Supply" className="h-4 w-auto opacity-80" />
+          <span className="h-4 w-px bg-white/15" />
           <p className="text-xs font-semibold tracking-[0.2em] text-white/30 uppercase">{agenda.title}</p>
           <button onClick={() => setManage("team")} title="Team members"
             className="flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-semibold uppercase tracking-wider text-white/30 hover:text-white/80 hover:bg-white/10 transition-colors">

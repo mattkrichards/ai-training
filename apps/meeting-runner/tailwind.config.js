@@ -9,7 +9,23 @@ module.exports = {
   			md: 'calc(var(--radius) - 2px)',
   			sm: 'calc(var(--radius) - 4px)'
   		},
+  		fontFamily: {
+  			heading: ['Montserrat', '"Segoe UI"', 'system-ui', 'sans-serif']
+  		},
   		colors: {
+  			// Richards Supply brand base colors (same palette as the rest of the hub)
+  			rs: {
+  				red: '#AB2C24',
+  				'red-deep': '#8A231D',
+  				'red-tint': '#FBEFED',
+  				black: '#111214',
+  				charcoal: '#1B1D20',
+  				ink: '#1F2328',
+  				slate: '#65737E',
+  				'slate-light': '#A3AEB7',
+  				bg: '#F3F2EF',
+  				line: '#DFE2E6'
+  			},
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
   			card: {

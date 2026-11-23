@@ -1,13 +1,11 @@
-import { CalendarClock, LogIn, Settings } from "lucide-react";
+import { LogIn, Settings } from "lucide-react";
 import { signIn } from "@/api/m365";
 
 function Shell({ children }) {
   return (
-    <div className="min-h-screen bg-[#F7F6F3] flex items-center justify-center p-6">
-      <div className="max-w-md w-full bg-white rounded-2xl border border-neutral-200 p-8 shadow-sm">
-        <div className="w-11 h-11 rounded-xl bg-neutral-900 flex items-center justify-center mb-6">
-          <CalendarClock className="w-5 h-5 text-white" />
-        </div>
+    <div className="min-h-screen bg-rs-bg flex items-center justify-center p-6">
+      <div className="max-w-md w-full bg-white rounded-2xl border border-rs-line border-t-4 border-t-rs-red p-8 shadow-sm">
+        <img src={`${import.meta.env.BASE_URL}brand/rs-logo-horizontal-dark.png`} alt="Richards Supply Company" className="h-7 w-auto mb-8" />
         {children}
       </div>
     </div>
@@ -17,14 +15,14 @@ function Shell({ children }) {
 export function SignInScreen() {
   return (
     <Shell>
-      <p className="text-xs font-semibold tracking-[0.2em] text-neutral-400 uppercase mb-2">Richards Supply</p>
-      <h1 className="text-2xl font-bold text-neutral-900 mb-2">MeetingRunner</h1>
+      <p className="text-xs font-semibold tracking-[0.2em] text-rs-red uppercase mb-2">Meeting Planner</p>
+      <h1 className="font-heading text-2xl font-extrabold text-rs-ink mb-2">MeetingRunner</h1>
       <p className="text-sm text-neutral-500 mb-8">
         Sign in with your Richards Supply Microsoft 365 account to open your team's agendas.
       </p>
       <button
         onClick={() => signIn()}
-        className="w-full flex items-center justify-center gap-2 px-5 py-3 bg-neutral-900 text-white text-sm font-medium rounded-xl hover:bg-neutral-700 transition-colors"
+        className="w-full flex items-center justify-center gap-2 px-5 py-3 bg-rs-red text-white text-sm font-medium rounded-xl hover:bg-rs-red-deep transition-colors"
       >
         <LogIn className="w-4 h-4" /> Sign in with Microsoft
       </button>
@@ -54,7 +52,7 @@ export function AuthErrorScreen({ message }) {
       <p className="text-sm text-neutral-500 mb-6 break-words">{message || "Something went wrong."}</p>
       <button
         onClick={() => signIn()}
-        className="w-full flex items-center justify-center gap-2 px-5 py-3 bg-neutral-900 text-white text-sm font-medium rounded-xl hover:bg-neutral-700 transition-colors"
+        className="w-full flex items-center justify-center gap-2 px-5 py-3 bg-rs-red text-white text-sm font-medium rounded-xl hover:bg-rs-red-deep transition-colors"
       >
         <LogIn className="w-4 h-4" /> Try again
       </button>

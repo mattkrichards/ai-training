@@ -119,7 +119,7 @@ export default function AgendaBuilder({ agenda, onBack, defaultTeamId = "" }) {
       <div className="flex items-center gap-2 mb-10 text-sm text-neutral-500">
         <span>Team</span>
         <select value={teamId} onChange={(e) => setTeamId(e.target.value)}
-          className="text-sm text-neutral-800 bg-white border border-neutral-200 rounded-xl px-3 py-1.5 outline-none focus:border-neutral-400">
+          className="text-sm text-neutral-800 bg-white border border-neutral-200 rounded-xl px-3 py-1.5 outline-none focus:border-rs-slate">
           <option value="">No team</option>
           {teams.map((t) => <option key={t.id} value={t.id}>{t.name} ({(t.members || []).length})</option>)}
         </select>
@@ -208,7 +208,7 @@ export default function AgendaBuilder({ agenda, onBack, defaultTeamId = "" }) {
       <button
         onClick={handleSave}
         disabled={!title.trim() || saving}
-        className="w-full py-3.5 bg-neutral-900 text-white font-semibold rounded-2xl hover:bg-neutral-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+        className="w-full py-3.5 bg-rs-red text-white font-semibold rounded-2xl hover:bg-rs-red-deep transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
       >
         <Save className="w-4 h-4" />
         {saving ? "Saving…" : "Save Agenda"}

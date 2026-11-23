@@ -96,7 +96,7 @@ function RockCard({ rock, onDelete, onUpdate, onComplete, team = [] }) {
             </div>
             <div className="flex gap-2 pt-0.5">
               <button onClick={saveEdit} disabled={!editForm.title.trim()}
-                className="px-3 py-1 bg-neutral-900 text-white text-[10px] font-semibold rounded-lg hover:bg-neutral-700 disabled:opacity-40 transition-colors">
+                className="px-3 py-1 bg-rs-red text-white text-[10px] font-semibold rounded-lg hover:bg-rs-red-deep disabled:opacity-40 transition-colors">
                 Save
               </button>
               <button onClick={() => setEditing(false)}
@@ -222,7 +222,7 @@ function RockCard({ rock, onDelete, onUpdate, onComplete, team = [] }) {
               />
               <div className="flex gap-2 pt-0.5">
                 <button onClick={addMilestone} disabled={!milestoneForm.title.trim()}
-                  className="px-3 py-1 bg-neutral-900 text-white text-[10px] font-semibold rounded-lg hover:bg-neutral-700 disabled:opacity-40 transition-colors">
+                  className="px-3 py-1 bg-rs-red text-white text-[10px] font-semibold rounded-lg hover:bg-rs-red-deep disabled:opacity-40 transition-colors">
                   Add
                 </button>
                 <button onClick={() => { setShowMilestoneForm(false); setMilestoneForm(emptyMilestone()); }}
@@ -417,7 +417,7 @@ export default function RockTracker({ agenda, onClose }) {
                 <button
                   onClick={handleAdd}
                   disabled={!form.title.trim()}
-                  className="px-4 py-1.5 bg-neutral-900 text-white text-xs font-semibold rounded-lg hover:bg-neutral-700 disabled:opacity-40 transition-colors"
+                  className="px-4 py-1.5 bg-rs-red text-white text-xs font-semibold rounded-lg hover:bg-rs-red-deep disabled:opacity-40 transition-colors"
                 >
                   Add Rock
                 </button>
