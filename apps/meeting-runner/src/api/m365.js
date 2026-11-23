@@ -132,6 +132,60 @@ function getDriveBase() {
 const enc = (s) => s.split("/").map(encodeURIComponent).join("/");
 const agendaPath = (id) => enc(`${config.folder}/agendas/${id}.json`);
 const agendasFolder = () => enc(`${config.folder}/agendas`);
+const teamPath = (id) => enc(`${config.folder}/teams/${id}.json`);
+const teamsFolder = () => enc(`${config.folder}/teams`);
+
+// Generic JSON file helpers for a folder of records (agendas, teams).
+async function readJson(path) {
+  const base = await getDriveBase();
+  const res = await graph(`${base}/root:/${path}:/content`, { raw: true });
+  if (res.status === 404) return null;
+  if (!res.ok) throw new Error(`Couldn't open ${decodeURIComponent(path)} (${res.status}).`);
+  return res.json();
+}
+
+async function writeJson(path, record) {
+  const base = await getDriveBase();
+  await graph(`${base}/root:/${path}:/content`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(record, null, 2),
+  });
+  return record;
+}
+
+async function deleteJson(path) {
+  const base = await getDriveBase();
+  const res = await graph(`${base}/root:/${path}`, { method: "DELETE", raw: true });
+  if (!res.ok && res.status !== 404) throw new Error(`Couldn't delete (${res.status}).`);
+}
+
+async function listJson(folder) {
+  const base = await getDriveBase();
+  let items = [];
+  let next = `${base}/root:/${folder}:/children?$top=999`;
+  while (next) {
+    const res = await graph(next, { raw: true });
+    if (res.status === 404) break;
+    if (!res.ok) throw new Error(`Couldn't list ${decodeURIComponent(folder)} (${res.status}).`);
+    const page = await res.json();
+    items = items.concat(page.value || []);
+    next = page["@odata.nextLink"] || null;
+  }
+  const files = items.filter((f) => f.file && f.name.endsWith(".json"));
+  const out = await Promise.all(
+    files.map(async (f) => {
+      try {
+        const url = f["@microsoft.graph.downloadUrl"];
+        if (url) return await (await fetch(url, { cache: "no-store" })).json();
+        return await readJson(`${folder}/${encodeURIComponent(f.name)}`);
+      } catch {
+        return null;
+      }
+    })
+  );
+  return out.filter(Boolean);
+}
 
 // Base44's CSV export (and text inputs) can hand back numbers as text ("05"), which then
 // get joined instead of added. Store and return them as real numbers.
@@ -185,6 +239,38 @@ function sortBy(list, sort) {
   });
 }
 
+// ── Teams ──────────────────────────────────────────────────────────────
+// A team: { id, name, members: [{ id, first_name, last_name, email, title }] }.
+// Agendas with a team_id show that team's members as their "team", and edits to an
+// agenda's team members are saved to the team (so every agenda of the team sees them).
+const Team = {
+  async list(sort = "name") {
+    return sortBy(await listJson(teamsFolder()), sort);
+  },
+  async get(id) {
+    return id ? readJson(teamPath(id)) : null;
+  },
+  async update(id, patch) {
+    const current = (await readJson(teamPath(id))) || { id };
+    return writeJson(teamPath(id), { ...current, ...patch, id, updated_date: new Date().toISOString() });
+  },
+  async delete(id) {
+    await deleteJson(teamPath(id));
+  },
+  async create(data) {
+    const now = new Date().toISOString();
+    const rec = { name: "", members: [], ...data, id: newId(), created_date: now, updated_date: now, created_by: currentUserEmail };
+    return writeJson(teamPath(rec.id), rec);
+  },
+};
+
+async function withTeam(rec, teamsById) {
+  if (!rec || !rec.team_id) return rec;
+  const team = teamsById ? teamsById.get(rec.team_id) : await Team.get(rec.team_id);
+  if (!team) return rec; // team deleted: fall back to the agenda's own list
+  return { ...rec, team: team.members || [], team_name: team.name };
+}
+
 // Same shape as base44.entities.Agenda so the screens didn't need to change.
 const Agenda = {
   async list(sort) {
@@ -211,19 +297,23 @@ const Agenda = {
         }
       })
     );
-    return sortBy(records.filter(Boolean), sort);
+    const teams = await Team.list().catch(() => []);
+    const byId = new Map(teams.map((t) => [t.id, t]));
+    const resolved = await Promise.all(records.filter(Boolean).map((r) => withTeam(r, byId)));
+    return sortBy(resolved, sort);
   },
 
   async filter(query = {}) {
     if (query.id) {
       const rec = await readAgendaFile(query.id);
-      return rec ? [rec] : [];
+      return rec ? [await withTeam(rec)] : [];
     }
     const all = await Agenda.list();
     return all.filter((r) => Object.entries(query).every(([k, v]) => r[k] === v));
   },
 
   async create(data, { keepId = false } = {}) {
+    if (data && data.team_id) data = { ...data, team: undefined };
     const now = new Date().toISOString();
     const record = {
       ...data,
@@ -239,8 +329,18 @@ const Agenda = {
   // a teammate's change to a different section (e.g. scorecard vs. to-dos) isn't lost.
   async update(id, patch) {
     const current = (await readAgendaFile(id)) || { id };
-    const record = { ...current, ...patch, id, updated_date: new Date().toISOString() };
-    return writeAgendaFile(record);
+    const merged = { ...current, ...patch, id, updated_date: new Date().toISOString() };
+    // Member edits on a team's agenda go to the team itself.
+    if (merged.team_id) {
+      const team = await Team.get(merged.team_id);
+      if (team) {
+        if (Object.prototype.hasOwnProperty.call(patch, "team")) await Team.update(merged.team_id, { members: patch.team });
+        delete merged.team; // members live on the team, not the agenda
+      }
+    }
+    delete merged.team_name;
+    const saved = await writeAgendaFile(merged);
+    return withTeam(saved);
   },
 
   async delete(id) {
@@ -274,7 +374,7 @@ async function SendEmail({ to, subject, body }) {
 }
 
 export const api = {
-  entities: { Agenda },
+  entities: { Agenda, Team },
   auth: { me, logout: signOut },
   integrations: { Core: { SendEmail } },
 };

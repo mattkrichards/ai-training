@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { api as base44 } from "@/api/m365";
 import TeamSelect from "./TeamSelect";
 import AgendaImport from "./AgendaImport";
@@ -14,13 +14,23 @@ const emptyItem = () => ({
   notes: "",
 });
 
-export default function AgendaBuilder({ agenda, onBack }) {
+export default function AgendaBuilder({ agenda, onBack, defaultTeamId = "" }) {
   const [title, setTitle] = useState(agenda?.title || "");
   const [items, setItems] = useState(agenda?.items || [emptyItem()]);
   const [saving, setSaving] = useState(false);
   const [dragIdx, setDragIdx] = useState(null);
   const [overIdx, setOverIdx] = useState(null);
   const [showImport, setShowImport] = useState(false);
+  const [teams, setTeams] = useState([]);
+  const [teamId, setTeamId] = useState(agenda?.team_id || defaultTeamId || "");
+
+  useEffect(() => {
+    base44.entities.Team.list("name").then(setTeams).catch(() => setTeams([]));
+  }, []);
+
+  // Presenter choices: the chosen team's members, else the agenda's own list.
+  const selectedTeam = teams.find((t) => t.id === teamId);
+  const people = selectedTeam ? selectedTeam.members || [] : agenda?.team_id ? [] : agenda?.team || [];
 
   // Items that are still the blank starter row don't count as "current items".
   const realItems = items.filter((i) => (i.title || "").trim());
@@ -59,7 +69,16 @@ export default function AgendaBuilder({ agenda, onBack }) {
   const handleSave = async () => {
     if (!title.trim()) return;
     setSaving(true);
-    const payload = { title: title.trim(), items };
+    const payload = { title: title.trim(), items, team_id: teamId || null };
+    // Moving an agenda that has its own member list onto a team: add those people to the
+    // team so nobody is lost.
+    if (teamId && selectedTeam && !agenda?.team_id && (agenda?.team || []).length) {
+      const have = new Set((selectedTeam.members || []).map((m) => `${m.first_name} ${m.last_name}`.trim().toLowerCase()));
+      const extra = agenda.team.filter((m) => !have.has(`${m.first_name} ${m.last_name}`.trim().toLowerCase()));
+      if (extra.length) await base44.entities.Team.update(teamId, { members: [...(selectedTeam.members || []), ...extra] });
+    }
+    // Taking an agenda off a team: keep a copy of the members on the agenda.
+    if (!teamId && agenda?.team_id) payload.team = agenda.team || [];
     if (agenda?.id) {
       await base44.entities.Agenda.update(agenda.id, payload);
     } else {
@@ -95,8 +114,17 @@ export default function AgendaBuilder({ agenda, onBack }) {
         placeholder="Meeting title…"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
-        className="w-full text-3xl font-bold text-neutral-900 placeholder:text-neutral-300 bg-transparent border-none outline-none mb-10 tracking-tight"
+        className="w-full text-3xl font-bold text-neutral-900 placeholder:text-neutral-300 bg-transparent border-none outline-none mb-3 tracking-tight"
       />
+      <div className="flex items-center gap-2 mb-10 text-sm text-neutral-500">
+        <span>Team</span>
+        <select value={teamId} onChange={(e) => setTeamId(e.target.value)}
+          className="text-sm text-neutral-800 bg-white border border-neutral-200 rounded-xl px-3 py-1.5 outline-none focus:border-neutral-400">
+          <option value="">No team</option>
+          {teams.map((t) => <option key={t.id} value={t.id}>{t.name} ({(t.members || []).length})</option>)}
+        </select>
+        {!teams.length && <span className="text-xs text-neutral-400">Create teams with the Teams button on the home page.</span>}
+      </div>
 
       {!agenda?.id && !realItems.length && (
         <button onClick={() => setShowImport(true)}
@@ -145,7 +173,7 @@ export default function AgendaBuilder({ agenda, onBack }) {
                     <span className="text-xs text-neutral-400">min</span>
                   </div>
                 </div>
-                <TeamSelect team={agenda?.team || []} value={item.presenter || ""} emptyLabel="No presenter"
+                <TeamSelect team={people} value={item.presenter || ""} emptyLabel="No presenter"
                   onChange={(v) => updateItem(idx, "presenter", v)}
                   className="w-full text-xs text-neutral-500 bg-transparent border border-neutral-200 rounded-md px-1.5 py-1 outline-none" />
                 <textarea
@@ -186,7 +214,7 @@ export default function AgendaBuilder({ agenda, onBack }) {
         {saving ? "Saving…" : "Save Agenda"}
       </button>
       {showImport && (
-        <AgendaImport team={agenda?.team || []} currentTitle={title} hasItems={realItems.length > 0}
+        <AgendaImport team={people} currentTitle={title} hasItems={realItems.length > 0}
           onImport={applyImport} onClose={() => setShowImport(false)} />
       )}
     </div>

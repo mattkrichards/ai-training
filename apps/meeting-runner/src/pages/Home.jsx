@@ -6,13 +6,15 @@ import AgendaBuilder from "@/components/agenda/AgendaBuilder";
 export default function Home() {
   const [view, setView] = useState("list"); // "list" | "build"
   const [editingAgenda, setEditingAgenda] = useState(null);
+  const [newTeamId, setNewTeamId] = useState("");
 
   const handleEdit = (agenda) => {
     setEditingAgenda(agenda);
     setView("build");
   };
 
-  const handleNew = () => {
+  const handleNew = (teamId = "") => {
+    setNewTeamId(teamId || "");
     setEditingAgenda(null);
     setView("build");
   };
@@ -28,7 +30,7 @@ export default function Home() {
         <AgendaList onNew={handleNew} onEdit={handleEdit} />
       )}
       {view === "build" && (
-        <AgendaBuilder agenda={editingAgenda} onBack={handleBack} />
+        <AgendaBuilder agenda={editingAgenda} defaultTeamId={newTeamId} onBack={handleBack} />
       )}
     </div>
   );
