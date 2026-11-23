@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { api as base44 } from "@/api/m365";
 import TeamSelect from "./TeamSelect";
-import { ArrowLeft, Plus, GripVertical, Trash2, Save, Clock } from "lucide-react";
+import AgendaImport from "./AgendaImport";
+import { ArrowLeft, Plus, GripVertical, Trash2, Save, Clock, Wand2 } from "lucide-react";
 
 const genId = () => Math.random().toString(36).slice(2, 9);
 
@@ -19,6 +20,17 @@ export default function AgendaBuilder({ agenda, onBack }) {
   const [saving, setSaving] = useState(false);
   const [dragIdx, setDragIdx] = useState(null);
   const [overIdx, setOverIdx] = useState(null);
+  const [showImport, setShowImport] = useState(false);
+
+  // Items that are still the blank starter row don't count as "current items".
+  const realItems = items.filter((i) => (i.title || "").trim());
+
+  const applyImport = ({ title: importedTitle, mode, items: imported }) => {
+    const made = imported.map((it) => ({ ...emptyItem(), ...it }));
+    setItems(mode === "append" ? [...realItems, ...made] : made);
+    if (importedTitle && !title.trim()) setTitle(importedTitle);
+    else if (importedTitle && mode === "replace") setTitle(importedTitle);
+  };
 
   const totalMins = items.reduce((sum, i) => sum + (Number(i.duration) || 0), 0);
 
@@ -65,9 +77,15 @@ export default function AgendaBuilder({ agenda, onBack }) {
           <ArrowLeft className="w-4 h-4" />
           Back
         </button>
-        <div className="flex items-center gap-2 text-sm text-neutral-400">
-          <Clock className="w-4 h-4" />
-          <span>{totalMins} min total</span>
+        <div className="flex items-center gap-4">
+          <button onClick={() => setShowImport(true)} title="Paste a screenshot, text or document of an agenda"
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-neutral-600 rounded-xl border border-neutral-200 bg-white hover:bg-neutral-50 transition-colors">
+            <Wand2 className="w-3.5 h-3.5" /> Import agenda
+          </button>
+          <div className="flex items-center gap-2 text-sm text-neutral-400">
+            <Clock className="w-4 h-4" />
+            <span>{totalMins} min total</span>
+          </div>
         </div>
       </div>
 
@@ -79,6 +97,13 @@ export default function AgendaBuilder({ agenda, onBack }) {
         onChange={(e) => setTitle(e.target.value)}
         className="w-full text-3xl font-bold text-neutral-900 placeholder:text-neutral-300 bg-transparent border-none outline-none mb-10 tracking-tight"
       />
+
+      {!agenda?.id && !realItems.length && (
+        <button onClick={() => setShowImport(true)}
+          className="w-full mb-4 flex items-center justify-center gap-2 py-3 rounded-2xl border-2 border-dashed border-violet-200 bg-violet-50/50 text-sm text-violet-600 hover:bg-violet-50 transition-colors">
+          <Wand2 className="w-4 h-4" /> Have an agenda already? Paste a screenshot or text to import it
+        </button>
+      )}
 
       {/* Items */}
       <div className="space-y-2 mb-6">
@@ -160,6 +185,10 @@ export default function AgendaBuilder({ agenda, onBack }) {
         <Save className="w-4 h-4" />
         {saving ? "Saving…" : "Save Agenda"}
       </button>
+      {showImport && (
+        <AgendaImport team={agenda?.team || []} currentTitle={title} hasItems={realItems.length > 0}
+          onImport={applyImport} onClose={() => setShowImport(false)} />
+      )}
     </div>
   );
 }
